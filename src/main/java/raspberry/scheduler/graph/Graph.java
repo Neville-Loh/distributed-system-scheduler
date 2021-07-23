@@ -3,7 +3,7 @@ package main.java.raspberry.scheduler.graph;
 import java.util.Hashtable;
 import java.util.List;
 
-public class Graph {
+public class Graph implements IGraph{
 
     public Node startNode;
     public Node endNode;
@@ -24,4 +24,22 @@ public class Graph {
     public List<Edge> getChild(Node x){
         return adjacencyList.get(x);
     }
+
+    @Override
+    public INode getNode(String id) {
+        //@todo Need to implement
+        return null;
+    }
+
+    @Override
+    public void addNode(INode node) {
+        //@todo Need to implement
+    }
+
+    @Override
+    public void addEdge(String parentNodeID, String childNodeID, int Weight) {
+        //@todo Need to implement
+    }
+
+
 }
