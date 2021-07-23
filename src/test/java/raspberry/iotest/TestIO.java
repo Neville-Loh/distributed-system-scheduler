@@ -15,7 +15,12 @@ public class TestIO {
 	}
 
 	@Test
-	public void test() {
+	public void testNode() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testEdge() {
 		fail("Not yet implemented");
 	}
 
