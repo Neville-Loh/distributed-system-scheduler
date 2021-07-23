@@ -3,7 +3,8 @@ package main.java.raspberry.scheduler.algorithm;
 import java.util.PriorityQueue;
 
 import main.java.raspberry.scheduler.graph.Graph;
-import main.java.raspberry.scheduler.graph.Node;
+import main.java.raspberry.scheduler.graph.INode;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +13,12 @@ public class Astar implements Algorithm{
 
     Graph graph;
     PriorityQueue pq;
-    List<Node> visted;
+    List<INode> visted;
 
     public Astar(Graph graphToSolve){
         graph = graphToSolve;
         pq = new PriorityQueue();
-        visted = new ArrayList<Node>();
+        visted = new ArrayList<INode>();
     }
 
 
