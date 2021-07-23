@@ -1,4 +1,4 @@
-package main.java.raspberry;
+package main.java.raspberry.scheduler.graph;
 
 import java.util.Hashtable;
 import java.util.List;

@@ -1,6 +1,9 @@
-package main.java.raspberry;
+package main.java.raspberry.scheduler.algorithm;
 
 import java.util.PriorityQueue;
+
+import main.java.raspberry.scheduler.graph.Graph;
+
 import java.util.ArrayList;
 import java.util.List;
 

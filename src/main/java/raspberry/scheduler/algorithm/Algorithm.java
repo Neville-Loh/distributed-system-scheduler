@@ -1,4 +1,4 @@
-package main.java.raspberry;
+package main.java.raspberry.scheduler.algorithm;
 
 
 public interface Algorithm {

@@ -1,6 +1,8 @@
-package main.java.raspberry;
+package main.java.raspberry.scheduler.algorithm;
 
 import java.util.ArrayList;
+
+import main.java.raspberry.scheduler.graph.Node;
 
 public class Schedule implements Comparable<Schedule>{
 
