@@ -4,41 +4,44 @@ import java.util.Hashtable;
 import java.util.List;
 
 public class Graph implements IGraph{
+    private String name;
+    public Hashtable<String, Node> nodes;
+    public Hashtable<String, List<IEdge>> InDegreeAdjacencyList;
+    public Hashtable<String, List<IEdge>> OutDegreeAdjacencyList;
 
-    public Node startNode;
-    public Node endNode;
-    public Hashtable<Node, List<Edge>> adjacencyList;
-
-    public Graph(){
-        adjacencyList = new Hashtable<Node, List<Edge>>();
-    }
-
-    // Add element to hashtable. Call when creating the adjacency list.
-    public void addChild (Node parentNode, List<Edge> edges){
-        adjacencyList.put(parentNode, edges);
-    }
-
-
-    // Returns child nodes
-    // x : the parent node.
-    public List<Edge> getChild(Node x){
-        return adjacencyList.get(x);
+    /**
+     * Constructor
+     * @param name name of the graph
+     */
+    public Graph(String name){
+        this.name = name;
+        InDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
+        OutDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
     }
 
     @Override
     public INode getNode(String id) {
-        //@todo Need to implement
-        return null;
+        return nodes.get(id);
     }
 
     @Override
-    public void addNode(INode node) {
-        //@todo Need to implement
+    public void addNode(String id, int value) {
+
     }
 
     @Override
-    public void addEdge(String parentNodeID, String childNodeID, int Weight) {
-        //@todo Need to implement
+    public void addEdge(String parentNodeID, String childNodeID, int weight) {
+        Node p = nodes.get(parentNodeID);
+        Node c = nodes.get(childNodeID);
+        IEdge e = new Edge(nodes.get(parentNodeID), nodes.get(childNodeID), weight);
+        InDegreeAdjacencyList.get(parentNodeID).add(e);
+        OutDegreeAdjacencyList.get(childNodeID).add(e);
+    }
+
+
+    @Override
+    public String toString(){
+        return this.name;
     }
 
 

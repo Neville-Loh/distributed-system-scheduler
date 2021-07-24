@@ -17,7 +17,7 @@ public interface IGraph{
      * @see INode
      * @param node the node to be added
      */
-    void addNode(INode node);
+    void addNode(String id, int value);
 
     /**
      *  Add an edge to the current graph

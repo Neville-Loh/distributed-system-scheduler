@@ -2,32 +2,30 @@ package main.java.raspberry.scheduler.graph;
 
 public class Edge implements IEdge{
 
+    private Node parentNode;
     private Node childNode;
     private int weight;
 
     // Node : childNode
     // Weight : Remote communication cost when switching processors.
-    public Edge(Node child, int communicatonCost){
+    public Edge(Node parent, Node child, int communicatonCost){
+        parentNode = parent;
         childNode = child;
         weight = communicatonCost;
     }
 
-
     @Override
     public int getWeight() {
-        //@todo Need to implement
-        return 0;
+        return weight;
     }
 
     @Override
     public INode getChild() {
-        //@todo Need to implement
-        return null;
+        return childNode;
     }
 
     @Override
     public INode getParent() {
-        //@todo Need to implement
-        return null;
+        return parentNode;
     }
 }
