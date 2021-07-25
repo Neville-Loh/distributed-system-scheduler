@@ -17,10 +17,10 @@ public class Schedule implements Comparable<Schedule>{
     public Node child;
     public int p_id;
 
-    public Schedule(int cost, int heuristic, int total, Schedule parentSchedule, Node childNode, int processorId){
+    public Schedule(int cost, int heuristic, Schedule parentSchedule, Node childNode, int processorId){
         g = cost;
         h = heuristic;
-        t = total;
+        t = cost + heuristic;
 
         parent = parentSchedule;
         child = childNode;
@@ -30,5 +30,15 @@ public class Schedule implements Comparable<Schedule>{
     @Override
     public int compareTo(Schedule s){
         return this.t > s.t ? 1 : this.t < s.t ? -1 : 0;
+    }
+
+    //After computing the scheduling, call this method to get List of paths
+    public List<Schedule> getPath(){
+        if (this.parent == null){
+            return Arrays.asList(this);
+        }
+        List<Schedule> p = this.parent.getPath();
+        p.add(this);
+        return p;
     }
 }

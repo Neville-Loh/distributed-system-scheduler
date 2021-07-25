@@ -12,18 +12,20 @@ public class Astar implements Algorithm{
     Graph graph;
     PriorityQueue pq;
     List<Node> visted;
+    int numP;
+    List<Schedule> visited;
 
-    public Astar(Graph graphToSolve){
+    public Astar(Graph graphToSolve, int numProcessors){
         graph = graphToSolve;
         pq = new PriorityQueue();
-        visted = new ArrayList<Node>();
+        visited = new ArrayList<Schedulle>();
+        numP = numProcessors;
     }
 
 
     @Override
     public void findPath() {
         // find the path
-
 
         // Put start node in "visted"
         // currentNode = start node
@@ -40,5 +42,16 @@ public class Astar implements Algorithm{
         // - - BREAK
         // - }
         // }
+
+        List<Node> topologicalOrder = new ArrayList<node>(graph.getTopologicalOrder_DFS());
+
+
     }
+
+    // Compute heuristic weight
+    // Currently our heurstic function is undecided. --> just returns 0.
+    public int h(){
+        return 0;
+    }
+
 }
