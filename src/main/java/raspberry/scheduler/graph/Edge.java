@@ -28,4 +28,9 @@ public class Edge implements IEdge{
     public INode getParent() {
         return parentNode;
     }
+    
+    @Override
+    public String toString() {
+    	return String.format("(pointsto=%s, weight=%d)", childNode.getName(), weight);
+    }
 }

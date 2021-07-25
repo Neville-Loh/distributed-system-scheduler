@@ -2,6 +2,7 @@ package main.java.raspberry.scheduler.graph;
 
 import java.util.Hashtable;
 import java.util.List;
+import java.util.ArrayList;
 
 public class Graph implements IGraph{
     private String name;
@@ -15,6 +16,7 @@ public class Graph implements IGraph{
      */
     public Graph(String name){
         this.name = name;
+        nodes = new Hashtable<String, INode>();
         InDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
         OutDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
     }
@@ -27,6 +29,8 @@ public class Graph implements IGraph{
     @Override
     public void addNode(String id, int value) {
         INode node = new Node(id, value);
+        InDegreeAdjacencyList.put(id, new ArrayList<IEdge>());
+        OutDegreeAdjacencyList.put(id, new ArrayList<IEdge>());
         nodes.put(id,node);
     }
 
@@ -34,7 +38,7 @@ public class Graph implements IGraph{
     public void addEdge(String parentNodeID, String childNodeID, int weight) {
         INode p = nodes.get(parentNodeID);
         INode c = nodes.get(childNodeID);
-        IEdge e = new Edge(nodes.get(parentNodeID), nodes.get(childNodeID), weight);
+        IEdge e = new Edge(p, c, weight);
         InDegreeAdjacencyList.get(parentNodeID).add(e);
         OutDegreeAdjacencyList.get(childNodeID).add(e);
     }
@@ -42,7 +46,13 @@ public class Graph implements IGraph{
 
     @Override
     public String toString(){
-        return this.name;
+    	String output = "Graph: " +this.name +"\n";
+    	for (String name: InDegreeAdjacencyList.keySet()) {
+    	    String key = name.toString();
+    	    String value = InDegreeAdjacencyList.get(name).toString();
+    	    output += "Node:" + key + " cost=" + nodes.get(key).getValue()  + " " + value + "\n";
+    	}
+    	return output;
     }
 
 

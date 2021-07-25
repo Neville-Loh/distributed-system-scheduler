@@ -2,13 +2,13 @@ package main.java.raspberry.scheduler.io;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import main.java.raspberry.scheduler.graph.Graph;
 import main.java.raspberry.scheduler.graph.IGraph;
+
 
 /**
  * Reader class reads in .dot files in the correct format and and converts it
@@ -32,19 +32,23 @@ public class Reader {
 		try {
 			File file = new File(filepath);
 			Scanner reader = new Scanner(file);
+			
+			String firstLine = reader.nextLine();
+			String[] firstLineInfo = getLineInfo(firstLine);
+			if (checkFormat(FIRST_LINE, firstLine)) {
+				String name = firstLineInfo[1].replaceAll("\"", "");
+				_graph = new Graph(name);
+			}
+			
+			
 			while (reader.hasNextLine()) {
 				String line = reader.nextLine();
 				String noWhiteSpace = line.replaceAll(" ", "");
 				String[] lineInfo = getLineInfo(line);
-				if (checkFormat(FIRST_LINE, line)) {
-					_graph = new Graph(lineInfo[0]);
-					System.out.printf("first line is: %s%n", line);
-				}
+
 				if (checkFormat(NODE_LINE, noWhiteSpace)) {
 					String nodeWeight = lineInfo[1].replaceAll("\\D", "");
 					_graph.addNode(lineInfo[0],Integer.parseInt(nodeWeight));
-					
-					System.out.printf("node name: %s, nodeWeight: %s%n", lineInfo[0], nodeWeight);
 				}
 				if (checkFormat(EDGE_LINE, noWhiteSpace)) {
 					String parentNode = lineInfo[0];
@@ -52,11 +56,11 @@ public class Reader {
 					String edgeWeight = lineInfo[3].replaceAll("\\D", "");					
 					_graph.addEdge(parentNode, childNode, Integer.parseInt(edgeWeight));
 					
-					System.out.printf("parentNode: %s, childNode: %s, edgeWeight: %s%n", parentNode, childNode, edgeWeight);
 				}
 
 			}
 			reader.close();
+			System.out.println(_graph);
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found");
 			e.printStackTrace();
@@ -71,8 +75,7 @@ public class Reader {
 	 */
 	private String[] getLineInfo(String line) {
 		String[] nodeInfo;
-		//@todo line.strip() is not in java 8
-		//line = line.strip();
+		line = line.trim();
 		nodeInfo = line.split("\\s+");
 		return nodeInfo;
 	}
