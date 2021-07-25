@@ -8,11 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import main.java.raspberry.scheduler.graph.Graph;
-import main.java.raspberry.scheduler.graph.IEdge;
 import main.java.raspberry.scheduler.graph.IGraph;
-import main.java.raspberry.scheduler.graph.INode;
-import main.java.raspberry.scheduler.graph.Node;
-import main.java.raspberry.scheduler.graph.Edge;
 
 /**
  * Reader class reads in .dot files in the correct format and and converts it
@@ -41,15 +37,14 @@ public class Reader {
 				String noWhiteSpace = line.replaceAll(" ", "");
 				String[] lineInfo = getLineInfo(line);
 				if (checkFormat(FIRST_LINE, line)) {
-					_graph = new Graph();
-					System.out.println(String.format("first line is: %s", line));
+					_graph = new Graph(lineInfo[0]);
+					System.out.printf("first line is: %s%n", line);
 				}
 				if (checkFormat(NODE_LINE, noWhiteSpace)) {
 					String nodeWeight = lineInfo[1].replaceAll("\\D", "");
-					INode node = new Node(Integer.parseInt(nodeWeight));
-					_graph.addNode(node);
+					_graph.addNode(lineInfo[0],Integer.parseInt(nodeWeight));
 					
-					System.out.println(String.format("node name: %s, nodeWeight: %s", lineInfo[0], nodeWeight));
+					System.out.printf("node name: %s, nodeWeight: %s%n", lineInfo[0], nodeWeight);
 				}
 				if (checkFormat(EDGE_LINE, noWhiteSpace)) {
 					String parentNode = lineInfo[0];
@@ -57,7 +52,7 @@ public class Reader {
 					String edgeWeight = lineInfo[3].replaceAll("\\D", "");					
 					_graph.addEdge(parentNode, childNode, Integer.parseInt(edgeWeight));
 					
-					System.out.println(String.format("parentNode: %s, childNode: %s, edgeWeight: %s", parentNode, childNode, edgeWeight));
+					System.out.printf("parentNode: %s, childNode: %s, edgeWeight: %s%n", parentNode, childNode, edgeWeight);
 				}
 
 			}
@@ -76,7 +71,8 @@ public class Reader {
 	 */
 	private String[] getLineInfo(String line) {
 		String[] nodeInfo;
-		line = line.strip();
+		//@todo line.strip() is not in java 8
+		//line = line.strip();
 		nodeInfo = line.split("\\s+");
 		return nodeInfo;
 	}

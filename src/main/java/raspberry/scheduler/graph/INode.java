@@ -26,4 +26,9 @@ public interface INode {
      * @return integer that is contained in the node
      */
     int getValue();
+
+    /**
+     * String
+     */
+    String getName();
 }

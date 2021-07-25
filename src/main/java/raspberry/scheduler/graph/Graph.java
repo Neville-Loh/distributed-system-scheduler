@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Graph implements IGraph{
     private String name;
-    public Hashtable<String, Node> nodes;
+    public Hashtable<String, INode> nodes;
     public Hashtable<String, List<IEdge>> InDegreeAdjacencyList;
     public Hashtable<String, List<IEdge>> OutDegreeAdjacencyList;
 
@@ -26,13 +26,14 @@ public class Graph implements IGraph{
 
     @Override
     public void addNode(String id, int value) {
-
+        INode node = new Node(id, value);
+        nodes.put(id,node);
     }
 
     @Override
     public void addEdge(String parentNodeID, String childNodeID, int weight) {
-        Node p = nodes.get(parentNodeID);
-        Node c = nodes.get(childNodeID);
+        INode p = nodes.get(parentNodeID);
+        INode c = nodes.get(childNodeID);
         IEdge e = new Edge(nodes.get(parentNodeID), nodes.get(childNodeID), weight);
         InDegreeAdjacencyList.get(parentNodeID).add(e);
         OutDegreeAdjacencyList.get(childNodeID).add(e);

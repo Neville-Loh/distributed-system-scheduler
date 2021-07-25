@@ -37,4 +37,8 @@ public class Node implements INode{
     public String toString(){
         return this.name;
     }
+
+    public String getName(){
+        return this.name;
+    }
 }
