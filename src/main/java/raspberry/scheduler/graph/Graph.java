@@ -3,6 +3,7 @@ package main.java.raspberry.scheduler.graph;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
+import java.util.ArrayList;
 
 public class Graph {
 
@@ -16,6 +17,12 @@ public class Graph {
     public Graph(){
         adjacencyList = new Hashtable<Node, List<Edge>>();
     }
+
+    // **** This constructor is used in Main.test() ****
+    public Graph( Hashtable adjacencyList1){
+        adjacencyList = adjacencyList1;
+    }
+
 
     // Add element to hashtable. Call when creating the adjacency list.
     public void addChild (Node parentNode, List<Edge> edges){
@@ -44,7 +51,7 @@ public class Graph {
     // Recursive function to compute topological order.
     public void recursiveTopological(Node x){
         if ( ! adjacencyList.get(x).isEmpty() ){
-            for ( edge i : adjacencyList.get(x) ){
+            for ( Edge i : adjacencyList.get(x) ){
                 if ( toVisit.contains(i.childNode)) {
                     recursiveTopological(i.childNode);
                 }
@@ -56,7 +63,7 @@ public class Graph {
 
     public void getTopologicalOrder_BFS(){
         //Yet to be implemented.
-        return
+        return;
     }
 
 }

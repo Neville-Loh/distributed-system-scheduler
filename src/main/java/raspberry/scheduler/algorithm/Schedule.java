@@ -1,30 +1,40 @@
 package main.java.raspberry.scheduler.algorithm;
 
 import java.util.ArrayList;
-
+import java.util.List;
+import java.util.Arrays;
 import main.java.raspberry.scheduler.graph.Node;
 
 public class Schedule implements Comparable<Schedule>{
 
-    // g: cost of the path from the start node to n.
     // h: Heuristic weight
     // t: Total weight
-    public int g;
     public int h;
     public int t;
 
-    public Schedule parent;
+    public int s; //the time this node start running.
+    public int f; //the time at this node finish running
+
+//    public Schedule parent;
     public Node child;
     public int p_id;
+    public ArrayList<Schedule> path;
 
-    public Schedule(int cost, int heuristic, Schedule parentSchedule, Node childNode, int processorId){
-        g = cost;
-        h = heuristic;
-        t = cost + heuristic;
-
-        parent = parentSchedule;
+    public Schedule(int cost, int heuristic, ArrayList<Schedule> parentSchedule, Node childNode, int processorId){
         child = childNode;
         p_id = processorId;
+
+        s = cost;
+        f = cost + childNode.getWeight();
+
+        h = heuristic;
+        t = f + heuristic;
+        if (parentSchedule == null){
+            path = new ArrayList<Schedule>();
+        }else{
+            path = new ArrayList<Schedule>(parentSchedule);
+        }
+        path.add(this);
     }
 
     @Override
@@ -34,11 +44,6 @@ public class Schedule implements Comparable<Schedule>{
 
     //After computing the scheduling, call this method to get List of paths
     public List<Schedule> getPath(){
-        if (this.parent == null){
-            return Arrays.asList(this);
-        }
-        List<Schedule> p = this.parent.getPath();
-        p.add(this);
-        return p;
+        return this.path;
     }
 }
