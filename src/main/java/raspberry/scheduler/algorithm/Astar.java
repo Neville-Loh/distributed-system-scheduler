@@ -40,40 +40,46 @@ public class Astar implements Algorithm{
                 pq.add(newSchedule);
             }
         }
-
+        System.out.print("ROOT TABLE :\n");
         printHashTable(rootTable);
+        System.out.println("");
+
         for (Schedule sc: master.keySet()){
-            printPath(sc.path);
-            printHashTable(master.get(sc));
+            printPath(sc);
+//            printHashTable(master.get(sc));
         }
 
         System.out.print("\n=== WHILE LOOP ===");
         Schedule cSchedule;
         while (true){
+            System.out.printf("\n PQ SIZE :  %d", pq.size());
             cSchedule = pq.poll();
-            if (cSchedule.path.size() == Main.NUM_NODE){
+            if (cSchedule.size == Main.NUM_NODE){
                 break;
             }
             Hashtable<Node, Integer> cTable = master.get(cSchedule);
+            master.remove(cSchedule);
             for (Node i: cTable.keySet()){
                 if (cTable.get(i) == 0 ){
+
+                    //TODO : Make it so that if there is multiple empty processor, use the lowerest value p_id.
                     for (int j=0; j<numP; j++){
-                        System.out.println("\n------------");
-                        int start = calculateCost(cSchedule.path, j, i);
-                        Schedule newSchedule = new Schedule( start, h(), cSchedule.path, i, j );
-                        Hashtable<Node, Integer> newTable = getChildTable(master.get(cSchedule),i);
+//                        System.out.println("\n------------");
+                        int start = calculateCost(cSchedule, j, i);
+                        Schedule newSchedule = new Schedule( start, h(), cSchedule, i, j );
+                        Hashtable<Node, Integer> newTable = getChildTable(cTable,i);
                         master.put(newSchedule,newTable);
                         pq.add(newSchedule);
 
-                        printPath(newSchedule.path);
-                        printHashTable(newTable);
+//                        printPath(newSchedule);
+//                        printHashTable(newTable);
                     }
                 }
             }
         }
 
         System.out.print("\n === THE FINAL ANSWER ===");
-        printPath(cSchedule.path);
+        printPath(cSchedule);
         //return cSchedule;
     }
 
@@ -83,17 +89,19 @@ public class Astar implements Algorithm{
         return 0;
     }
 
-    public int calculateCost(ArrayList<Schedule> parentSchedule, int processorId, Node childNode){
+    public int calculateCost(Schedule parentSchedule, int processorId, Node childNode){
         // Find last finish parent node
         // Find last finish time for current processor id.
         Schedule last_processorId_use = null; //last time processor with "processorId" was used.
-        for (int i = parentSchedule.size()-1; i>=0; i--){
-            Schedule cParentSchedule = parentSchedule.get(i);
+        Schedule cParentSchedule = parentSchedule;
+        while ( cParentSchedule != null){
             if ( cParentSchedule.p_id == processorId ){
                 last_processorId_use = cParentSchedule;
                 break;
             }
+            cParentSchedule = cParentSchedule.parent;
         }
+
 
         //last time parent was used. Needs to check for all processor.
         int last_parent=0;
@@ -102,12 +110,12 @@ public class Astar implements Algorithm{
         }
 
         Boolean [] last_parent_processor = new Boolean[this.numP];
-        for (int i = parentSchedule.size()-1; i>=0; i--){
+        cParentSchedule = parentSchedule;
+        while ( cParentSchedule != null){
             if ( !Arrays.asList(last_parent_processor).contains(null) ){
                 break;
             }
 
-            Schedule cParentSchedule = parentSchedule.get(i);
             for ( Edge j: graph.adjacencyList.get( cParentSchedule.child ) ){
                 if (j.childNode == childNode && cParentSchedule.p_id != processorId){
                     last_parent_processor[ cParentSchedule.p_id ] = true;
@@ -116,6 +124,7 @@ public class Astar implements Algorithm{
                     }
                 }
             }
+            cParentSchedule = cParentSchedule.parent;
         }
         return last_parent;
     }
@@ -142,8 +151,9 @@ public class Astar implements Algorithm{
         return tmp;
     }
 
-    public void printPath(ArrayList<Schedule> path){
+    public void printPath(Schedule x){
         System.out.println("");
+        ArrayList<Schedule> path = (ArrayList<Schedule>) x.getPath();
         for (Schedule i: path){
             System.out.printf("%c : {start:%d}, {finish:%d}, {p_id:%d} \n",i.child._id,i.s,i.f,i.p_id);
         }

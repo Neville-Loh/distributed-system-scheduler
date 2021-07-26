@@ -18,9 +18,11 @@ public class Schedule implements Comparable<Schedule>{
 //    public Schedule parent;
     public Node child;
     public int p_id;
-    public ArrayList<Schedule> path;
+//    public ArrayList<Schedule> path;
+    public Schedule parent;
+    public int size;
 
-    public Schedule(int cost, int heuristic, ArrayList<Schedule> parentSchedule, Node childNode, int processorId){
+    public Schedule(int cost, int heuristic, Schedule parentSchedule, Node childNode, int processorId){
         child = childNode;
         p_id = processorId;
 
@@ -29,12 +31,16 @@ public class Schedule implements Comparable<Schedule>{
 
         h = heuristic;
         t = f + heuristic;
+
+        parent = parentSchedule;
         if (parentSchedule == null){
-            path = new ArrayList<Schedule>();
+            size = 1;
         }else{
-            path = new ArrayList<Schedule>(parentSchedule);
+            size = parentSchedule.size + 1;
         }
-        path.add(this);
+    }
+    public Schedule(char id){
+        char _id = id;
     }
 
     @Override
@@ -43,7 +49,13 @@ public class Schedule implements Comparable<Schedule>{
     }
 
     //After computing the scheduling, call this method to get List of paths
-    public List<Schedule> getPath(){
-        return this.path;
+    public ArrayList<Schedule> getPath(){
+        // TODO: implement
+        if (this.parent == null){
+            return new ArrayList<Schedule>( Arrays.asList(this) );
+        }
+        ArrayList<Schedule> p = this.parent.getPath();
+        p.add(this);
+        return p;
     }
 }
