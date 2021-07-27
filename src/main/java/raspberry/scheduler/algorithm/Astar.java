@@ -13,7 +13,7 @@ public class Astar implements Algorithm{
 
     Graph graph;
     PriorityQueue<Schedule> pq;
-    List<Node> visted;
+//    List<Node> visted;
     int numP;
     List<Schedule> visited;
 
@@ -89,7 +89,7 @@ public class Astar implements Algorithm{
         for (Node i: x.keySet()){
             sum += i.getWeight();
         }
-        return sum;
+        return sum/numP;
     }
 
     public int calculateCost(Schedule parentSchedule, int processorId, Node childNode){
@@ -105,7 +105,6 @@ public class Astar implements Algorithm{
             cParentSchedule = cParentSchedule.parent;
         }
 
-
         //last time parent was used. Needs to check for all processor.
         int last_parent=0;
         if (last_processorId_use != null){
@@ -115,9 +114,9 @@ public class Astar implements Algorithm{
         Boolean [] last_parent_processor = new Boolean[this.numP];
         cParentSchedule = parentSchedule;
         while ( cParentSchedule != null){
-            if ( !Arrays.asList(last_parent_processor).contains(null) ){
-                break;
-            }
+//            if ( !Arrays.asList(last_parent_processor).contains(null) ){
+//                break;
+//            }
 
             for ( Edge j: graph.adjacencyList.get( cParentSchedule.child ) ){
                 if (j.childNode == childNode && cParentSchedule.p_id != processorId){
