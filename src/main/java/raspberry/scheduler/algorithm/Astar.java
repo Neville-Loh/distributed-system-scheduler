@@ -35,7 +35,7 @@ public class Astar implements Algorithm{
 
         for (Node i: rootTable.keySet()){
             if (rootTable.get(i) == 0 ){
-                Schedule newSchedule = new Schedule( 0, h(), null, i, 0 );
+                Schedule newSchedule = new Schedule( 0, h(rootTable), null, i, 0 );
                 master.put(newSchedule,getChildTable(rootTable,i));
                 pq.add(newSchedule);
             }
@@ -61,13 +61,12 @@ public class Astar implements Algorithm{
             master.remove(cSchedule);
             for (Node i: cTable.keySet()){
                 if (cTable.get(i) == 0 ){
-
                     //TODO : Make it so that if there is multiple empty processor, use the lowerest value p_id.
                     for (int j=0; j<numP; j++){
 //                        System.out.println("\n------------");
                         int start = calculateCost(cSchedule, j, i);
-                        Schedule newSchedule = new Schedule( start, h(), cSchedule, i, j );
                         Hashtable<Node, Integer> newTable = getChildTable(cTable,i);
+                        Schedule newSchedule = new Schedule( start, h(newTable), cSchedule, i, j );
                         master.put(newSchedule,newTable);
                         pq.add(newSchedule);
 
@@ -85,8 +84,12 @@ public class Astar implements Algorithm{
 
     // Compute heuristic weight
     // Currently our heurstic function is undecided. --> just returns 0.
-    public int h(){
-        return 0;
+    public int h(Hashtable<Node, Integer> x){
+        int sum = 0;
+        for (Node i: x.keySet()){
+            sum += i.getWeight();
+        }
+        return sum;
     }
 
     public int calculateCost(Schedule parentSchedule, int processorId, Node childNode){

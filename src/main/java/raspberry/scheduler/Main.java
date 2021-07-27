@@ -1,7 +1,7 @@
 package main.java.raspberry.scheduler;
 
 import java.util.*;
-
+import java.lang.Math;
 import main.java.raspberry.scheduler.algorithm.Schedule;
 import main.java.raspberry.scheduler.graph.Graph;
 import main.java.raspberry.scheduler.graph.Node;
@@ -21,11 +21,15 @@ public class Main {
     public static void test(){
         System.out.println("======== RUNNING TEST ========");
 
+
+        // with h()=0, -> 692 node in pq.
+        // with h( return sum(unscheduled node) ) -> 17
         Hashtable<Node, List<Edge>> table = makeHashTable2();
         Graph g = new Graph(table);
-        Astar a = new Astar(g,7);
+        Astar a = new Astar(g,5);
         NUM_NODE = table.size();
         System.out.printf("\n Number of NODES : %d \n", NUM_NODE);
+
         a.findPath();
     }
 
@@ -76,35 +80,12 @@ public class Main {
     public static Hashtable<Node, List<Edge>> makeHashTable2(){
         Hashtable<Node, List<Edge>> adjacencyList = new Hashtable<Node, List<Edge>>();
 
-        Node node_a = new Node('a', 2);
-        Node node_b = new Node('b', 2);
-        Node node_c = new Node('c', 2);
-        Node node_d = new Node('d', 3);
-        Node node_e = new Node('e', 2);
-        Node node_f = new Node('f', 3);
-        Node node_g = new Node('g', 2);
-//        Node node_h = new Node('h', 2);
-//        Node node_i = new Node('i', 2);
-//        Node node_j = new Node('j', 2);
-//        Node node_k = new Node('k', 3);
-//        Node node_l = new Node('l', 2);
-//        Node node_m = new Node('m', 3);
-//        Node node_n = new Node('n', 2);
+        Node tmp;
+        for(char alphabet = 'a'; alphabet <='z'; alphabet++ ) {
+            tmp = new Node(alphabet,(int)((Math.random()+1)*7) );
+            adjacencyList.put(tmp, new ArrayList<Edge>());
+        }
 
-        adjacencyList.put(node_a, new ArrayList<Edge>());
-        adjacencyList.put(node_b, new ArrayList<Edge>());
-        adjacencyList.put(node_c, new ArrayList<Edge>());
-        adjacencyList.put(node_d, new ArrayList<Edge>());
-        adjacencyList.put(node_e, new ArrayList<Edge>());
-        adjacencyList.put(node_f, new ArrayList<Edge>());
-        adjacencyList.put(node_g, new ArrayList<Edge>());
-//        adjacencyList.put(node_h, new ArrayList<Edge>());
-//        adjacencyList.put(node_i, new ArrayList<Edge>());
-//        adjacencyList.put(node_j, new ArrayList<Edge>());
-//        adjacencyList.put(node_k, new ArrayList<Edge>());
-//        adjacencyList.put(node_l, new ArrayList<Edge>());
-//        adjacencyList.put(node_m, new ArrayList<Edge>());
-//        adjacencyList.put(node_n, new ArrayList<Edge>());
         return adjacencyList;
     }
 }
