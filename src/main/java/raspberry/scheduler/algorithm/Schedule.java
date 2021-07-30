@@ -22,6 +22,32 @@ public class Schedule implements Comparable<Schedule>{
     public Schedule parent;
     public int size;
 
+    public int _upperBound;    // For BNB. Represents the worst case. <- Bad schedling.
+    public int _lowerBound;   // For BNB. Represents the base case. <- perfect schedling.
+
+
+    public Schedule(int cost, Schedule parentSchedule, INode childNode, int processorId){
+        node = childNode;
+        p_id = processorId;
+
+        startTime = cost;
+        finishTime = cost + childNode.getValue();
+        t = finishTime;
+
+        parent = parentSchedule;
+        if (parentSchedule == null){
+            size = 1;
+            _lowerBound = finishTime;
+        }else{
+            size = parentSchedule.size + 1;
+            if ( finishTime > parentSchedule._lowerBound){
+                _lowerBound = finishTime;
+            }else{
+                _lowerBound = parentSchedule._lowerBound;
+            }
+        }
+    }
+
     public Schedule(int cost, int heuristic, Schedule parentSchedule, INode childNode, int processorId){
         node = childNode;
         p_id = processorId;
@@ -39,6 +65,7 @@ public class Schedule implements Comparable<Schedule>{
             size = parentSchedule.size + 1;
         }
     }
+
 
     @Override
     public int compareTo(Schedule s){
