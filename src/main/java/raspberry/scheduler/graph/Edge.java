@@ -6,13 +6,12 @@ public class Edge implements IEdge{
     private INode childNode;
     private int weight;
 
-    // Node : childNode
-    // Weight : Remote communication cost when switching processors.
     public Edge(INode parent, INode child, int communicatonCost){
         parentNode = parent;
         childNode = child;
         weight = communicatonCost;
     }
+
 
     @Override
     public int getWeight() {
@@ -32,5 +31,11 @@ public class Edge implements IEdge{
     @Override
     public String toString() {
     	return String.format("(pointsto=%s, weight=%d)", childNode.getName(), weight);
+//=======
+//    //  ***  Temporary, we will only be using this constructor. ***???????????????
+//    public Edge(Node parent, Node child, int communicatonCost){
+//        childNode = child;
+//        child.addParent(parent, communicatonCost);
+//>>>>>>> master
     }
 }
