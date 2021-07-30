@@ -3,6 +3,8 @@ package main.java.raspberry.scheduler.algorithm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+
+import main.java.raspberry.scheduler.graph.INode;
 import main.java.raspberry.scheduler.graph.Node;
 
 public class Schedule implements Comparable<Schedule>{
@@ -16,13 +18,13 @@ public class Schedule implements Comparable<Schedule>{
     public int fisnishTime; //the time at this node finish running
 
 //    public Schedule parent;
-    public Node node;
+    public INode node;
     public int p_id;
 //    public ArrayList<Schedule> path;
     public Schedule parent;
     public int size;
 
-    public Schedule(int cost, int heuristic, Schedule parentSchedule, Node childNode, int processorId){
+    public Schedule(int cost, int heuristic, Schedule parentSchedule, INode childNode, int processorId){
         node = childNode;
         p_id = processorId;
 

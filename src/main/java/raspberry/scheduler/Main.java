@@ -27,8 +27,8 @@ public class Main {
         //Hashtable<Node, List<Edge>> table = makeHashTable();
         Graph g = new Graph("test graph");
         makeGraph(g);
-        Astar a = new Astar(g,5);
-        NUM_NODE = 6;
+        Astar a = new Astar(g,2);
+        NUM_NODE = 7;
         System.out.printf("\n Number of NODES : %d \n", NUM_NODE);
 
         a.findPath();

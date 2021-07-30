@@ -1,5 +1,6 @@
 package main.java.raspberry.scheduler.graph;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -48,5 +49,12 @@ public interface IGraph{
      * @throws EdgeDoesNotExistException
      */
     int getEdgeWeight(INode parent, INode child) throws EdgeDoesNotExistException;
+
+
+    /**
+     *
+     * @return
+     */
+    Collection<INode> getAllNodes();
 }
 

@@ -42,10 +42,12 @@ public class Astar implements Algorithm{
         printHashTable(rootTable);
         System.out.println("");
 
+        System.out.println("Printing MASSSTERETABLE");
         for (Schedule sc: master.keySet()){
             printPath(sc);
-//            printHashTable(master.get(sc));
+            printHashTable(master.get(sc));
         }
+        System.out.println("ENDDDDD");
 
         System.out.print("\n=== WHILE LOOP ===");
         Schedule cSchedule;
@@ -57,14 +59,14 @@ public class Astar implements Algorithm{
             }
             Hashtable<INode, Integer> cTable = master.get(cSchedule);
             master.remove(cSchedule);
-            for (INode i: cTable.keySet()){
-                if (cTable.get(i) == 0 ){
+            for (INode node: cTable.keySet()){
+                if (cTable.get(node) == 0 ){
                     //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
                     for (int j=0; j<numP; j++){
 //                        System.out.println("\n------------");
-                        int start = calculateCost(cSchedule, j, i);
-                        Hashtable<INode, Integer> newTable = getChildTable(cTable,i);
-                        Schedule newSchedule = new Schedule( start, h(newTable), cSchedule, i, j );
+                        int start = calculateCost(cSchedule, j, node);
+                        Hashtable<INode, Integer> newTable = getChildTable(cTable,node);
+                        Schedule newSchedule = new Schedule( start, h(newTable), cSchedule, node, j );
                         master.put(newSchedule,newTable);
                         pq.add(newSchedule);
 
@@ -146,23 +148,28 @@ public class Astar implements Algorithm{
     }
 
     public Hashtable<INode, Integer> getRootTable(){
-        Hashtable<INode, Integer> tmp = new Hashtable<Node, Integer>();
-        for (INode i : this.graph.adjacencyList.keySet()){
+        Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>();
+        for (INode i : this.graph.getAllNodes()){
             tmp.put(i,0);
         }
-        for (INode i : this.graph.adjacencyList.keySet()){
-            for (Edge j : this.graph.adjacencyList.get(i) ){
-                tmp.put( j.childNode, tmp.get(j.childNode) + 1);
+        for (INode i : this.graph.getAllNodes()){
+            for (IEdge j : this.graph.getOutgoingEdges(i.getName())){
+                tmp.put( j.getChild(), tmp.get(j.getChild()) + 1);
             }
         }
         return tmp;
     }
 
     public Hashtable<INode, Integer> getChildTable(Hashtable<INode, Integer> parentTable, INode x){
-        Hashtable<INode, Integer> tmp = new Hashtable<Node, Integer>(parentTable);
+        Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>(parentTable);
         tmp.remove(x);
-        for (Edge i : this.graph.getChild(x)){
-            tmp.put( i.childNode,  tmp.get(i.childNode) - 1 );
+
+        System.out.println(this.graph.getOutgoingEdges(x.getName()));
+        System.out.println(graph.toString());
+
+
+        for (IEdge i : this.graph.getOutgoingEdges(x.getName())){
+            tmp.put( i.getChild(),  tmp.get(i.getChild()) - 1 );
         }
         return tmp;
     }
@@ -170,15 +177,17 @@ public class Astar implements Algorithm{
     public void printPath(Schedule x){
         System.out.println("");
         ArrayList<Schedule> path = (ArrayList<Schedule>) x.getPath();
+
+        //path.sort((o1, o2) -> o1.node.getName().compareTo(o2.node.getName()));
         for (Schedule i: path){
-            System.out.printf("%c : {start:%d}, {finish:%d}, {p_id:%d} \n",i.node._id,i.startTime,i.fisnishTime,i.p_id);
+            System.out.printf("%s : {start:%d}, {finish:%d}, {p_id:%d} \n",i.node.getName(),i.startTime,i.fisnishTime,i.p_id);
         }
     }
 
     public void printHashTable(Hashtable<INode, Integer> table){
         System.out.printf("{ ");
         for (INode i: table.keySet()){
-            System.out.printf("%c_%d, ", i._id, table.get(i));
+            System.out.printf("%s_%d, ", i.getName(), table.get(i));
         }
         System.out.printf(" }\n");
     }
