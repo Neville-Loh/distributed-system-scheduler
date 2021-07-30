@@ -7,6 +7,7 @@ import main.java.raspberry.scheduler.graph.Graph;
 import main.java.raspberry.scheduler.graph.Node;
 import main.java.raspberry.scheduler.graph.Edge;
 import main.java.raspberry.scheduler.algorithm.Astar;
+import main.java.raspberry.scheduler.algorithm.BNB;
 
 public class Main {
 
@@ -26,11 +27,15 @@ public class Main {
         // with h( return sum(unscheduled node) ) -> 17
         Hashtable<Node, List<Edge>> table = makeHashTable2();
         Graph g = new Graph(table);
-        Astar a = new Astar(g,5);
+        BNB b = new BNB(g,2);
+
+        Astar a = new Astar(g, 2);
         NUM_NODE = table.size();
         System.out.printf("\n Number of NODES : %d \n", NUM_NODE);
 
-        a.findPath();
+//        a.findPath();
+
+        b.findPath();
     }
 
     public static Hashtable<Node, List<Edge>> makeHashTable(){
@@ -79,13 +84,11 @@ public class Main {
 
     public static Hashtable<Node, List<Edge>> makeHashTable2(){
         Hashtable<Node, List<Edge>> adjacencyList = new Hashtable<Node, List<Edge>>();
-
         Node tmp;
-        for(char alphabet = 'a'; alphabet <='z'; alphabet++ ) {
+        for(char alphabet = 'a'; alphabet <='j'; alphabet++ ) {
             tmp = new Node(alphabet,(int)((Math.random()+1)*7) );
             adjacencyList.put(tmp, new ArrayList<Edge>());
         }
-
         return adjacencyList;
     }
 }

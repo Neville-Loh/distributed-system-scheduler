@@ -22,6 +22,31 @@ public class Schedule implements Comparable<Schedule>{
     public Schedule parent;
     public int size;
 
+    public int latest;
+
+    public Schedule(int cost, Schedule parentSchedule, Node childNode, int processorId){
+        child = childNode;
+        p_id = processorId;
+
+        s = cost;
+        f = cost + childNode.getWeight();
+        t = f;
+
+        parent = parentSchedule;
+        if (parentSchedule == null){
+            size = 1;
+            this.latest = f;
+        }else{
+            size = parentSchedule.size + 1;
+            if ( f > parentSchedule.latest){
+                this.latest = f;
+            }else{
+                this.latest = parentSchedule.latest;
+            }
+        }
+    }
+
+    // Used for A* algo
     public Schedule(int cost, int heuristic, Schedule parentSchedule, Node childNode, int processorId){
         child = childNode;
         p_id = processorId;
@@ -39,6 +64,7 @@ public class Schedule implements Comparable<Schedule>{
             size = parentSchedule.size + 1;
         }
     }
+
     public Schedule(char id){
         char _id = id;
     }
