@@ -1,34 +1,63 @@
 package main.java.raspberry.scheduler.algorithm;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
 
+import main.java.raspberry.scheduler.graph.INode;
 import main.java.raspberry.scheduler.graph.Node;
 
 public class Schedule implements Comparable<Schedule>{
 
-    // g: cost of the path from the start node to n.
     // h: Heuristic weight
     // t: Total weight
-    public int g;
     public int h;
     public int t;
 
-    public Schedule parent;
-    public Node child;
-    public int p_id;
+    public int startTime; //the time this node start running.
+    public int fisnishTime; //the time at this node finish running
 
-    public Schedule(int cost, int heuristic, int total, Schedule parentSchedule, Node childNode, int processorId){
-        g = cost;
+//    public Schedule parent;
+    public INode node;
+    public int p_id;
+//    public ArrayList<Schedule> path;
+    public Schedule parent;
+    public int size;
+
+    public Schedule(int cost, int heuristic, Schedule parentSchedule, INode childNode, int processorId){
+        node = childNode;
+        p_id = processorId;
+
+        startTime = cost;
+        fisnishTime = cost + childNode.getValue();
+
         h = heuristic;
-        t = total;
+        t = fisnishTime + heuristic;
 
         parent = parentSchedule;
-        child = childNode;
-        p_id = processorId;
+        if (parentSchedule == null){
+            size = 1;
+        }else{
+            size = parentSchedule.size + 1;
+        }
     }
+//    public Schedule(char id){
+//        char _id = id;
+//    }
 
     @Override
     public int compareTo(Schedule s){
         return this.t > s.t ? 1 : this.t < s.t ? -1 : 0;
+    }
+
+    //After computing the scheduling, call this method to get List of paths
+    public ArrayList<Schedule> getPath(){
+        // TODO: implement
+        if (this.parent == null){
+            return new ArrayList<Schedule>( Arrays.asList(this) );
+        }
+        ArrayList<Schedule> p = this.parent.getPath();
+        p.add(this);
+        return p;
     }
 }

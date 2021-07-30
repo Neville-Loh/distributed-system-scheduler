@@ -1,8 +1,6 @@
 package main.java.raspberry.scheduler.graph;
 
-import java.util.Hashtable;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Graph implements IGraph{
     private String name;
@@ -39,21 +37,76 @@ public class Graph implements IGraph{
         INode p = nodes.get(parentNodeID);
         INode c = nodes.get(childNodeID);
         IEdge e = new Edge(p, c, weight);
-        InDegreeAdjacencyList.get(parentNodeID).add(e);
-        OutDegreeAdjacencyList.get(childNodeID).add(e);
+        OutDegreeAdjacencyList.get(parentNodeID).add(e);
+        InDegreeAdjacencyList.get(childNodeID).add(e);
+    }
+
+    @Override
+    public List<IEdge> getOutgoingEdges(String id) {
+        return OutDegreeAdjacencyList.get(id);
+    }
+
+    @Override
+    public int getEdgeWeight(INode parent, INode child) throws EdgeDoesNotExistException {
+        for (IEdge edge : OutDegreeAdjacencyList.get(parent.getName())){
+            if (edge.getChild() == child){
+                return edge.getWeight();
+            }
+        }
+        throw new EdgeDoesNotExistException("Edge does not exists");
+    }
+
+    @Override
+    public Collection<INode> getAllNodes() {
+        return this.nodes.values();
     }
 
 
     @Override
     public String toString(){
-    	String output = "Graph: " +this.name +"\n";
-    	for (String name: InDegreeAdjacencyList.keySet()) {
+    	StringBuilder output = new StringBuilder("Graph: " + this.name + "\n");
+    	for (String name: OutDegreeAdjacencyList.keySet()) {
     	    String key = name.toString();
-    	    String value = InDegreeAdjacencyList.get(name).toString();
-    	    output += "Node:" + key + " cost=" + nodes.get(key).getValue()  + " " + value + "\n";
+    	    String value = OutDegreeAdjacencyList.get(name).toString();
+    	    output.append("Node:")
+                    .append(key)
+                    .append(" cost=")
+                    .append(nodes.get(key).getValue())
+                    .append(" ")
+                    .append(value)
+                    .append("\n");
     	}
-    	return output;
+    	return output.toString();
     }
 
+
+//    // This path would be optimal solution for 1 processor scheduling.
+//    public Stack getTopologicalOrder_DFS(){
+//        //Compute topological order and return it.
+//        toVisit = new ArrayList<Node>( adjacencyList.keySet() );
+//        topologicalOrder = new Stack();
+//        while ( ! toVisit.isEmpty() ){
+//            recursiveTopological( toVisit.get(0) );
+//        }
+//        return topologicalOrder;
+//    }
+//
+//    // Recursive function to compute topological order.
+//    public void recursiveTopological(Node x){
+//        if ( ! adjacencyList.get(x).isEmpty() ){
+//            for ( Edge i : adjacencyList.get(x) ){
+//                if ( toVisit.contains(i.childNode)) {
+//                    recursiveTopological(i.childNode);
+//                }
+//            }
+//        }
+//        toVisit.remove(x);
+//        topologicalOrder.push(x);
+//    }
+//
+//    public void getTopologicalOrder_BFS(){
+//        //Yet to be implemented.
+//        return;
+//    }
 
 }
