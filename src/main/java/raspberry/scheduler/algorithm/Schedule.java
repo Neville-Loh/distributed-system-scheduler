@@ -12,25 +12,25 @@ public class Schedule implements Comparable<Schedule>{
     public int h;
     public int t;
 
-    public int s; //the time this node start running.
-    public int f; //the time at this node finish running
+    public int startTime; //the time this node start running.
+    public int fisnishTime; //the time at this node finish running
 
 //    public Schedule parent;
-    public Node child;
+    public Node node;
     public int p_id;
 //    public ArrayList<Schedule> path;
     public Schedule parent;
     public int size;
 
     public Schedule(int cost, int heuristic, Schedule parentSchedule, Node childNode, int processorId){
-        child = childNode;
+        node = childNode;
         p_id = processorId;
 
-        s = cost;
-        f = cost + childNode.getWeight();
+        startTime = cost;
+        fisnishTime = cost + childNode.getValue();
 
         h = heuristic;
-        t = f + heuristic;
+        t = fisnishTime + heuristic;
 
         parent = parentSchedule;
         if (parentSchedule == null){
@@ -39,9 +39,9 @@ public class Schedule implements Comparable<Schedule>{
             size = parentSchedule.size + 1;
         }
     }
-    public Schedule(char id){
-        char _id = id;
-    }
+//    public Schedule(char id){
+//        char _id = id;
+//    }
 
     @Override
     public int compareTo(Schedule s){

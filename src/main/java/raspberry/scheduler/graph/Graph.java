@@ -44,6 +44,21 @@ public class Graph implements IGraph{
         OutDegreeAdjacencyList.get(childNodeID).add(e);
     }
 
+    @Override
+    public List<IEdge> getOutgoingEdges(String id) {
+        return OutDegreeAdjacencyList.get(id);
+    }
+
+    @Override
+    public int getEdgeWeight(INode parent, INode child) throws EdgeDoesNotExistException {
+        for (IEdge edge : OutDegreeAdjacencyList.get(parent.getName())){
+            if (edge.getChild() == child){
+                return edge.getWeight();
+            }
+        }
+        throw new EdgeDoesNotExistException("Edge does not exists");
+    }
+
 
     @Override
     public String toString(){
@@ -56,33 +71,33 @@ public class Graph implements IGraph{
     	return output;
     }
 
-    // This path would be optimal solution for 1 processor scheduling.
-    public Stack getTopologicalOrder_DFS(){
-        //Compute topological order and return it.
-        toVisit = new ArrayList<Node>( adjacencyList.keySet() );
-        topologicalOrder = new Stack();
-        while ( ! toVisit.isEmpty() ){
-            recursiveTopological( toVisit.get(0) );
-        }
-        return topologicalOrder;
-    }
-
-    // Recursive function to compute topological order.
-    public void recursiveTopological(Node x){
-        if ( ! adjacencyList.get(x).isEmpty() ){
-            for ( Edge i : adjacencyList.get(x) ){
-                if ( toVisit.contains(i.childNode)) {
-                    recursiveTopological(i.childNode);
-                }
-            }
-        }
-        toVisit.remove(x);
-        topologicalOrder.push(x);
-    }
-
-    public void getTopologicalOrder_BFS(){
-        //Yet to be implemented.
-        return;
-    }
+//    // This path would be optimal solution for 1 processor scheduling.
+//    public Stack getTopologicalOrder_DFS(){
+//        //Compute topological order and return it.
+//        toVisit = new ArrayList<Node>( adjacencyList.keySet() );
+//        topologicalOrder = new Stack();
+//        while ( ! toVisit.isEmpty() ){
+//            recursiveTopological( toVisit.get(0) );
+//        }
+//        return topologicalOrder;
+//    }
+//
+//    // Recursive function to compute topological order.
+//    public void recursiveTopological(Node x){
+//        if ( ! adjacencyList.get(x).isEmpty() ){
+//            for ( Edge i : adjacencyList.get(x) ){
+//                if ( toVisit.contains(i.childNode)) {
+//                    recursiveTopological(i.childNode);
+//                }
+//            }
+//        }
+//        toVisit.remove(x);
+//        topologicalOrder.push(x);
+//    }
+//
+//    public void getTopologicalOrder_BFS(){
+//        //Yet to be implemented.
+//        return;
+//    }
 
 }

@@ -2,26 +2,21 @@ package main.java.raspberry.scheduler.algorithm;
 
 import java.util.*;
 
-import main.java.raspberry.scheduler.graph.IGraph;
-import main.java.raspberry.scheduler.graph.Graph;
-import main.java.raspberry.scheduler.graph.INode;
-import main.java.raspberry.scheduler.graph.Node;
-import main.java.raspberry.scheduler.graph.Edge;
+import main.java.raspberry.scheduler.graph.*;
 
 // TODO : Replace, Main.NUM_NODE with some other variable.
 import main.java.raspberry.scheduler.Main;
 
 public class Astar implements Algorithm{
 
-    IGraph graph;
+    private IGraph graph;
 
     PriorityQueue<Schedule> pq;
-//    List<Node> visted;
     int numP;
     List<Schedule> visited;
 
     public Astar(IGraph graphToSolve, int numProcessors){
-        graph = graphToSolve;
+        this.graph = graphToSolve;
         pq = new PriorityQueue<Schedule>();
         visited = new ArrayList<Schedule>();
         numP = numProcessors;
@@ -33,10 +28,10 @@ public class Astar implements Algorithm{
         // "master" stores, schedule and its counterTable.
         // "rootTable" is the table all counterTable is based of off.
         //  --> stores a node and number of incoming edges.
-        Hashtable<Schedule, Hashtable<Node, Integer>> master = new Hashtable<Schedule, Hashtable<Node, Integer>>();
-        Hashtable<Node, Integer> rootTable = this.getRootTable();
+        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
+        Hashtable<INode, Integer> rootTable = this.getRootTable();
 
-        for (Node i: rootTable.keySet()){
+        for (INode i: rootTable.keySet()){
             if (rootTable.get(i) == 0 ){
                 Schedule newSchedule = new Schedule( 0, h(rootTable), null, i, 0 );
                 master.put(newSchedule,getChildTable(rootTable,i));
@@ -60,15 +55,15 @@ public class Astar implements Algorithm{
             if (cSchedule.size == Main.NUM_NODE){
                 break;
             }
-            Hashtable<Node, Integer> cTable = master.get(cSchedule);
+            Hashtable<INode, Integer> cTable = master.get(cSchedule);
             master.remove(cSchedule);
-            for (Node i: cTable.keySet()){
+            for (INode i: cTable.keySet()){
                 if (cTable.get(i) == 0 ){
-                    //TODO : Make it so that if there is multiple empty processor, use the lowerest value p_id.
+                    //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
                     for (int j=0; j<numP; j++){
 //                        System.out.println("\n------------");
                         int start = calculateCost(cSchedule, j, i);
-                        Hashtable<Node, Integer> newTable = getChildTable(cTable,i);
+                        Hashtable<INode, Integer> newTable = getChildTable(cTable,i);
                         Schedule newSchedule = new Schedule( start, h(newTable), cSchedule, i, j );
                         master.put(newSchedule,newTable);
                         pq.add(newSchedule);
@@ -86,20 +81,23 @@ public class Astar implements Algorithm{
     }
 
     // Compute heuristic weight
-    // Currently our heurstic function is undecided. --> just returns 0.
-    public int h(Hashtable<Node, Integer> x){
+    // Currently our heuristic function is undecided. --> just returns 0.
+    public int h(Hashtable<INode, Integer> x){
         int sum = 0;
-        for (Node i: x.keySet()){
-            sum += i.getWeight();
+        for (INode i: x.keySet()){
+            sum += i.getValue();
         }
         return sum/numP;
     }
 
-    public int calculateCost(Schedule parentSchedule, int processorId, Node childNode){
+    public int calculateCost(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
         // Find last finish time for current processor id.
         Schedule last_processorId_use = null; //last time processor with "processorId" was used.
         Schedule cParentSchedule = parentSchedule;
+
+        //---------------------------------------- Geting start time
+        // finding the first schedule that has same id
         while ( cParentSchedule != null){
             if ( cParentSchedule.p_id == processorId ){
                 last_processorId_use = cParentSchedule;
@@ -109,37 +107,50 @@ public class Astar implements Algorithm{
         }
 
         //last time parent was used. Needs to check for all processor.
-        int last_parent=0;
+        int finished_time_of_last_parent=0;
         if (last_processorId_use != null){
-            last_parent = last_processorId_use.f;
+            finished_time_of_last_parent = last_processorId_use.fisnishTime;
         }
 
-        Boolean [] last_parent_processor = new Boolean[this.numP];
+
+        // -------------------------------------------- getting start time
+        //Boolean [] last_parent_processor = new Boolean[this.numP];
+
+
         cParentSchedule = parentSchedule;
         while ( cParentSchedule != null){
-//            if ( !Arrays.asList(last_parent_processor).contains(null) ){
-//                break;
-//            }
 
-            for ( Edge j: graph.adjacencyList.get( cParentSchedule.child ) ){
-                if (j.childNode == childNode && cParentSchedule.p_id != processorId){
-                    last_parent_processor[ cParentSchedule.p_id ] = true;
-                    if (last_parent < (cParentSchedule.f + childNode.parentCommunicationWeight.get(cParentSchedule.child))){
-                        last_parent = cParentSchedule.f + childNode.parentCommunicationWeight.get(cParentSchedule.child);
+            // for edges in current parent scheduled node
+            INode last_scheduled_node = cParentSchedule.node;
+            for ( IEdge edge: graph.getOutgoingEdges(last_scheduled_node.getName())){
+
+                // if edge points to  === childNode
+                if (edge.getChild() == nodeToBeSchedule && cParentSchedule.p_id != processorId){
+                    //last_parent_processor[ cParentSchedule.p_id ] = true;
+
+                    try {
+                        int communicationWeight = graph.getEdgeWeight(cParentSchedule.node,nodeToBeSchedule);
+                        //  finished_time_of_last_parent  <
+                        if (finished_time_of_last_parent < (cParentSchedule.fisnishTime + communicationWeight)){
+                            finished_time_of_last_parent = cParentSchedule.fisnishTime + communicationWeight;
+                        }
+                    } catch (EdgeDoesNotExistException e){
+                        System.out.println(e.getMessage());
                     }
+
                 }
             }
             cParentSchedule = cParentSchedule.parent;
         }
-        return last_parent;
+        return finished_time_of_last_parent;
     }
 
-    public Hashtable<Node, Integer> getRootTable(){
-        Hashtable<Node, Integer> tmp = new Hashtable<Node, Integer>();
-        for (Node i : this.graph.adjacencyList.keySet()){
+    public Hashtable<INode, Integer> getRootTable(){
+        Hashtable<INode, Integer> tmp = new Hashtable<Node, Integer>();
+        for (INode i : this.graph.adjacencyList.keySet()){
             tmp.put(i,0);
         }
-        for (Node i : this.graph.adjacencyList.keySet()){
+        for (INode i : this.graph.adjacencyList.keySet()){
             for (Edge j : this.graph.adjacencyList.get(i) ){
                 tmp.put( j.childNode, tmp.get(j.childNode) + 1);
             }
@@ -147,8 +158,8 @@ public class Astar implements Algorithm{
         return tmp;
     }
 
-    public Hashtable<Node, Integer> getChildTable(Hashtable<Node, Integer> parentTable, Node x){
-        Hashtable<Node, Integer> tmp = new Hashtable<Node, Integer>(parentTable);
+    public Hashtable<INode, Integer> getChildTable(Hashtable<INode, Integer> parentTable, INode x){
+        Hashtable<INode, Integer> tmp = new Hashtable<Node, Integer>(parentTable);
         tmp.remove(x);
         for (Edge i : this.graph.getChild(x)){
             tmp.put( i.childNode,  tmp.get(i.childNode) - 1 );
@@ -160,13 +171,13 @@ public class Astar implements Algorithm{
         System.out.println("");
         ArrayList<Schedule> path = (ArrayList<Schedule>) x.getPath();
         for (Schedule i: path){
-            System.out.printf("%c : {start:%d}, {finish:%d}, {p_id:%d} \n",i.child._id,i.s,i.f,i.p_id);
+            System.out.printf("%c : {start:%d}, {finish:%d}, {p_id:%d} \n",i.node._id,i.startTime,i.fisnishTime,i.p_id);
         }
     }
 
-    public void printHashTable(Hashtable<Node, Integer> table){
+    public void printHashTable(Hashtable<INode, Integer> table){
         System.out.printf("{ ");
-        for (Node i: table.keySet()){
+        for (INode i: table.keySet()){
             System.out.printf("%c_%d, ", i._id, table.get(i));
         }
         System.out.printf(" }\n");
