@@ -12,7 +12,8 @@ project-1-raspberry-spirits-15 created by GitHub Classroom
 
 ### classes and package
 
-Class name 
+Class name should be written as `ClassNameAndStuff`
+package name `all_lowercase_
 
 
 ### Functions
