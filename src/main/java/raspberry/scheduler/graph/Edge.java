@@ -1,23 +1,41 @@
 package main.java.raspberry.scheduler.graph;
 
-public class Edge {
+public class Edge implements IEdge{
 
-    public Node childNode;
+    private INode parentNode;
+    private INode childNode;
+    private int weight;
 
-    //Since we added "parentCommunicationWeight" in Node-Class, this is unnecessary.
-    //private int weight;
-
-
-    // Node : childNode
-    // Weight : Remote communication cost when switching processors.
-    public Edge(Node child, int communicatonCost){
+    public Edge(INode parent, INode child, int communicatonCost){
+        parentNode = parent;
         childNode = child;
-//        weight = communicatonCost;
+        weight = communicatonCost;
     }
 
-    //  ***  Temporary, we will only be using this constructor. ***
-    public Edge(Node parent, Node child, int communicatonCost){
-        childNode = child;
-        child.addParent(parent, communicatonCost);
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
+    @Override
+    public INode getChild() {
+        return childNode;
+    }
+
+    @Override
+    public INode getParent() {
+        return parentNode;
+    }
+    
+    @Override
+    public String toString() {
+    	return String.format("(pointsto=%s, weight=%d)", childNode.getName(), weight);
+//=======
+//    //  ***  Temporary, we will only be using this constructor. ***???????????????
+//    public Edge(Node parent, Node child, int communicatonCost){
+//        childNode = child;
+//        child.addParent(parent, communicatonCost);
+//>>>>>>> master
     }
 }

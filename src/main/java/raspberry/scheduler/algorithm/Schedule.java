@@ -1,9 +1,9 @@
 package main.java.raspberry.scheduler.algorithm;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
-import main.java.raspberry.scheduler.graph.Node;
+
+import main.java.raspberry.scheduler.graph.INode;
 
 public class Schedule implements Comparable<Schedule>{
 
@@ -12,25 +12,25 @@ public class Schedule implements Comparable<Schedule>{
     public int h;
     public int t;
 
-    public int s; //the time this node start running.
-    public int f; //the time at this node finish running
+    public int startTime; //the time this node start running.
+    public int fisnishTime; //the time at this node finish running
 
 //    public Schedule parent;
-    public Node child;
+    public INode node;
     public int p_id;
 //    public ArrayList<Schedule> path;
     public Schedule parent;
     public int size;
 
-    public Schedule(int cost, int heuristic, Schedule parentSchedule, Node childNode, int processorId){
-        child = childNode;
+    public Schedule(int cost, int heuristic, Schedule parentSchedule, INode childNode, int processorId){
+        node = childNode;
         p_id = processorId;
 
-        s = cost;
-        f = cost + childNode.getWeight();
+        startTime = cost;
+        fisnishTime = cost + childNode.getValue();
 
         h = heuristic;
-        t = f + heuristic;
+        t = fisnishTime + heuristic;
 
         parent = parentSchedule;
         if (parentSchedule == null){
@@ -39,9 +39,9 @@ public class Schedule implements Comparable<Schedule>{
             size = parentSchedule.size + 1;
         }
     }
-    public Schedule(char id){
-        char _id = id;
-    }
+//    public Schedule(char id){
+//        char _id = id;
+//    }
 
     @Override
     public int compareTo(Schedule s){

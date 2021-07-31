@@ -1,34 +1,34 @@
 package main.java.raspberry.scheduler.graph;
 
+import java.util.List;
 import java.util.Hashtable;
 
-public class Node {
+public class Node implements INode{
 
+    private String name;
     private int weight;
     public char _id;
 
-    // This is an temporary solution. As our adjacencyList is one directional.
-    // Stores lists of parent nodes and its communicationWeight.
-    public Hashtable<Node, Integer> parentCommunicationWeight;
-
-    public Node (int executionTime){
-        weight = executionTime;
-        parentCommunicationWeight = new Hashtable<Node, Integer>();
+    public Node(String name, int executionTime){
+        this.name = name;
+        this.weight = executionTime;
     }
 
-    // "_id" represents the node character. eg."a"
-    public Node (char id, int executionTime){
-        _id = id;
-        weight = executionTime;
-        parentCommunicationWeight = new Hashtable<Node, Integer>();
-    }
-
-    public int getWeight(){
+    @Override
+    public int getValue() {
         return weight;
     }
 
-    // As stated in line 10-12, this is temporary solution.
-    public void addParent(Node parentNode, int communicationWeight){
-        parentCommunicationWeight.put(parentNode, communicationWeight);
+    public void setValue(int val){
+        this.weight = val;
+    }
+
+    @Override
+    public String toString(){
+        return this.name;
+    }
+
+    public String getName(){
+        return this.name;
     }
 }
