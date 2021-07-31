@@ -47,6 +47,11 @@ public class Graph implements IGraph{
     }
 
     @Override
+    public List<IEdge> getIngoingEdges(String id) {
+        return InDegreeAdjacencyList.get(id);
+    }
+
+    @Override
     public int getEdgeWeight(INode parent, INode child) throws EdgeDoesNotExistException {
         for (IEdge edge : OutDegreeAdjacencyList.get(parent.getName())){
             if (edge.getChild() == child){

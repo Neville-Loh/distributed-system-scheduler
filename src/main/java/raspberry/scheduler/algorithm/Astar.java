@@ -39,13 +39,13 @@ public class Astar implements Algorithm{
             }
         }
         System.out.print("ROOT TABLE :\n");
-        printHashTable(rootTable);
+        //printHashTable(rootTable);
         System.out.println("");
 
         System.out.println("Printing MASSSTERETABLE");
         for (Schedule sc: master.keySet()){
             printPath(sc);
-            printHashTable(master.get(sc));
+            //printHashTable(master.get(sc));
         }
         System.out.println("ENDDDDD");
 
