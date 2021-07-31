@@ -1,5 +1,6 @@
 package main.java.raspberry.scheduler.controller;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -7,6 +8,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -21,6 +23,9 @@ public class StartScreenController{
     private Button selectButton;
 
     @FXML
+    private Text fileNameText;
+
+    @FXML
     private void testButton(){
         System.out.println("i got pressed!");
     }
@@ -29,7 +34,20 @@ public class StartScreenController{
     private void selectFile(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select file");
-        fileChooser.showOpenDialog(new Stage());
+        Stage popup = new Stage();
+        File selectedFile = fileChooser.showOpenDialog(popup);
+
+        if(selectedFile != null) {
+
+            String fileName = selectedFile.getName();
+//        int userSelection = fileChooser.showSaveDialog(popup);
+//        String test = fileChooser.titleProperty();
+            System.out.println(fileName);
+
+            fileNameText.setText(fileName);
+        }else{
+            System.out.println("cancelled");
+        }
 
     }
 }

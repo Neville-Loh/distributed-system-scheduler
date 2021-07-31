@@ -14,5 +14,7 @@
       </Text>
       <Button fx:id="startButton" layoutX="255.0" layoutY="215.0" mnemonicParsing="false" onAction="#testButton" prefHeight="25.0" prefWidth="90.0" text="Start" />
       <Button fx:id="selectButton" layoutX="255.0" layoutY="274.0" mnemonicParsing="false" onAction="#selectFile" prefHeight="25.0" prefWidth="90.0" text="Select File" />
+      <Text layoutX="255.0" layoutY="331.0" strokeType="OUTSIDE" strokeWidth="0.0" text="File:" />
+      <Text fx:id="fileNameText" layoutX="279.0" layoutY="331.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="132.13671875" />
    </children>
 </AnchorPane>
