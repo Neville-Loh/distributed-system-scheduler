@@ -43,6 +43,14 @@ public interface IGraph{
 
 
     /**
+     * Return the outgoing edges of node
+     * @param id the string id of the node
+     * @return edges
+     */
+    List<IEdge> getIngoingEdges(String id);
+
+
+    /**
      * @param parent
      * @param child
      * @return

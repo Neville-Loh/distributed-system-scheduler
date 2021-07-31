@@ -1,8 +1,15 @@
 package test.java.raspberry.iotest;
 
 import main.java.raspberry.scheduler.algorithm.OutputSchedule;
+import main.java.raspberry.scheduler.algorithm.Schedule;
+import main.java.raspberry.scheduler.graph.EdgeDoesNotExistException;
+import main.java.raspberry.scheduler.graph.IEdge;
+import main.java.raspberry.scheduler.graph.IGraph;
+import main.java.raspberry.scheduler.graph.INode;
 
-public abstract class TestSchedule implements OutputSchedule{
+import java.util.List;
+
+public abstract class TestSchedule implements OutputSchedule {
 
     //must check whether there is violation of dependencies
     //check whether tasks overlap
@@ -14,27 +21,17 @@ public abstract class TestSchedule implements OutputSchedule{
     // finished time of the entire thing
     // number of processor
 
-    private int numInputTasks;
-    private int numOutputTasks;
-    private int startTime;
-    private int nodeWeight;
+    private IGraph _graph;
+    private OutputSchedule _outputSchedule;
 
-
-    public TestSchedule(numInputTasks, numOutputTasks, startTime){
-        _numInputTasks = numInputTasks;
-        _numOutputTasks = numInputTasks;
-        _startTime = startTime;
-        _nodeWeight = nodeWeight;
+    public TestSchedule(IGraph graph, OutputSchedule outputSchedule) {
+        _graph = graph;
+        _outputSchedule = outputSchedule;
     }
 
     //check whether all tasks are in the schedule
-    public boolean allTasksPresent(int Graph, int Schedule){
-        if (_numInputTasks == _numOutputTasks) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    public boolean allTasksPresent() {
+        return _graph.getAllNodes().size() == _outputSchedule.getNumTasks();
     }
 
 
@@ -42,21 +39,58 @@ public abstract class TestSchedule implements OutputSchedule{
     // - a child node begins execution prior to the parent node
     // - a child node begins execution while parent node is still in progress.
     // - node with no dependency relation overlap
-    public boolean isValid (Graph graph, Schedule schedule){
-        for (nodes.GetAllNodes()){
-            parents = node.getParents();
-            if (getStartTime(parent) > getStartTime(child)){
-                return false;
-            }
-            else if ((getProcessor(Parent<node>) != getProcessor(node)) & (child.getStartTime < (edge.getWeight() + parent.getWeight() + parent.getStartTime()))){
-                return false;
-            }
-            else if ((getProcessor(Parent<node>) == getProcessor(node)) & (){
-            }
-            else if {//need to account for when nodes with no dependency relation overlap{
+    public boolean isValid() throws EdgeDoesNotExistException {
+
+        if(_checkOverlap() || !allTasksPresent()) {
+            return false;
         }
-        return 1;
+
+        for (INode node : _graph.getAllNodes()) {
+            List<IEdge> ingoingEdges = _graph.getIngoingEdges(node.getName());
+
+            for (IEdge edge : ingoingEdges) {
+                INode parentNode = edge.getParent();
+
+
+                int parentEndTime = _outputSchedule.getStartTime(parentNode) + parentNode.getValue();
+
+
+                if ((_outputSchedule.getProcessorNum(parentNode) != _outputSchedule.getProcessorNum(node))
+                        && ((_graph.getEdgeWeight(parentNode, node) + parentEndTime)) > _outputSchedule.getStartTime(node)) {
+                    return false;
+                } else if (parentEndTime > _outputSchedule.getStartTime(node)) {
+                    return false;
+                }
+
+
+            }
         }
+        return true;
     }
+
+    private boolean _checkOverlap(){
+        for (INode node1 : _graph.getAllNodes()) {
+            int startTime1 = _outputSchedule.getStartTime(node1);
+            int endTime1 = _outputSchedule.getStartTime(node1) + node1.getValue();
+
+            // check all other nodes to see if it is overlapping
+            for (INode node2 : _graph.getAllNodes()) {
+                int startTime2 = _outputSchedule.getStartTime(node2);
+
+                // check same processor node for all other node that is not node 1
+                if (node1 != node2
+                        && _outputSchedule.getProcessorNum(node1) == _outputSchedule.getProcessorNum(node1)) {
+
+                    // if node 2 start in between node 1 computation
+                    if (startTime2 < endTime1 && startTime2 > startTime1){
+                        return false;
+                    }
+                }
+            }
+
+        }
+        return true;
+    }
+
 
 }
