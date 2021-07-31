@@ -19,4 +19,6 @@ public interface OutputSchedule {
 
     int getFinishTime();
 
+    int getNumTasks();
+
 }
