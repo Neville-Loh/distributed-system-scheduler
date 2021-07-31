@@ -9,11 +9,10 @@ import java.io.IOException;
 
 public class Main extends Application{
 
-    //private Stage primaryStage;
-    Parent root;
+    private Stage primaryStage;
+//    private Parent root;
 
     public static void main(String[] args) {
-        // write your code here
         System.out.println("Hello world");
 
         launch(args);
@@ -21,17 +20,9 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
-        //this.primaryStage = primaryStage;
-       // this.primaryStage.setTitle("placeholder");
-       // FXMLLoader loader = new FXMLLoader();
-       // loader.setLocation(this.getClass().getResource("/main.java.raspberry.scheduler/view/StartScreenView.fxml"));
-        root = FXMLLoader.load(getClass().getResource("/main.java.raspberry.scheduler/view/StartScreenView.fxml"));
-       //  Parent layout = loader.load();
-
+        Parent root = FXMLLoader.load(getClass().getResource("/main.java.raspberry.scheduler/view/StartScreenView.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
         primaryStage.show();
 
 
