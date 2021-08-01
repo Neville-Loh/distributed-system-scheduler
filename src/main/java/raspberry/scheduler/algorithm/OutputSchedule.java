@@ -1,6 +1,6 @@
-package main.java.raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm;
 
-import main.java.raspberry.scheduler.graph.INode;
+import raspberry.scheduler.graph.INode;
 
 public interface OutputSchedule {
 

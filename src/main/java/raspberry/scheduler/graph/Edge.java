@@ -1,4 +1,4 @@
-package main.java.raspberry.scheduler.graph;
+package raspberry.scheduler.graph;
 
 public class Edge implements IEdge{
 
