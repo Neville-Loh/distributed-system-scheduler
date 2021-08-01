@@ -14,12 +14,14 @@ public class Astar implements Algorithm{
     PriorityQueue<Schedule> pq;
     int numP;
     List<Schedule> visited;
+    int numNode;
 
     public Astar(IGraph graphToSolve, int numProcessors){
         this.graph = graphToSolve;
         pq = new PriorityQueue<Schedule>();
         visited = new ArrayList<Schedule>();
         numP = numProcessors;
+        numNode = graph.getNumNodes();
     }
 
     @Override
@@ -56,7 +58,7 @@ public class Astar implements Algorithm{
             cSchedule = pq.poll();
 
             //todo replace num_node,Main.NUM_NODE
-            if (cSchedule.size == 7){
+            if (cSchedule.size == numNode){
                 break;
             }
             Hashtable<INode, Integer> cTable = master.get(cSchedule);

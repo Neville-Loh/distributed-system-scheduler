@@ -64,5 +64,11 @@ public interface IGraph{
      * @return
      */
     Collection<INode> getAllNodes();
+
+
+    /**
+     * @return number of node this graph has.
+     */
+    int getNumNodes ();
 }
 
