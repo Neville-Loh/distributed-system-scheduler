@@ -1,11 +1,11 @@
-package test.java.raspberry.iotest;
+package raspberry.iotest;
 
-import main.java.raspberry.scheduler.algorithm.OutputSchedule;
-import main.java.raspberry.scheduler.algorithm.Schedule;
-import main.java.raspberry.scheduler.graph.EdgeDoesNotExistException;
-import main.java.raspberry.scheduler.graph.IEdge;
-import main.java.raspberry.scheduler.graph.IGraph;
-import main.java.raspberry.scheduler.graph.INode;
+import raspberry.scheduler.algorithm.OutputSchedule;
+import raspberry.scheduler.algorithm.Schedule;
+import raspberry.scheduler.graph.EdgeDoesNotExistException;
+import raspberry.scheduler.graph.IEdge;
+import raspberry.scheduler.graph.IGraph;
+import raspberry.scheduler.graph.INode;
 
 import java.util.List;
 

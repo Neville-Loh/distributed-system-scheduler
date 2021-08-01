@@ -22,4 +22,9 @@ public class Solution implements OutputSchedule{
     public int getFinishTime() {
         return 0;
     }
+
+    @Override
+    public int getNumTasks() {
+        return 0;
+    }
 }
