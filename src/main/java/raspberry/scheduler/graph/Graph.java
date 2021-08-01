@@ -67,6 +67,11 @@ public class Graph implements IGraph{
         return this.nodes.values();
     }
 
+    @Override
+    public int getNumNodes() {
+        return this.nodes.size();
+    }
+
 
     @Override
     public String toString(){

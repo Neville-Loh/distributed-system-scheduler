@@ -56,7 +56,7 @@ public class Astar implements Algorithm{
             cSchedule = pq.poll();
 
             //todo replace num_node,Main.NUM_NODE
-            if (cSchedule.size == 7){
+            if (cSchedule.size == graph.getNumNodes()){
                 break;
             }
             Hashtable<INode, Integer> cTable = master.get(cSchedule);
