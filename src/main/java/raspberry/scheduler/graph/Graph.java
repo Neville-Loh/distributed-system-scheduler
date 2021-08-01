@@ -1,4 +1,5 @@
-package main.java.raspberry.scheduler.graph;
+package raspberry.scheduler.graph;
+
 
 import java.util.*;
 

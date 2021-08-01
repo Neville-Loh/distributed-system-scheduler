@@ -1,11 +1,11 @@
-package main.java.raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm;
 
 import java.util.*;
 
-import main.java.raspberry.scheduler.graph.*;
+import raspberry.scheduler.graph.*;
 
 // TODO : Replace, Main.NUM_NODE with some other variable.
-import main.java.raspberry.scheduler.Main;
+import raspberry.scheduler.Main;
 
 public class Astar implements Algorithm{
 
@@ -54,7 +54,9 @@ public class Astar implements Algorithm{
         while (true){
             System.out.printf("\n PQ SIZE :  %d", pq.size());
             cSchedule = pq.poll();
-            if (cSchedule.size == Main.NUM_NODE){
+
+            //todo replace num_node,Main.NUM_NODE
+            if (cSchedule.size == 7){
                 break;
             }
             Hashtable<INode, Integer> cTable = master.get(cSchedule);
@@ -111,7 +113,7 @@ public class Astar implements Algorithm{
         //last time parent was used. Needs to check for all processor.
         int finished_time_of_last_parent=0;
         if (last_processorId_use != null){
-            finished_time_of_last_parent = last_processorId_use.fisnishTime;
+            finished_time_of_last_parent = last_processorId_use.finishTime;
         }
 
 
@@ -133,8 +135,8 @@ public class Astar implements Algorithm{
                     try {
                         int communicationWeight = graph.getEdgeWeight(cParentSchedule.node,nodeToBeSchedule);
                         //  finished_time_of_last_parent  <
-                        if (finished_time_of_last_parent < (cParentSchedule.fisnishTime + communicationWeight)){
-                            finished_time_of_last_parent = cParentSchedule.fisnishTime + communicationWeight;
+                        if (finished_time_of_last_parent < (cParentSchedule.finishTime + communicationWeight)){
+                            finished_time_of_last_parent = cParentSchedule.finishTime + communicationWeight;
                         }
                     } catch (EdgeDoesNotExistException e){
                         System.out.println(e.getMessage());
@@ -180,7 +182,7 @@ public class Astar implements Algorithm{
 
         //path.sort((o1, o2) -> o1.node.getName().compareTo(o2.node.getName()));
         for (Schedule i: path){
-            System.out.printf("%s : {start:%d}, {finish:%d}, {p_id:%d} \n",i.node.getName(),i.startTime,i.fisnishTime,i.p_id);
+            System.out.printf("%s : {start:%d}, {finish:%d}, {p_id:%d} \n",i.node.getName(),i.startTime,i.finishTime,i.p_id);
         }
     }
 

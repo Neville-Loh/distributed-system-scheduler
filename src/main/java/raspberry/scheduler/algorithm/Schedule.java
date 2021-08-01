@@ -1,9 +1,8 @@
-package main.java.raspberry.scheduler.algorithm;
-
+package raspberry.scheduler.algorithm;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import main.java.raspberry.scheduler.graph.INode;
+import raspberry.scheduler.graph.INode;
 
 public class Schedule implements Comparable<Schedule>{
 
@@ -13,7 +12,7 @@ public class Schedule implements Comparable<Schedule>{
     public int t;
 
     public int startTime; //the time this node start running.
-    public int fisnishTime; //the time at this node finish running
+    public int finishTime; //the time at this node finish running
 
 //    public Schedule parent;
     public INode node;
@@ -27,10 +26,10 @@ public class Schedule implements Comparable<Schedule>{
         p_id = processorId;
 
         startTime = cost;
-        fisnishTime = cost + childNode.getValue();
+        finishTime = cost + childNode.getValue();
 
         h = heuristic;
-        t = fisnishTime + heuristic;
+        t = finishTime + heuristic;
 
         parent = parentSchedule;
         if (parentSchedule == null){

@@ -1,13 +1,12 @@
-package main.java.raspberry.scheduler.io;
-
+package raspberry.scheduler.io;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import main.java.raspberry.scheduler.graph.Graph;
-import main.java.raspberry.scheduler.graph.IGraph;
+import raspberry.scheduler.graph.Graph;
+import raspberry.scheduler.graph.IGraph;
 
 
 /**
