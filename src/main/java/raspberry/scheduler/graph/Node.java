@@ -1,27 +1,17 @@
-package main.java.raspberry.scheduler.graph;
+package raspberry.scheduler.graph;
 
 import java.util.List;
+import java.util.Hashtable;
 
 public class Node implements INode{
 
     private String name;
     private int weight;
+    public char _id;
 
-    public Node (String name, int executionTime){
+    public Node(String name, int executionTime){
         this.name = name;
         this.weight = executionTime;
-    }
-
-    @Override
-    public boolean hasParent() {
-        //@todo Need to implement
-        return false;
-    }
-
-    @Override
-    public List<IEdge> getOutGoingEdges() {
-        //@todo Need to implement
-        return null;
     }
 
     @Override

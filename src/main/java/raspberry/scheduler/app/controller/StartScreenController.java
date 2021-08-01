@@ -1,4 +1,4 @@
-package main.java.raspberry.scheduler.controller;
+package raspberry.scheduler.app.controller;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
