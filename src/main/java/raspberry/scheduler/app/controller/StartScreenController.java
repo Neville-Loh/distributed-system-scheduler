@@ -1,6 +1,7 @@
 package raspberry.scheduler.app.controller;
 
 import javafx.beans.property.ObjectProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -48,6 +49,12 @@ public class StartScreenController{
         }else{
             System.out.println("cancelled");
         }
+
+    }
+
+    @FXML
+    private void showMainScreen(ActionEvent event){
+        ScreenController.goMainScreen(getClass(), event);
 
     }
 }

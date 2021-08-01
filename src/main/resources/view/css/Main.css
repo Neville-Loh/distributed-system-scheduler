@@ -1,0 +1,26 @@
+<!-- CS colors -->
+.bg-color{
+    -fx-background-color: #31393C;
+}
+.Pane{
+    -fx-background-color: #31393C;
+}
+.text{
+    -fx-text-fill: #ffffff;
+}
+/* Button styling */
+.button{
+    -fx-background-color: #6930C3;
+    -fx-opacity: 1;
+}
+.button:hover{
+    -fx-opacity: 0.8;
+
+
+}
+
+.button:pressed{
+    -fx-opacity: 0.5;
+    -fx-background-color: #6930C3;
+
+}
