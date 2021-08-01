@@ -63,7 +63,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>${javafx.maven.plugin.version}</version>
                 <configuration>
-                    <mainClass>raspberry.scheduler</mainClass>
+                    <mainClass>raspberry.scheduler.app.App</mainClass>
                 </configuration>
             </plugin>
         </plugins>
