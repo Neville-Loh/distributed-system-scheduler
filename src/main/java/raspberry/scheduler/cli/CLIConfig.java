@@ -22,26 +22,56 @@ public class CLIConfig {
     //if no number of cores is defined - run sequentially
     public static final int SEQUENTIAL_EXEC = 1;
     //if no file name is defined - default is "INPUT-output.dot"
-    public static final String DEFAULT_OUTPUT = "INPUT-output.dot";
 
     //Default constructor
     public CLIConfig(){
         _visualise = false;
-        _outputFile = DEFAULT_OUTPUT;
         _numCores = SEQUENTIAL_EXEC;
     }
 
     public void setNumProcessors(int numProcessors){
         _numProcessors = numProcessors;
     }
+    public int get_numProcessors(){
+        return _numProcessors;
+    }
 
     public void setDotFile(String fileName){
         _dotFile = fileName;
     }
 
+    public String getDotFile(){
+        return _dotFile;
+    }
+
     public void setNumCores(int numCores){
         _numCores = numCores;
     }
+
+    public int getNumCores(){
+        return _numCores;
+    }
+    public void setVisualise(boolean visualise){
+        _visualise = visualise;
+    }
+
+    public boolean getVisualise(){
+        return _visualise;
+    }
+
+    public void setOutputFile(String fileName){
+        _outputFile = fileName;
+    }
+
+    public String getOutputFile(){
+        return _outputFile;
+    }
+
+    public void defaultOutput(){
+        String inputFileName = _dotFile.substring(0, _dotFile.length() - 4)
+        _outputFile = _dotFile.concat(inputFileName);
+    }
+
 
 
 }
