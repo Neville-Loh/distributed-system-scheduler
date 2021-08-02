@@ -5,56 +5,83 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import raspberry.scheduler.algorithm.Astar;
+import raspberry.scheduler.algorithm.MemoryBoundAStar;
+import raspberry.scheduler.algorithm.OutputSchedule;
+import raspberry.scheduler.graph.EdgeDoesNotExistException;
+import raspberry.scheduler.graph.Graph;
 
 
 public class Main {
 
-//    public static int NUM_NODE;
-//
-//    public static void main(String[] args) {
-//
-//        // This is unit test. (I will make proper Junit test later)
-//        test();
-//    }
-//
-//    public static void test(){
-//        System.out.println("======== RUNNING TEST ========");
-//
-//
-//        // with h()=0, -> 692 node in pq.
-//        // with h( return sum(unscheduled node) ) -> 17
-//        //Hashtable<Node, List<Edge>> table = makeHashTable();
-//        Graph g = new Graph("test graph");
-//        makeGraph(g);
-//        Astar a = new Astar(g,2);
-//        NUM_NODE = 7;
-//        System.out.printf("\n Number of NODES : %d \n", NUM_NODE);
-//
-//        a.findPath();
-//    }
-//
-//    private static void makeGraph(Graph graph) {
-//        graph.addNode("a", 2);
-//        graph.addNode("b", 2);
-//        graph.addNode("c", 2);
-//        graph.addNode("d", 3);
-//        graph.addNode("e", 2);
-//        graph.addNode("f", 3);
-//        graph.addNode("g", 2);
-//
-//        graph.addEdge("a", "b",1);
-//        graph.addEdge("a", "c",3);
-//        graph.addEdge("a", "d",1);
-//
-//        graph.addEdge("b", "e",3);
-//        graph.addEdge("b", "g",4);
-//
-//        graph.addEdge("c", "f",1);
-//        graph.addEdge("d", "f",1);
-//        graph.addEdge("e", "g",2);
-//        graph.addEdge("f", "g",2);
-//
-//    }
+    public static int NUM_NODE;
+
+    public static void main(String[] args) throws EdgeDoesNotExistException {
+
+        // This is unit test. (I will make proper Junit test later)
+        test();
+    }
+
+    public static void test() throws EdgeDoesNotExistException {
+        System.out.println("======== RUNNING TEST ========");
+
+
+        // with h()=0, -> 692 node in pq.
+        // with h( return sum(unscheduled node) ) -> 17
+        //Hashtable<Node, List<Edge>> table = makeHashTable();
+        Graph g = new Graph("test graph");
+        makeGraph(g);
+        Astar a = new Astar(g,8);
+        MemoryBoundAStar mba = new MemoryBoundAStar(g,2);
+        NUM_NODE = 7;
+        System.out.printf("\n Number of NODES : %d \n", NUM_NODE);
+        OutputSchedule output = mba.findPath();
+        TestSchedule s = new TestSchedule(g, output);
+        System.out.println("Is correct schedule: " +s.isValid());
+
+    }
+
+    private static void makeGraph(Graph graph) {
+        graph.addNode("a", 2);
+        graph.addNode("b", 2);
+        graph.addNode("c", 2);
+        graph.addNode("d", 3);
+        graph.addNode("e", 2);
+        graph.addNode("f", 3);
+        graph.addNode("g", 1);
+
+
+        graph.addEdge("a", "b",1);
+        graph.addEdge("a", "c",3);
+        graph.addEdge("a", "d",1);
+
+        graph.addEdge("b", "e",3);
+        graph.addEdge("b", "g",4);
+
+        graph.addEdge("c", "f",1);
+        graph.addEdge("d", "f",1);
+        graph.addEdge("e", "g",2);
+        graph.addEdge("f", "g",2);
+
+
+        graph.addNode("i", 5);
+        graph.addNode("j", 6);
+        graph.addNode("k", 4);
+
+        graph.addNode("i2", 1);
+        graph.addNode("j3", 1);
+        graph.addNode("k4", 1);
+        graph.addEdge("i", "f",3);
+        graph.addEdge("d", "j",6);
+        graph.addEdge("d", "k",1);
+        graph.addEdge("i2", "i",1);
+        graph.addEdge("j3", "j",6);
+        graph.addEdge("k4", "j3",1);
+        graph.addEdge("k4", "j",1);
+
+
+
+    }
 
 //    public static Hashtable<Node, List<Edge>> makeHashTable(){
 //        Hashtable<Node, List<Edge>> adjacencyList = new Hashtable<Node, List<Edge>>();

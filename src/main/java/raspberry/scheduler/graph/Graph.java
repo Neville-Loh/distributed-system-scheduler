@@ -87,7 +87,7 @@ public class Graph implements IGraph{
                     .append(value)
                     .append("\n");
     	}
-    	return output.toString();
+        return output.toString();
     }
 
 

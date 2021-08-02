@@ -1,4 +1,4 @@
-package raspberry.iotest;
+package raspberry.scheduler;
 
 import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.algorithm.Schedule;
@@ -9,7 +9,7 @@ import raspberry.scheduler.graph.INode;
 
 import java.util.List;
 
-public abstract class TestSchedule implements OutputSchedule {
+public class TestSchedule {
 
     //must check whether there is violation of dependencies
     //check whether tasks overlap
@@ -53,8 +53,6 @@ public abstract class TestSchedule implements OutputSchedule {
 
 
                 int parentEndTime = _outputSchedule.getStartTime(parentNode) + parentNode.getValue();
-
-
                 if ((_outputSchedule.getProcessorNum(parentNode) != _outputSchedule.getProcessorNum(node))
                         && ((_graph.getEdgeWeight(parentNode, node) + parentEndTime)) > _outputSchedule.getStartTime(node)) {
                     return false;
