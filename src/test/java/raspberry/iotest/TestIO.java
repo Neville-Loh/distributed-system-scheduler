@@ -5,8 +5,14 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 
+import raspberry.scheduler.algorithm.Astar;
+import raspberry.scheduler.algorithm.OutputSchedule;
+import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.io.InvalidFormatException;
 import raspberry.scheduler.io.Reader;
+import raspberry.scheduler.io.Writer;
+
+import java.io.IOException;
 
 public class TestIO {
 
@@ -16,7 +22,7 @@ public class TestIO {
      */
     @Test
     public void testInput() throws InvalidFormatException {
-        Reader file1 = new Reader("src/test/resources/example.dot");
+        Reader file1 = new Reader("src/test/resources/input/example1.dot");
         file1.read();
     }
 
@@ -26,7 +32,7 @@ public class TestIO {
     @Test
     public void testIncorrectFirstLineFormat() {
         try {
-            Reader file1 = new Reader("src/test/resources/incorrectfirstline.dot");
+            Reader file1 = new Reader("src/test/resources/input/incorrectfirstline.dot");
             file1.read();
             fail();
         } catch (InvalidFormatException e) {
@@ -41,7 +47,7 @@ public class TestIO {
     @Test
     public void testIncorrectEdgeFormat() {
         try {
-            Reader file1 = new Reader("src/test/resources/incorrectedgeline.dot");
+            Reader file1 = new Reader("src/test/resources/input/incorrectedgeline.dot");
             file1.read();
             fail();
         } catch (InvalidFormatException e) {
@@ -55,7 +61,7 @@ public class TestIO {
     @Test
     public void testIncorrectNodeFormat() {
         try {
-            Reader file1 = new Reader("src/test/resources/incorrectnodeline.dot");
+            Reader file1 = new Reader("src/test/resources/input/incorrectnodeline.dot");
             file1.read();
             fail();
         } catch (InvalidFormatException e) {
@@ -69,13 +75,11 @@ public class TestIO {
     @Test
     public void testIncorrectLastLine() {
         try {
-            Reader file1 = new Reader("src/test/resources/incorrectlastline.dot");
+            Reader file1 = new Reader("src/test/resources/input/incorrectlastline.dot");
             file1.read();
             fail();
         } catch (InvalidFormatException e) {
             // This exception is expected - ignore it.
         }
     }
-
-
 }

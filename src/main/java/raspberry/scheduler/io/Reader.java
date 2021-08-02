@@ -30,13 +30,17 @@ public class Reader {
 	private String _filepath;
 
 
+	/**
+	 * Reader constructor
+	 * @param filepath filepath of the input .dot file e.g. "src/test/resources/input/example1.dot"
+	 */
 	public Reader(String filepath) {
 		_filepath = filepath;
 	}
 
 
 	/**
-	 * read in the input file
+	 * read in the input file and checks if it is in the correct format
 	 * @throws InvalidFormatException
 	 */
 	public void read() throws InvalidFormatException {
@@ -86,6 +90,13 @@ public class Reader {
 		}
 	}
 
+
+	/**
+	 * @return the input graph read
+	 */
+	public IGraph getGraph() {
+		return _graph;
+	}
 
 	/**
 	 * turn a line into a list of words split by whitespace from file
