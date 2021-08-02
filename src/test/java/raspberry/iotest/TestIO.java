@@ -17,6 +17,7 @@ public class TestIO {
 	public void setup() {
 //		URL url = getClass().getResource("example.dot");
 		Reader file1 = new Reader("src/test/resources/example.dot");
+		file1.read();
 
 
 //		System.out.println(directory.getAbsolutePath());

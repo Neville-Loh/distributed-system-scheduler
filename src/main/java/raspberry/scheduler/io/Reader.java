@@ -1,12 +1,15 @@
 package raspberry.scheduler.io;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import raspberry.scheduler.graph.Graph;
 import raspberry.scheduler.graph.IGraph;
+import raspberry.scheduler.graph.INode;
 
 
 /**
@@ -20,41 +23,52 @@ import raspberry.scheduler.graph.IGraph;
 public class Reader {
 
 	// The correct format of the input files in Regex
-
 	private static final String FIRST_LINE = "digraph \".*\" \\{";
 	private static final String NODE_LINE = "([a-zA-Z0-9]+)\\[Weight=([0-9]+)];";
 	private static final String EDGE_LINE = "([a-zA-Z0-9]+)->([a-zA-Z0-9]+)\\[Weight=([0-9]+)];";
 
 	private IGraph _graph;
+	private Hashtable<INode, Integer> _nodeList;
+	private String _filepath;
+
 
 	public Reader(String filepath) {
+		_filepath = filepath;
+	}
+
+
+	public void read() {
 		try {
-			File file = new File(filepath);
+			File file = new File(_filepath);
 			Scanner reader = new Scanner(file);
-			
+
 			String firstLine = reader.nextLine();
+
 			String[] firstLineInfo = getLineInfo(firstLine);
-			if (checkFormat(FIRST_LINE, firstLine)) {
+
+			// check format of first line
+			if (checkFormat(FIRST_LINE, firstLine) && firstLineInfo.length == 3) {
 				String name = firstLineInfo[1].replaceAll("\"", "");
 				_graph = new Graph(name);
 			}
-			
-			
+
+			// check format of the rest of lines
 			while (reader.hasNextLine()) {
 				String line = reader.nextLine();
 				String noWhiteSpace = line.replaceAll(" ", "");
 				String[] lineInfo = getLineInfo(line);
-
-				if (checkFormat(NODE_LINE, noWhiteSpace)) {
+				if (checkFormat(NODE_LINE, noWhiteSpace) && lineInfo.length == 2) {
 					String nodeWeight = lineInfo[1].replaceAll("\\D", "");
 					_graph.addNode(lineInfo[0],Integer.parseInt(nodeWeight));
 				}
-				if (checkFormat(EDGE_LINE, noWhiteSpace)) {
+				else if (checkFormat(EDGE_LINE, noWhiteSpace) && lineInfo.length == 4) {
 					String parentNode = lineInfo[0];
 					String childNode = lineInfo[2];
-					String edgeWeight = lineInfo[3].replaceAll("\\D", "");					
+					String edgeWeight = lineInfo[3].replaceAll("\\D", "");
 					_graph.addEdge(parentNode, childNode, Integer.parseInt(edgeWeight));
-					
+				}
+				else if (lineInfo.length == 1 && !reader.hasNextLine() && lineInfo[0].equals("}")) {
+					System.out.println(lineInfo[0]);
 				}
 
 			}
@@ -64,11 +78,11 @@ public class Reader {
 			System.out.println("File not found");
 			e.printStackTrace();
 		}
-
 	}
 
+
 	/**
-	 * get a list of words seperated by whitespace from file
+	 * turn a line into a list of words split by whitespace from file
 	 * @param line
 	 * @return
 	 */
