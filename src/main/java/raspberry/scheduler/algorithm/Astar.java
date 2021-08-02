@@ -25,7 +25,7 @@ public class Astar implements Algorithm{
     }
 
     @Override
-    public Solution findPath() {
+    public OutputSchedule findPath() {
         // find the path
         // "master" stores, schedule and its counterTable.
         // "rootTable" is the table all counterTable is based of off.
