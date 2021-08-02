@@ -10,4 +10,11 @@ package raspberry.scheduler.io;
  */
 
 public class Writer {
+    private String _filename;
+
+    public Writer() {
+
+    }
+
+
 }

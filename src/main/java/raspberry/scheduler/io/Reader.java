@@ -27,7 +27,6 @@ public class Reader {
 	private static final String EDGE_LINE = "\\s+([a-zA-Z0-9]+) -> ([a-zA-Z0-9]+)\\s+\\[Weight=([0-9]+)];";
 
 	private IGraph _graph;
-	private Hashtable<INode, Integer> _nodeList;
 	private String _filepath;
 
 
@@ -36,13 +35,16 @@ public class Reader {
 	}
 
 
+	/**
+	 * read in the input file
+	 * @throws InvalidFormatException
+	 */
 	public void read() throws InvalidFormatException {
 		try {
 			File file = new File(_filepath);
 			Scanner reader = new Scanner(file);
 
 			String firstLine = reader.nextLine();
-
 			String[] firstLineInfo = getLineInfo(firstLine);
 
 			// check format of first line
@@ -57,20 +59,24 @@ public class Reader {
 				String line = reader.nextLine();
 				String noWhiteSpace = line.replaceAll(" ", "");
 				String[] lineInfo = getLineInfo(line);
+
+				//check node line format, should have size of 2 "node" and "weight"
 				if (checkFormat(NODE_LINE, line) && lineInfo.length == 2) {
 					String nodeWeight = lineInfo[1].replaceAll("\\D", "");
 					_graph.addNode(lineInfo[0],Integer.parseInt(nodeWeight));
 				}
+				//check edge line format, should have size 4 "node", "->", "node", "weight"
 				else if (checkFormat(EDGE_LINE, line) && lineInfo.length == 4) {
 					String parentNode = lineInfo[0];
 					String childNode = lineInfo[2];
 					String edgeWeight = lineInfo[3].replaceAll("\\D", "");
 					_graph.addEdge(parentNode, childNode, Integer.parseInt(edgeWeight));
 				}
+				//check last line format
 				else if (lineInfo.length == 1 && !reader.hasNextLine() && lineInfo[0].equals("}")) {
 					System.out.println(lineInfo[0]);
 				}
-				else { throw new InvalidFormatException("Invalid format in input file");}
+				else { throw new InvalidFormatException(String.format("Invalid format in input file of line: ", line));}
 			}
 			reader.close();
 			System.out.println(_graph);
