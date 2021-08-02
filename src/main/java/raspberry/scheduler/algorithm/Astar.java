@@ -25,7 +25,7 @@ public class Astar implements Algorithm{
     }
 
     @Override
-    public void findPath() {
+    public Solution findPath() {
         // find the path
         // "master" stores, schedule and its counterTable.
         // "rootTable" is the table all counterTable is based of off.
@@ -83,7 +83,7 @@ public class Astar implements Algorithm{
 
         System.out.print("\n === THE FINAL ANSWER ===");
         printPath(cSchedule);
-        //return cSchedule;
+        return new Solution(cSchedule,numP);
     }
 
     // Compute heuristic weight
@@ -180,13 +180,15 @@ public class Astar implements Algorithm{
 
     public void printPath(Schedule x){
         System.out.println("");
-        ArrayList<Schedule> path = (ArrayList<Schedule>) x.getPath();
+        Hashtable<INode, int[]> path = x.getPath();
 
         //path.sort((o1, o2) -> o1.node.getName().compareTo(o2.node.getName()));
-        for (Schedule i: path){
-            System.out.printf("%s : {start:%d}, {finish:%d}, {p_id:%d} \n",i.node.getName(),i.startTime,i.finishTime,i.p_id);
+        for (INode i: path.keySet()){
+            System.out.printf("%s : {start:%d}, {finish:%d}, {p_id:%d} \n",
+                    i.getName(), path.get(i)[0], path.get(i)[1], path.get(i)[2]);
         }
     }
+
 
     public void printHashTable(Hashtable<INode, Integer> table){
         System.out.printf("{ ");
