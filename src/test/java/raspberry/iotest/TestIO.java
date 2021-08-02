@@ -2,35 +2,84 @@ package raspberry.iotest;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
-import java.net.URL;
-
-import org.junit.Before;
 import org.junit.Test;
 
 
+import raspberry.scheduler.algorithm.Astar;
+import raspberry.scheduler.algorithm.OutputSchedule;
+import raspberry.scheduler.graph.IGraph;
+import raspberry.scheduler.io.InvalidFormatException;
 import raspberry.scheduler.io.Reader;
+import raspberry.scheduler.io.Writer;
+
+import java.io.IOException;
 
 public class TestIO {
-	
-	@Before
-	public void setup() {
-//		URL url = getClass().getResource("example.dot");
-		Reader file1 = new Reader("src/test/resources/example.dot");
+
+    /**
+     * test normal input
+     * @throws InvalidFormatException
+     */
+    @Test
+    public void testInput() throws InvalidFormatException {
+        Reader file1 = new Reader("src/test/resources/input/example1.dot");
+        file1.read();
+    }
+
+    /**
+     * test input file with incorrect first line format
+     */
+    @Test
+    public void testIncorrectFirstLineFormat() {
+        try {
+            Reader file1 = new Reader("src/test/resources/input/incorrectfirstline.dot");
+            file1.read();
+            fail();
+        } catch (InvalidFormatException e) {
+            // This exception is expected - ignore it.
+        }
+    }
 
 
-//		System.out.println(directory.getAbsolutePath());
-	}
+    /**
+     * test input file with incorrect edge line format
+     */
+    @Test
+    public void testIncorrectEdgeFormat() {
+        try {
+            Reader file1 = new Reader("src/test/resources/input/incorrectedgeline.dot");
+            file1.read();
+            fail();
+        } catch (InvalidFormatException e) {
+            // This exception is expected - ignore it.
+        }
+    }
 
-	@Test
-	public void testNode() {
-		//fail("Not yet implemented");
-	}
+    /**
+     * test input file with incorrect node line format
+     */
+    @Test
+    public void testIncorrectNodeFormat() {
+        try {
+            Reader file1 = new Reader("src/test/resources/input/incorrectnodeline.dot");
+            file1.read();
+            fail();
+        } catch (InvalidFormatException e) {
+            // This exception is expected - ignore it.
+        }
+    }
 
-	@Test
-	public void testEdge() {
-		//fail("Not yet implemented");
-	}
-
-
+    /**
+     * test input file with incorrect last line format
+     */
+    @Test
+    public void testIncorrectLastLine() {
+        try {
+            Reader file1 = new Reader("src/test/resources/input/incorrectlastline.dot");
+            file1.read();
+            fail();
+        } catch (InvalidFormatException e) {
+            // This exception is expected - ignore it.
+        }
+    }
 }
