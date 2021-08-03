@@ -31,13 +31,13 @@ public class Main {
         //Hashtable<Node, List<Edge>> table = makeHashTable();
         Graph g = new Graph("test graph");
         makeGraph(g);
-        Astar a = new Astar(g,8);
+        Astar a = new Astar(g,2);
         MemoryBoundAStar mba = new MemoryBoundAStar(g,2);
         NUM_NODE = 7;
         System.out.printf("\n Number of NODES : %d \n", NUM_NODE);
         OutputSchedule output = mba.findPath();
         TestSchedule s = new TestSchedule(g, output);
-        System.out.println("Is correct schedule: " +s.isValid());
+        System.out.println("\nIs correct schedule: " +s.isValid() + "\n"+ "finished time: " + output.getFinishTime());
 
     }
 
@@ -48,7 +48,7 @@ public class Main {
         graph.addNode("d", 3);
         graph.addNode("e", 2);
         graph.addNode("f", 3);
-        graph.addNode("g", 1);
+        graph.addNode("g", 2);
 
 
         graph.addEdge("a", "b",1);
@@ -64,20 +64,20 @@ public class Main {
         graph.addEdge("f", "g",2);
 
 
-        graph.addNode("i", 5);
-        graph.addNode("j", 6);
-        graph.addNode("k", 4);
-
-        graph.addNode("i2", 1);
-        graph.addNode("j3", 1);
-        graph.addNode("k4", 1);
-        graph.addEdge("i", "f",3);
-        graph.addEdge("d", "j",6);
-        graph.addEdge("d", "k",1);
-        graph.addEdge("i2", "i",1);
-        graph.addEdge("j3", "j",6);
-        graph.addEdge("k4", "j3",1);
-        graph.addEdge("k4", "j",1);
+//        graph.addNode("i", 5);
+//        graph.addNode("j", 6);
+//        graph.addNode("k", 4);
+//
+//        graph.addNode("i2", 1);
+//        graph.addNode("j3", 1);
+//        graph.addNode("k4", 1);
+//        graph.addEdge("i", "f",3);
+//        graph.addEdge("d", "j",6);
+//        graph.addEdge("d", "k",1);
+//        graph.addEdge("i2", "i",1);
+//        graph.addEdge("j3", "j",6);
+//        graph.addEdge("k4", "j3",1);
+//        graph.addEdge("k4", "j",1);
 
 
 

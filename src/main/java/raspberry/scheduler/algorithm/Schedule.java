@@ -56,4 +56,15 @@ public class Schedule implements Comparable<Schedule>{
         tmp.put(this.node, new int[]{this.startTime,this.finishTime,this.p_id});
         return tmp;
     }
+
+
+    public void printPath(){
+        System.out.println("");
+        Hashtable<INode, int[]> path = this.getPath();
+        //path.sort((o1, o2) -> o1.node.getName().compareTo(o2.node.getName()));
+        for (INode i: path.keySet()){
+            System.out.printf("%s : {start:%d}, {finish:%d}, {p_id:%d} \n",
+                    i.getName(), path.get(i)[0], path.get(i)[1], path.get(i)[2]);
+        }
+    }
 }

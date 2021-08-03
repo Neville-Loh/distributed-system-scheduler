@@ -168,10 +168,6 @@ public class Astar implements Algorithm{
         Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>(parentTable);
         tmp.remove(x);
 
-        System.out.println(this.graph.getOutgoingEdges(x.getName()));
-        System.out.println(graph.toString());
-
-
         for (IEdge i : this.graph.getOutgoingEdges(x.getName())){
             tmp.put( i.getChild(),  tmp.get(i.getChild()) - 1 );
         }

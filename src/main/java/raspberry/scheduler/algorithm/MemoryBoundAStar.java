@@ -8,29 +8,27 @@ import raspberry.scheduler.graph.*;
 // TODO : Replace, Main.NUM_NODE with some other variable.
 
 public class MemoryBoundAStar implements Algorithm{
-
     private IGraph graph;
-    private PriorityQueue<Schedule> pq;
+    private TwoWayPriorityQueue pq;
     private final int TOTAL_NUM_PROCESSOR;
     private List<Schedule> visited;
     private int numNode;
-    private final int MAX_NUMBER_NODE = 9;
+    private final int MAX_NUMBER_NODE = 2000;
 
     public MemoryBoundAStar(IGraph graphToSolve, int numProcessors){
         this.graph = graphToSolve;
-        pq = new PriorityQueue<Schedule>();
+        pq = new TwoWayPriorityQueue();
         visited = new ArrayList<Schedule>();
         TOTAL_NUM_PROCESSOR = numProcessors;
         numNode = graph.getNumNodes();
 
     }
 
-    private class ForgottenSchedule{
+    private static class ForgottenSchedule{
         Collection<INode> nodes;
         int fCost;
-        ForgottenSchedule(INode node, int fCost){
+        ForgottenSchedule(int fCost){
             this.nodes = new ArrayList<INode>();
-            this.addNode(node);
             this.fCost = fCost;
         }
 
@@ -45,7 +43,10 @@ public class MemoryBoundAStar implements Algorithm{
         public Collection<INode> getNodes(){
             return nodes;
         }
+
     }
+
+
 
     @Override
     public OutputSchedule findPath() {
@@ -71,7 +72,7 @@ public class MemoryBoundAStar implements Algorithm{
             System.out.printf("\nPQ SIZE :  %d", pq.size());
 
             // pull current node
-            cSchedule = pq.poll();
+            cSchedule = pq.pollMin();
             parentsLeft = master.get(cSchedule);
             master.remove(cSchedule);
 
@@ -86,8 +87,6 @@ public class MemoryBoundAStar implements Algorithm{
             } else {
                 nodes = parentsLeft.keySet();
             }
-
-
 
             for (INode node: nodes){
                 if (parentsLeft.get(node) == 0 ){
@@ -107,10 +106,26 @@ public class MemoryBoundAStar implements Algorithm{
                     }
                 }
             }
+
+            while (pq.size() > MAX_NUMBER_NODE){
+                ForgottenSchedule forgottenSchedule;
+                Schedule badSchedule = pq.pollMax();
+                Schedule badScheduleParent = badSchedule.parent;
+
+                // if badNode parent already forget some other node
+                if (forgotten.containsKey(badScheduleParent)){
+                    forgottenSchedule = forgotten.get(badScheduleParent);
+
+                } else {
+                    forgottenSchedule = new ForgottenSchedule(badSchedule.t);
+                    forgotten.put(badScheduleParent,forgottenSchedule);
+                }
+                forgottenSchedule.addNode(badSchedule.node);
+            }
         }
 
         System.out.print("\n === THE FINAL ANSWER ===");
-        printPath(cSchedule);
+        cSchedule.printPath();
         return new Solution(cSchedule,TOTAL_NUM_PROCESSOR);
     }
 
@@ -193,24 +208,13 @@ public class MemoryBoundAStar implements Algorithm{
         tmp.remove(x);
 
         //System.out.println(graph.toString());
-
-
         for (IEdge i : this.graph.getOutgoingEdges(x.getName())){
             tmp.put( i.getChild(),  tmp.get(i.getChild()) - 1 );
         }
         return tmp;
     }
 
-    public void printPath(Schedule x){
-        System.out.println("");
-        Hashtable<INode, int[]> path = x.getPath();
 
-        //path.sort((o1, o2) -> o1.node.getName().compareTo(o2.node.getName()));
-        for (INode i: path.keySet()){
-            System.out.printf("%s : {start:%d}, {finish:%d}, {p_id:%d} \n",
-                    i.getName(), path.get(i)[0], path.get(i)[1], path.get(i)[2]);
-        }
-    }
 
 
     public void printHashTable(Hashtable<INode, Integer> table){
