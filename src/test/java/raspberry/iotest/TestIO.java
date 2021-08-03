@@ -5,25 +5,24 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 
-import raspberry.scheduler.algorithm.Astar;
-import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.graph.IGraph;
+import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.InvalidFormatException;
 import raspberry.scheduler.io.Reader;
-import raspberry.scheduler.io.Writer;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class TestIO {
 
     /**
      * test normal input
-     * @throws InvalidFormatException
+     * @throws FileNotFoundException
      */
     @Test
-    public void testInput() throws InvalidFormatException {
-        Reader file1 = new Reader("src/test/resources/input/example1.dot");
-        file1.read();
+    public void testInput() throws  FileNotFoundException {
+//        Reader file1 = new Reader("src/test/resources/input/example1.dot");
+//        file1.read();
+        GraphReader graphReader = new GraphReader("src/test/resources/output/outputExample.dot");
+        graphReader.read();
     }
 
     /**
