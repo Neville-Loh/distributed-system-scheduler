@@ -24,6 +24,7 @@ public class CLIConfig {
     //if no file name is defined - default is "INPUT-output.dot"
     public static final int DEFAULT_NUMBER_OF_PROCESSORS = 1;
 
+
     //Default constructor
     public CLIConfig(){
         _visualise = false;
@@ -33,6 +34,9 @@ public class CLIConfig {
     // I made this into a string to resolve an issue.
     public void setNumProcessors(int numProcessors){
         _numProcessors = numProcessors;
+    }
+    public int get_numProcessors(){
+        return _numProcessors;
     }
 
     // throws ParserConfigurationException <- add this later for checking whether the input is valid
