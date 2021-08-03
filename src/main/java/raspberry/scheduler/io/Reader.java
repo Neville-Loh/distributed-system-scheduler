@@ -47,7 +47,6 @@ public class Reader {
 		try {
 			File file = new File(_filepath);
 			Scanner reader = new Scanner(file);
-
 			String firstLine = reader.nextLine();
 			String[] firstLineInfo = getLineInfo(firstLine);
 
@@ -80,7 +79,7 @@ public class Reader {
 				else if (lineInfo.length == 1 && !reader.hasNextLine() && lineInfo[0].equals("}")) {
 					System.out.println(lineInfo[0]);
 				}
-				else { throw new InvalidFormatException(String.format("Invalid format in input file of line: ", line));}
+				else { throw new InvalidFormatException(String.format("Invalid format in input file of line: %s", line));}
 			}
 			reader.close();
 			System.out.println(_graph);

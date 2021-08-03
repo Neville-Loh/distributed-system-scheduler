@@ -1,47 +1,55 @@
 
 package raspberry.scheduler;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import raspberry.scheduler.algorithm.Astar;
-import raspberry.scheduler.algorithm.MemoryBoundAStar;
+import raspberry.scheduler.algorithm.sma.MemoryBoundAStar;
 import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.graph.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.Graph;
+import raspberry.scheduler.graph.IGraph;
+import raspberry.scheduler.io.InvalidFormatException;
+import raspberry.scheduler.io.Reader;
 
 
 public class Main {
 
     public static int NUM_NODE;
 
-    public static void main(String[] args) throws EdgeDoesNotExistException {
+    public static void main(String[] args) throws EdgeDoesNotExistException, InvalidFormatException {
 
         // This is unit test. (I will make proper Junit test later)
         test();
     }
 
-    public static void test() throws EdgeDoesNotExistException {
+    public static void test() throws EdgeDoesNotExistException, InvalidFormatException {
         System.out.println("======== RUNNING TEST ========");
-
+        IGraph g;
 
         // with h()=0, -> 692 node in pq.
         // with h( return sum(unscheduled node) ) -> 17
         //Hashtable<Node, List<Edge>> table = makeHashTable();
-        Graph g = new Graph("test graph");
+
+
+
+        Reader r = new Reader("16_466.dot");
+        r.read();
+
+        g = r.getGraph();
+
+        g = new Graph("test graph");
         makeGraph(g);
         Astar a = new Astar(g,2);
         MemoryBoundAStar mba = new MemoryBoundAStar(g,2);
-        NUM_NODE = 7;
-        System.out.printf("\n Number of NODES : %d \n", NUM_NODE);
         OutputSchedule output = mba.findPath();
+
+
+
+        //System.out.println(g2);
         TestSchedule s = new TestSchedule(g, output);
-        System.out.println("\nIs correct schedule: " +s.isValid() + "\n"+ "finished time: " + output.getFinishTime());
+        System.out.println("\nIs correct schedule: " + s.isValid() + "\n"+ "finished time: " + output.getFinishTime());
 
     }
 
-    private static void makeGraph(Graph graph) {
+    private static void makeGraph(IGraph graph) {
         graph.addNode("a", 2);
         graph.addNode("b", 2);
         graph.addNode("c", 2);

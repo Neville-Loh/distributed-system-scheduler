@@ -19,7 +19,7 @@ public class TestOutput {
     public void testWriter() throws IOException, InvalidFormatException {
 
         //read in graph
-        Reader file1 = new Reader("src/test/resources/input/example1.dot");
+        Reader file1 = new Reader("16_466.dot");
         file1.read();
         IGraph graph = file1.getGraph();
 
@@ -28,7 +28,7 @@ public class TestOutput {
         OutputSchedule schedule = astar.findPath();
 
         //write to output file
-        Writer writer = new Writer("outputExample","src/test/resources/output", graph, schedule);
+        Writer writer = new Writer("outputExample1","src/test/resources/output", graph, schedule);
         writer.write();
     }
 }

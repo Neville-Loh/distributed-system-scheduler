@@ -6,7 +6,6 @@ import raspberry.scheduler.graph.INode;
  * Interface that represent a scheduling algorithm output
  */
 public interface OutputSchedule {
-
     /**
      * Ge the total processor number of given input
      * @return total the processor total number

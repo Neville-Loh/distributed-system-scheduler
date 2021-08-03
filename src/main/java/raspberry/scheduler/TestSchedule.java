@@ -31,6 +31,12 @@ public class TestSchedule {
 
     //check whether all tasks are in the schedule
     public boolean allTasksPresent() {
+        if (_graph.getAllNodes().size() != _outputSchedule.getNumTasks()){
+            System.out.println("Not All Tasks Present" +
+                    "\nExpected Task: " + _graph.getAllNodes().size()  +
+                    "\nResult Task: " + _outputSchedule.getNumTasks());
+            return false;
+        }
         return _graph.getAllNodes().size() == _outputSchedule.getNumTasks();
     }
 
@@ -42,6 +48,7 @@ public class TestSchedule {
     public boolean isValid() throws EdgeDoesNotExistException {
 
         if(_checkOverlap() || !allTasksPresent()) {
+            System.out.println("Overlap: " + _checkOverlap() + " allTaksPresent: " + allTasksPresent());
             return false;
         }
 
@@ -81,6 +88,7 @@ public class TestSchedule {
 
                     // if node 2 start in between node 1 computation
                     if (startTime2 < endTime1 && startTime2 > startTime1){
+                        System.out.println("Overlap!!!!!!!!!!!!!!!!!!!!!!");
                         return false;
                     }
                 }

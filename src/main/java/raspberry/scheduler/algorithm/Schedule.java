@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
+import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 
 public class Schedule implements Comparable<Schedule>{
@@ -14,6 +15,7 @@ public class Schedule implements Comparable<Schedule>{
 
     public int startTime; //the time this node start running.
     public int finishTime; //the time at this node finish running
+    public Hashtable<INode,Boolean> isScheduled;
 
 //    public Schedule parent;
     public INode node;
@@ -22,7 +24,7 @@ public class Schedule implements Comparable<Schedule>{
     public Schedule parent;
     public int size;
 
-    public Schedule(int cost, int heuristic, Schedule parentSchedule, INode childNode, int processorId){
+    public Schedule(int cost, int heuristic, Schedule parentSchedule, INode childNode, int processorId, IGraph graph)  {
         node = childNode;
         p_id = processorId;
 
@@ -35,10 +37,28 @@ public class Schedule implements Comparable<Schedule>{
         parent = parentSchedule;
         if (parentSchedule == null){
             size = 1;
+            isScheduled = new Hashtable<INode, Boolean>();
+            for (INode node: graph.getAllNodes()){
+                isScheduled.put(node, false);
+            }
+            System.out.println("created?????");
         }else{
             size = parentSchedule.size + 1;
+            Hashtable<INode, Boolean> tmp = new Hashtable<INode, Boolean>();
+            tmp.putAll(parent.isScheduled);
+            System.out.println(tmp);
+            isScheduled = tmp;
+//            isScheduled.putAll(parent.isScheduled);
+//            for (INode node: graph.getAllNodes()){
+//                isScheduled.put(node, false);
+//                if
+//                if isScheduled.get(node) parent.isScheduled()
+//                isScheduled.put(node, false);
+//            }
+            isScheduled.replace(childNode,true);
         }
     }
+
 
     @Override
     public int compareTo(Schedule s){

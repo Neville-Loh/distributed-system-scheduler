@@ -1,4 +1,5 @@
 package raspberry.scheduler.algorithm;
+import raspberry.scheduler.algorithm.sma.MBSchedule;
 import raspberry.scheduler.graph.INode;
 
 import java.util.ArrayList;
@@ -13,7 +14,19 @@ public class Solution implements OutputSchedule{
 
     public Solution(Schedule schedule, int numP){
         _table = schedule.getPath();
-        _finshTime = schedule.finishTime;
+        _finshTime = 0;
+        for (INode node : _table.keySet()){
+            _finshTime = Math.max(getStartTime(node) + node.getValue(),_finshTime);
+        }
+        _totalProcessorNum = numP;
+    }
+
+    public Solution(MBSchedule schedule, int numP){
+        _table = schedule.getPath();
+        _finshTime = 0;
+        for (INode node : _table.keySet()){
+            _finshTime = Math.max(getStartTime(node) + node.getValue(),_finshTime);
+        }
         _totalProcessorNum = numP;
     }
 
