@@ -35,7 +35,7 @@ public class Astar implements Algorithm{
         // "rootTable" is the table all counterTable is based of off.
         //  --> stores a node and number of incoming edges.
         getH();
-        
+
         Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
         Hashtable<INode, Integer> rootTable = this.getRootTable();
 
@@ -68,7 +68,7 @@ public class Astar implements Algorithm{
         while (true){
             System.out.printf("\n PQ SIZE :  %d", pq.size());
             cSchedule = pq.poll();
-            System.out.printf("===== %d =====\n", cSchedule.finishTime);
+//            System.out.printf("===== %d =====\n", cSchedule.finishTime);
             //todo replace num_node,Main.NUM_NODE
             if (cSchedule.size == numNode){
                 break;
@@ -272,19 +272,20 @@ public class Astar implements Algorithm{
         int max = 0;
         for ( IEdge i : e){
             int justCost = getHRecursive(i.getChild()) + n.getValue();
-            int withCommunicationCost = justCost + i.getWeight();
+//            int withCommunicationCost = justCost + i.getWeight();
             if ( max < justCost ){
                 max = justCost;
             }
-            if ( min > withCommunicationCost){
-                min = withCommunicationCost;
-            }
+//            if ( min > withCommunicationCost){
+//                min = withCommunicationCost;
+//            }
         }
 
-        if( min < max){
-            return max;
-        }else{
-            return min;
-        }
+        return max;
+//        if( min < max){
+//            return max;
+//        }else{
+//            return min;
+//        }
     }
 }
