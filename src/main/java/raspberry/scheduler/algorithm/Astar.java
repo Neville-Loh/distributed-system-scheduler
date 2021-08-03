@@ -9,19 +9,23 @@ import raspberry.scheduler.Main;
 
 public class Astar implements Algorithm{
 
-    private IGraph graph;
+    private Graph graph;
 
     PriorityQueue<Schedule> pq;
     int numP;
     List<Schedule> visited;
     int numNode;
+    Hashtable<String, Integer> heuristic = new Hashtable<String, Integer>();
 
-    public Astar(IGraph graphToSolve, int numProcessors){
+    int maxCriticalPath;
+
+    public Astar(Graph graphToSolve, int numProcessors){
         this.graph = graphToSolve;
         pq = new PriorityQueue<Schedule>();
         visited = new ArrayList<Schedule>();
         numP = numProcessors;
         numNode = graph.getNumNodes();
+        System.out.printf("NUM_NODE : %d\n", numNode);
     }
 
     @Override
@@ -30,12 +34,20 @@ public class Astar implements Algorithm{
         // "master" stores, schedule and its counterTable.
         // "rootTable" is the table all counterTable is based of off.
         //  --> stores a node and number of incoming edges.
+        getH();
+        
         Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
         Hashtable<INode, Integer> rootTable = this.getRootTable();
 
         for (INode i: rootTable.keySet()){
             if (rootTable.get(i) == 0 ){
-                Schedule newSchedule = new Schedule( 0, h(rootTable), null, i, 0 );
+                Schedule newSchedule = new Schedule( 0,
+                        Collections.max(Arrays.asList(
+                        h(i.getName()),
+                        h1(rootTable, i.getValue()),
+                        maxCriticalPath-i.getValue(),
+                        h2(rootTable, i.getValue(), null) )),
+                        null, i, 0 );
                 master.put(newSchedule,getChildTable(rootTable,i));
                 pq.add(newSchedule);
             }
@@ -56,7 +68,7 @@ public class Astar implements Algorithm{
         while (true){
             System.out.printf("\n PQ SIZE :  %d", pq.size());
             cSchedule = pq.poll();
-
+            System.out.printf("===== %d =====\n", cSchedule.finishTime);
             //todo replace num_node,Main.NUM_NODE
             if (cSchedule.size == numNode){
                 break;
@@ -70,7 +82,14 @@ public class Astar implements Algorithm{
 //                        System.out.println("\n------------");
                         int start = calculateCost(cSchedule, j, node);
                         Hashtable<INode, Integer> newTable = getChildTable(cTable,node);
-                        Schedule newSchedule = new Schedule( start, h(newTable), cSchedule, node, j );
+                        Schedule newSchedule = new Schedule(
+                                start,
+                                Collections.max(Arrays.asList(
+                                        h(node.getName()),
+                                        h1(newTable, start+node.getValue()),
+                                        maxCriticalPath-start-node.getValue(),
+                                        h2(newTable, start+node.getValue(), cSchedule) )),
+                                cSchedule, node, j );
                         master.put(newSchedule,newTable);
                         pq.add(newSchedule);
 
@@ -88,13 +107,40 @@ public class Astar implements Algorithm{
 
     // Compute heuristic weight
     // Currently our heuristic function is undecided. --> just returns 0.
-    public int h(Hashtable<INode, Integer> x){
-        int sum = 0;
+    public int h(String s){
+        return heuristic.get(s);
+    }
+
+    public int h1(Hashtable<INode, Integer> x ,int finishTime){
+        int sum = finishTime;
         for (INode i: x.keySet()){
             sum += i.getValue();
         }
-        return sum/numP;
+        return sum/numP - finishTime;
     }
+
+    public int h2(Hashtable<INode, Integer> x, int finishTime, Schedule parent){
+        int sum = finishTime;
+        for ( int i=0; i<numP; i++){
+            sum += getLastPTime(parent, i);
+        }
+        for (INode i: x.keySet()){
+            sum += i.getValue();
+        }
+        int spreadOutTime =  sum/numP;
+        return spreadOutTime-finishTime;
+    }
+
+    public int getLastPTime(Schedule cParentSchedule, int processorId){
+        while ( cParentSchedule != null){
+            if ( cParentSchedule.p_id == processorId ){
+                return cParentSchedule.finishTime;
+            }
+            cParentSchedule = cParentSchedule.parent;
+        }
+        return 0;
+    }
+
 
     public int calculateCost(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
@@ -158,7 +204,7 @@ public class Astar implements Algorithm{
         }
         for (INode i : this.graph.getAllNodes()){
             for (IEdge j : this.graph.getOutgoingEdges(i.getName())){
-                tmp.put( j.getChild(), tmp.get(j.getChild()) + 1);
+                tmp.replace( j.getChild(), tmp.get(j.getChild()) + 1);
             }
         }
         return tmp;
@@ -168,12 +214,11 @@ public class Astar implements Algorithm{
         Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>(parentTable);
         tmp.remove(x);
 
-        System.out.println(this.graph.getOutgoingEdges(x.getName()));
-        System.out.println(graph.toString());
-
+//        System.out.println(this.graph.getOutgoingEdges(x.getName()));
+//        System.out.println(graph.toString());
 
         for (IEdge i : this.graph.getOutgoingEdges(x.getName())){
-            tmp.put( i.getChild(),  tmp.get(i.getChild()) - 1 );
+            tmp.replace( i.getChild(),  tmp.get(i.getChild()) - 1 );
         }
         return tmp;
     }
@@ -196,5 +241,50 @@ public class Astar implements Algorithm{
             System.out.printf("%s_%d, ", i.getName(), table.get(i));
         }
         System.out.printf(" }\n");
+    }
+
+    public void getH(){
+        heuristic = new Hashtable<String, Integer>();
+        for ( INode i : this.graph.getAllNodes()){
+            heuristic.put(i.getName(), 0);
+        }
+
+        for ( INode i: this.graph.getAllNodes() ){
+            heuristic.put(i.getName(), getHRecursive( i ));
+        }
+
+        for (String j: heuristic.keySet()){
+            System.out.printf("%s_%d ", j, heuristic.get(j));
+        }
+        maxCriticalPath = Collections.max(heuristic.values());
+        System.out.printf("MAX : %d\n",Collections.max(heuristic.values()));
+    }
+
+    public int getHRecursive( INode n){
+        List<IEdge> e = this.graph.getOutgoingEdges(n.getName());
+        if ( e.size() == 0){
+            return 0;
+        } else if (e.size() == 1){
+            return getHRecursive(e.get(0).getChild()) + n.getValue();
+        }
+
+        int min = Integer.MAX_VALUE;;
+        int max = 0;
+        for ( IEdge i : e){
+            int justCost = getHRecursive(i.getChild()) + n.getValue();
+            int withCommunicationCost = justCost + i.getWeight();
+            if ( max < justCost ){
+                max = justCost;
+            }
+            if ( min > withCommunicationCost){
+                min = withCommunicationCost;
+            }
+        }
+
+        if( min < max){
+            return max;
+        }else{
+            return min;
+        }
     }
 }
