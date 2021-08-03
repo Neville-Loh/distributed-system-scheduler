@@ -12,6 +12,7 @@ import raspberry.scheduler.graph.INode;
 
 
 /**
+ * -----------this is old reader----------------------
  * Reader class reads in .dot files in the correct format and and converts it
  * into a Graph
  * 
