@@ -1,13 +1,14 @@
-package main.java.raspberry.scheduler.cli;
+package raspberry.scheduler.cli;
 
 import main.java.raspberry.scheduler.cli.CLIConfig;
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 // This class handles the parsing of the commands and exceptions thrown when the program is accessed from the command line.
 public class CLIParser {
     public static final String WRONG_ARGUMENTS = "The arguments entered are not registered. Please try -help for more options.";
-    public final String HELP_MENU = "Help Menu: \n \n" +
+    public static final String HELP_MENU = "Help Menu: \n \n" +
             "java -jar " + getJARFileName() + " INPUT.dot P [OPTION] \n \n" +
             "INPUT.dot : a task graph with integer weights in dot format \n" +
             "P : number of processors to schedule the input graph on \n \n" +
@@ -16,11 +17,15 @@ public class CLIParser {
             // Visualisation still needs to be implemented
             // "-v : visualise the search \n" +
             "-o OUTPUT : output file is name OUTPUT (default is INPUT-output.dot)";
+    public static final String NO_INPUT_NUM_CORES = "No input was detected for number of cores.";
+    public static final String NO_INTEGER_NUM_CORES = "Please enter an valid integer for number of cores.";
+    public static final String NO_OUTPUT_FILE_INPUT = "Please enter a name for the output file.";
 
-    // Takes in command inputs and creates CLIConfig object
-    // inputs should be in the form [InputFileName, NumberOfProcessors, Option,
-    // NumberOfCores if -p is chosen/ Name of OUTPUT file if -o is chosen]
-    public CLIConfig parser (String[] inputs) throws ParserException {
+    /* Takes in command inputs and creates CLIConfig object
+    * inputs should be in the form [InputFileName, NumberOfProcessors, Option,
+    * NumberOfCores if -p is chosen/ Name of OUTPUT file if -o is chosen]
+    */
+    public static CLIConfig parser(String[] inputs) throws ParserException {
         CLIConfig CLIConfig = new CLIConfig();
 
         // Check if the user requested for help.
@@ -41,29 +46,53 @@ public class CLIParser {
         CLIConfig.setDotFile(inputs[0]);
         CLIConfig.setNumProcessors(Integer.parseInt(inputs[1]));
 
-        // Check for option to select number of parallel cores used
-        // Need to check whether there is an input at all and if it is in integer, do later
-        // Have to add default values.
-        if (inputs[2] == "-p"){
-            CLIConfig.setNumCores(Integer.parseInt(inputs[3]));
+        for (int i = 2; i < inputs.length; i++) {
+
+            // Check for option to select number of parallel cores used
+            // Need to check whether there is an input at all and if it is in integer, do later
+            // Have to add default values.
+            if (Objects.equals(inputs[i], "-p")) {
+                try {
+                    CLIConfig.setNumCores(Integer.parseInt(inputs[i + 1]));
+                }
+                catch (ArrayIndexOutOfBoundsException e){
+                    throw new ParserException(NO_INPUT_NUM_CORES);
+                }
+                catch (NumberFormatException e){
+                    throw new ParserException(NO_INTEGER_NUM_CORES);
+                }
+                break;
+            }
+
+            // Visualisation still needs to be implemented
+            // else if (inputs[2] == "-v"){
+
+            //}
+
+            // Check for option to select name of OUTPUT file (default is INPUT-output.dot)
+            // Check if there is an input.
+            // Have to add default values.
+            else if (Objects.equals(inputs[i], "-o")) {
+                try {
+                    CLIConfig.setOutputFile(inputs[i + 1]);
+                }
+                catch (ArrayIndexOutOfBoundsException e){
+                    throw new ParserException(NO_OUTPUT_FILE_INPUT);
+                }
+                break;
+            }
         }
 
-        // Visualisation still needs to be implemented
-        // else if (inputs[2] == "-v"){
-
-        //}
-
-        // Check for option to select name of OUTPUT file (default is INPUT-output.dot)
-        // Check if there is an input.
-        // Have to add default values.
-        else if (inputs[2] == "-o"){
-            CLIConfig.setOutputFile(inputs[3]);
+        // if user has not chosen to select an output file name, the default will be given.
+        if (CLIConfig.getOutputFile() == null){
+            CLIConfig.defaultOutput();
         }
 
     return CLIConfig;
     }
 
-    public String getJARFileName(){
+    // Return the JAR file name.
+    public static String getJARFileName(){
         return new File(CLIParser.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
     }
 

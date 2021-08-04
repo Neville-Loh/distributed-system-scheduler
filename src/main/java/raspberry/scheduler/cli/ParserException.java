@@ -1,4 +1,4 @@
-package main.java.raspberry.scheduler.cli;
+package raspberry.scheduler.cli;
 
 public class ParserException extends Exception{
     public String _message;
