@@ -32,9 +32,11 @@ public class CLIConfig {
     }
 
     // I made this into a string to resolve an issue.
+    //Sets the number of processors running the algorithm
     public void setNumProcessors(int numProcessors){
         _numProcessors = numProcessors;
     }
+    //returns the number of processors running the algorithm
     public int get_numProcessors(){
         return _numProcessors;
     }
@@ -47,37 +49,47 @@ public class CLIConfig {
         return _numProcessors;
     }
 
+    //sets the specified input dot file
     public void setDotFile(String fileName){
         _dotFile = fileName;
     }
 
+    //returns input dot file name as a string
     public String getDotFile(){
         return _dotFile;
     }
 
+    //sets the number of dedicated cores to run the program - default value is one.
     public void setNumCores(int numCores){
         _numCores = numCores;
     }
 
+    //returns the number of dedicated cores to run the program
     public int getNumCores(){
         return _numCores;
     }
+
+    //sets wether or not program has to be visualised - default is false
     public void setVisualise(boolean visualise){
         _visualise = visualise;
     }
 
+    //returns a boolean value for visualise to represent whether the program needs to be visualised.
     public boolean getVisualise(){
         return _visualise;
     }
 
+    //Sets the output file name - default name format is input file name + out.dot i.e. INPUT-output.dot
     public void setOutputFile(String fileName){
         _outputFile = fileName;
     }
 
+    //returns the Output file name as a String
     public String getOutputFile(){
         return _outputFile;
     }
 
+    //sets the default Output file name as a string in the INPUT-output.dot format
     public void defaultOutput(){
         String inputFileName = _dotFile.substring(0, _dotFile.length() - 4);
         _outputFile = _dotFile.concat(inputFileName);
