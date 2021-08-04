@@ -1,6 +1,7 @@
 package raspberry.scheduler.graph;
 
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -70,5 +71,9 @@ public interface IGraph{
      * @return number of node this graph has.
      */
     int getNumNodes ();
+
+
+
+    public Hashtable<INode,Integer> getCriticalPathWeightTable();
 }
 

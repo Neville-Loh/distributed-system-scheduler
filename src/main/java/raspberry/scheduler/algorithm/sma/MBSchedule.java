@@ -174,7 +174,8 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
              " processorId: " + p_id
              + " Task = " + node
              + " startTime: " + startTime
-             + " finishTime: " + finishTime;
+             + " finishTime: " + finishTime
+             + "   ||||| overall finish time: " +_overallFinishTime;
     }
 }
 

@@ -22,6 +22,7 @@ public class MemoryBoundAStar implements Algorithm {
     private final int TOTAL_NUM_PROCESSOR;
     private int numNode;
     private final int MAX_NUMBER_NODE = 2000;
+    private Hashtable<INode, Integer> _criticalPathWeightTable;
 
 
     /**
@@ -34,6 +35,7 @@ public class MemoryBoundAStar implements Algorithm {
         _pq = new TwoWayPriorityQueue();
         TOTAL_NUM_PROCESSOR = totalProcessorNumber;
         numNode = _graph.getNumNodes();
+        _criticalPathWeightTable = _graph.getCriticalPathWeightTable();
     }
 
     /**
@@ -102,7 +104,7 @@ public class MemoryBoundAStar implements Algorithm {
             cSchedule = _pq.pollMin();
             parentsLeft = master.get(cSchedule);
             master.remove(cSchedule);
-            System.out.println(" --------Pulled scheduled = " + cSchedule);
+            //System.out.println(" --------Pulled scheduled = " + cSchedule);
 
             // if all task is scheduled
             if (cSchedule.size == numNode){
@@ -128,7 +130,7 @@ public class MemoryBoundAStar implements Algorithm {
                         newSchedule.setHScore(h(newSchedule));
 
                         //TODO remove
-                        System.out.println("\n" + newSchedule);
+                        //System.out.println("\n" + newSchedule);
 
 
                         master.put(newSchedule,parentsLeftAfterSchedule);
@@ -163,17 +165,14 @@ public class MemoryBoundAStar implements Algorithm {
 
     /**
      * Heuristic function
-     * @param parentsleft
-     * @return
-     */
-    /**
-     *
      * @return
      */
     public int h(MBSchedule schedule){
-        int emptyGaps = schedule.getOverallFinishTime() - schedule.getEarliestFinishTimeOfAllProcessorsProcessors();
-        int perfectScheduling = schedule.getRemainingComputeTime() / TOTAL_NUM_PROCESSOR;
-        return perfectScheduling - emptyGaps;
+//        int emptyGaps = schedule.getOverallFinishTime() - schedule.getEarliestFinishTimeOfAllProcessorsProcessors();
+//        int perfectScheduling = schedule.getRemainingComputeTime() / TOTAL_NUM_PROCESSOR;
+//        return Math.max(schedule.getOverallFinishTime(), perfectScheduling - emptyGaps);
+
+        return schedule.finishTime + _criticalPathWeightTable.get(schedule.node);
     }
 
 

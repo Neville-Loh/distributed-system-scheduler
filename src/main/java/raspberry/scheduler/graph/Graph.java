@@ -2,12 +2,14 @@ package raspberry.scheduler.graph;
 
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Graph implements IGraph{
     private String name;
     public Hashtable<String, INode> nodes;
     public Hashtable<String, List<IEdge>> InDegreeAdjacencyList;
     public Hashtable<String, List<IEdge>> OutDegreeAdjacencyList;
+    private Hashtable<String,Integer> _criticalPathWeightTable;
 
     /**
      * Constructor
@@ -91,6 +93,53 @@ public class Graph implements IGraph{
     }
 
 
+    @Override
+    public Hashtable<INode,Integer> getCriticalPathWeightTable(){
+        _criticalPathWeightTable = new Hashtable<String, Integer>();
+        ArrayList<String> start = new ArrayList<String>();
+        InDegreeAdjacencyList.forEach( (k,v) -> {
+            if (v.size() == 0){
+                start.add(k);
+            }
+            _criticalPathWeightTable.put(k,-1);
+        });
+        start.forEach(node -> {
+            int val = dfs(node);
+            if (_criticalPathWeightTable.containsKey(node)){
+                _criticalPathWeightTable.put(node, Math.max(_criticalPathWeightTable.get((node)), val));
+            } else {
+                _criticalPathWeightTable.put(node, val);
+            }
+        });
+
+        System.out.println("table" + _criticalPathWeightTable);
+
+        Hashtable<INode, Integer> result = new Hashtable<INode, Integer>();
+        _criticalPathWeightTable.forEach((k,v) -> result.put(nodes.get(k), v - nodes.get(k).getValue()));
+        System.out.println("result" + result);
+        return result;
+    }
+
+    private int dfs(String node){
+        //System.out.println(node);
+        //System.out.println(_criticalPathWeightTable);
+        List<IEdge> edges = getOutgoingEdges(node);
+        int computeTime = nodes.get(node).getValue();
+        if (edges.size() == 0 ){
+            _criticalPathWeightTable.put(node,computeTime);
+            //System.out.println("return");
+            return computeTime;
+        } else {
+            AtomicInteger currentMax = new AtomicInteger(_criticalPathWeightTable.get(node));
+            edges.forEach(edge -> {
+                currentMax.set(Math.max(currentMax.get(),computeTime + dfs(edge.getChild().getName())));
+            });
+            _criticalPathWeightTable.put(node,currentMax.intValue());
+            return currentMax.intValue();
+        }
+
+
+    }
 //    // This path would be optimal solution for 1 processor scheduling.
 //    public Stack getTopologicalOrder_DFS(){
 //        //Compute topological order and return it.

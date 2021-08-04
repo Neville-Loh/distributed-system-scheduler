@@ -31,12 +31,6 @@ public class TestSchedule {
 
     //check whether all tasks are in the schedule
     public boolean allTasksPresent() {
-        if (_graph.getAllNodes().size() != _outputSchedule.getNumTasks()){
-            System.out.println("Not All Tasks Present" +
-                    "\nExpected Task: " + _graph.getAllNodes().size()  +
-                    "\nResult Task: " + _outputSchedule.getNumTasks());
-            return false;
-        }
         return _graph.getAllNodes().size() == _outputSchedule.getNumTasks();
     }
 
@@ -47,8 +41,7 @@ public class TestSchedule {
     // - node with no dependency relation overlap
     public boolean isValid() throws EdgeDoesNotExistException {
 
-        if(_checkOverlap() || !allTasksPresent()) {
-            System.out.println("Overlap: " + _checkOverlap() + " allTaksPresent: " + allTasksPresent());
+        if(_isOverlap() || !allTasksPresent()) {
             return false;
         }
 
@@ -60,6 +53,8 @@ public class TestSchedule {
 
 
                 int parentEndTime = _outputSchedule.getStartTime(parentNode) + parentNode.getValue();
+
+
                 if ((_outputSchedule.getProcessorNum(parentNode) != _outputSchedule.getProcessorNum(node))
                         && ((_graph.getEdgeWeight(parentNode, node) + parentEndTime)) > _outputSchedule.getStartTime(node)) {
                     return false;
@@ -73,7 +68,7 @@ public class TestSchedule {
         return true;
     }
 
-    private boolean _checkOverlap(){
+    private boolean _isOverlap(){
         for (INode node1 : _graph.getAllNodes()) {
             int startTime1 = _outputSchedule.getStartTime(node1);
             int endTime1 = _outputSchedule.getStartTime(node1) + node1.getValue();
@@ -84,18 +79,17 @@ public class TestSchedule {
 
                 // check same processor node for all other node that is not node 1
                 if (node1 != node2
-                        && _outputSchedule.getProcessorNum(node1) == _outputSchedule.getProcessorNum(node1)) {
+                        && _outputSchedule.getProcessorNum(node1) == _outputSchedule.getProcessorNum(node2)) {
 
                     // if node 2 start in between node 1 computation
                     if (startTime2 < endTime1 && startTime2 > startTime1){
-                        System.out.println("Overlap!!!!!!!!!!!!!!!!!!!!!!");
-                        return false;
+                        return true;
                     }
                 }
             }
 
         }
-        return true;
+        return false;
     }
 
 

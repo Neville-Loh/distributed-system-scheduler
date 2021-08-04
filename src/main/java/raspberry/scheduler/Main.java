@@ -30,13 +30,19 @@ public class Main {
 
 
 
-        Reader r = new Reader("16_466.dot");
+        //Reader r = new Reader("Nodes_7_OutTree.dot");
+        //Reader r = new Reader("Nodes_8_Random.dot");
+        //Reader r = new Reader("Nodes_9_SeriesParallel.dot");
+        //Reader r = new Reader("Nodes_10_Random.dot");
+        Reader r = new Reader("Nodes_11_OutTree.dot");
         r.read();
 
         g = r.getGraph();
 
-        g = new Graph("test graph");
-        makeGraph(g);
+        //g = new Graph("test graph");
+        //makeGraph(g);
+        //g.getCriticalPathWeightTable();
+
         Astar a = new Astar(g,2);
         MemoryBoundAStar mba = new MemoryBoundAStar(g,2);
         OutputSchedule output = mba.findPath();
