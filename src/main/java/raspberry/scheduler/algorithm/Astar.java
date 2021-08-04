@@ -26,6 +26,7 @@ public class Astar implements Algorithm{
         numP = numProcessors;
         numNode = graph.getNumNodes();
         System.out.printf("NUM_NODE : %d\n", numNode);
+        System.out.printf("NUM_P    : %d\n", numP);
     }
 
     @Override
@@ -46,7 +47,8 @@ public class Astar implements Algorithm{
                         h(i.getName()),
                         h1(rootTable, i.getValue()),
                         maxCriticalPath-i.getValue(),
-                        h2(rootTable, i.getValue(), null) )),
+                        h2(rootTable, 0,i.getValue(), null)
+                        )),
                         null, i, 0 );
                 master.put(newSchedule,getChildTable(rootTable,i));
                 pq.add(newSchedule);
@@ -88,7 +90,8 @@ public class Astar implements Algorithm{
                                         h(node.getName()),
                                         h1(newTable, start+node.getValue()),
                                         maxCriticalPath-start-node.getValue(),
-                                        h2(newTable, start+node.getValue(), cSchedule) )),
+                                        h2(newTable, start,node.getValue(), cSchedule)
+                                        )),
                                 cSchedule, node, j );
                         master.put(newSchedule,newTable);
                         pq.add(newSchedule);
@@ -119,8 +122,8 @@ public class Astar implements Algorithm{
         return sum/numP - finishTime;
     }
 
-    public int h2(Hashtable<INode, Integer> x, int finishTime, Schedule parent){
-        int sum = finishTime;
+    public int h2(Hashtable<INode, Integer> x, int start, int cost, Schedule parent){
+        int sum = cost;
         for ( int i=0; i<numP; i++){
             sum += getLastPTime(parent, i);
         }
@@ -128,7 +131,7 @@ public class Astar implements Algorithm{
             sum += i.getValue();
         }
         int spreadOutTime =  sum/numP;
-        return spreadOutTime-finishTime;
+        return spreadOutTime-start-cost;
     }
 
     public int getLastPTime(Schedule cParentSchedule, int processorId){
