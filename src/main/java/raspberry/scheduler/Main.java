@@ -6,21 +6,24 @@ import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.graph.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.Graph;
 import raspberry.scheduler.graph.IGraph;
+import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.InvalidFormatException;
 import raspberry.scheduler.io.Reader;
+
+import java.io.FileNotFoundException;
 
 
 public class Main {
 
     public static int NUM_NODE;
 
-    public static void main(String[] args) throws EdgeDoesNotExistException, InvalidFormatException {
+    public static void main(String[] args) throws EdgeDoesNotExistException, InvalidFormatException, FileNotFoundException {
 
         // This is unit test. (I will make proper Junit test later)
         test();
     }
 
-    public static void test() throws EdgeDoesNotExistException, InvalidFormatException {
+    public static void test() throws EdgeDoesNotExistException, InvalidFormatException, FileNotFoundException {
         System.out.println("======== RUNNING TEST ========");
         IGraph g;
 
@@ -30,11 +33,11 @@ public class Main {
 
 
 
-        //Reader r = new Reader("Nodes_7_OutTree.dot");
-        //Reader r = new Reader("Nodes_8_Random.dot");
-        //Reader r = new Reader("Nodes_9_SeriesParallel.dot");
-        //Reader r = new Reader("Nodes_10_Random.dot");
-        Reader r = new Reader("Nodes_11_OutTree.dot");
+        //GraphReader r = new GraphReader("Nodes_7_OutTree.dot");
+        //GraphReader r = new GraphReader("Nodes_8_Random.dot");
+        //GraphReader r = new GraphReader("Nodes_9_SeriesParallel.dot");
+        GraphReader r = new GraphReader("Nodes_10_Random.dot");
+        //GraphReader r = new GraphReader("Nodes_11_OutTree.dot");
         r.read();
 
         g = r.getGraph();

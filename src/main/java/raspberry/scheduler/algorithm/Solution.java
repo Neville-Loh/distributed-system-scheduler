@@ -20,6 +20,14 @@ public class Solution implements OutputSchedule{
         _totalProcessorNum = numP;
     }
 
+    public Solution(MBSchedule schedule, int numP){
+        _table = schedule.getPath();
+        for (INode node: _table.keySet()){
+            _finshTime = Math.max(getStartTime(node) + node.getValue(), _finshTime);
+        }
+        _totalProcessorNum = numP;
+    }
+
     @Override
     public int getTotalProcessorNum() {
         return _totalProcessorNum;
