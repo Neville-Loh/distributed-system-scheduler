@@ -16,6 +16,8 @@ public class BNB implements Algorithm {
     Stack<Schedule> _scheduleStack;
     int _bound;
     int _numNode;
+    Hashtable<String, Integer> parentHeuristicTable;
+    int _maxCriticalPath;
 
     public BNB(IGraph graphToSolve, int numProcessors){
         _graph = graphToSolve;
@@ -40,30 +42,44 @@ public class BNB implements Algorithm {
         Schedule shortestPath = null;
         // Stack - Keeps track of all available/scheduable tasks.
         _scheduleStack = new Stack<Schedule>();
+
         Hashtable<INode, Integer> rootTable = getRootTable();
         Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
-
-        printHashTable(rootTable);
+        parentHeuristicTable = new Heuristic().getHeuristicTable(_graph);
+        _maxCriticalPath = Collections.max( parentHeuristicTable.values() );
 
         for (INode i : rootTable.keySet()){
             if (rootTable.get(i) == 0 ) {
                 Schedule newSchedule = new Schedule(0, null, i, 0);
                 master.put(newSchedule, getChildTable(rootTable, i));
                 _scheduleStack.push(newSchedule);
+                int cBound = getUpperBound();
+                if ( cBound < _bound){
+                    _bound = cBound;
+                }
             }
         }
 
         Schedule cSchedule;
         Hashtable<INode, Integer> cTable;
         while (true){
-            System.out.printf("\n PQ SIZE :  %d", _scheduleStack.size());
+//            System.out.printf("\n Stack SIZE :  %d", _scheduleStack.size());
             cSchedule = _scheduleStack.pop();
             cTable = master.get(cSchedule);
             master.remove(cSchedule);
 
-            if (cSchedule._lowerBound >= _bound){
+            int cBound = getUpperBound();
+            if ( cBound < _bound){
+                _bound = cBound;
+            }
+
+            if (cSchedule._lowerBound >= _bound) {
                 // Bounded. Meaning, this current schedule is too slow.
                 // We already know better schedule so ignore.
+            }else if( getLowerBound(parentHeuristicTable, cSchedule.node,
+                    cTable, _maxCriticalPath, _numP) >= _bound ){
+                // REASON TO SEPRATE the first "IF" and second "else if" statement is for optimization.
+                // We also already know better schedle.
             }else{
                 if (cSchedule.size == _numNode ){
                     if (cSchedule._lowerBound < _bound){
@@ -180,4 +196,18 @@ public class BNB implements Algorithm {
                     i.getName(), path.get(i)[0], path.get(i)[1], path.get(i)[2]);
         }
     }
+
+    public int getUpperBound(){
+        return Integer.MAX_VALUE;
+    }
+
+    //This is bascially heuristic function.
+    public int getLowerBound(Hashtable<String, Integer> heuristicTable, INode i,
+                             Hashtable<INode, Integer> rootTable,
+                             int maxCriticalPath,
+                             int numP){
+        return new Heuristic().getH(heuristicTable,i,rootTable,maxCriticalPath,numP);
+    }
+
+
 }
