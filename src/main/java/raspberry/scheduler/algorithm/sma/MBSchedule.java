@@ -22,10 +22,8 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 
     private int _hScore;
 
-    public int p_id;
-    public INode node;
-    public int startTime; //the time this node start running.
-    public int finishTime; //the time at this node finish running
+    private ScheduledTask _scheduledTask;
+
 
     private int _overallFinishTime;
     private int _earliestFinishProcessorID;
@@ -33,47 +31,48 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     private int _remainingComputeTime;
 
     /**
-     *
-     * @param taskStartTime
+     * Class constructor
      * @param parentSchedule
-     * @param taskToSchedule
-     * @param processorId
      * @param remainingComputeTime remaining compute time after input task has been scheduled
      */
-    public MBSchedule(MBSchedule parentSchedule, int remainingComputeTime, int processorId, INode taskToSchedule, int taskStartTime)  {
+    public MBSchedule(MBSchedule parentSchedule, int remainingComputeTime, ScheduledTask scheduledTask)  {
         // scheduled task value
-        node = taskToSchedule;
-        p_id = processorId;
-        startTime = taskStartTime;
-        finishTime = taskStartTime + taskToSchedule.getValue();
+        _scheduledTask = scheduledTask;
 
         // linked-list attribute
         parent = parentSchedule;
         _remainingComputeTime = remainingComputeTime;
         if (parentSchedule == null){
             size = 1;
-            _overallFinishTime = finishTime;
+
+            // Manhattan distance heuristic
+            //_earliestFinishProcessorID = 1;
         }else{
             size = parentSchedule.size + 1;
-            _overallFinishTime = Math.max(parent.getOverallFinishTime(), finishTime);
+            _overallFinishTime = Math.max(parent.getOverallFinishTime(), _scheduledTask.getFinishTime());
+
+
+//            // Manhattan distance heuristic
+//            if (_earliestFinishProcessorID == this.parent.getEarliestFinishProcessorID()){
+//                _earliestFinishTimeOfAllProcessors = _scheduledTask.getFinishTime();
+//            } else if (_earliestFinishProcessorID){
+//
+//            }
+
         }
 
-        // a* attributes
-        //fScore = _overallFinishTime + heuristic;
 
     }
 
 
     /**
      *
-     * @param processorId
-     * @param taskToSchedule
-     * @param taskStartTime
+     * @param scheduledTask
      * @return
      */
-    public MBSchedule createSubSchedule(int processorId, INode taskToSchedule, int taskStartTime){
-        int remainingComputeTime = _remainingComputeTime - taskToSchedule.getValue();
-        return new MBSchedule(this, remainingComputeTime, processorId, taskToSchedule,taskStartTime);
+    public MBSchedule createSubSchedule(ScheduledTask scheduledTask){
+        int remainingComputeTime = _remainingComputeTime - scheduledTask.getTask().getValue();
+        return new MBSchedule(this, remainingComputeTime, scheduledTask);
     }
 
 
@@ -85,14 +84,17 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
      * @return path
      */
     public Hashtable<INode, int[]> getPath(){
-        Hashtable<INode, int[]> tmp;
+        Hashtable<INode, int[]> temp;
         if (this.parent == null){
-            tmp = new Hashtable<INode, int[]>();
+            temp = new Hashtable<INode, int[]>();
         }else{
-            tmp = this.parent.getPath();
+            temp = this.parent.getPath();
         }
-        tmp.put(this.node, new int[]{this.startTime,this.finishTime,this.p_id});
-        return tmp;
+        temp.put(_scheduledTask.getTask(),
+                new int[]{_scheduledTask.getStartTime(),
+                        _scheduledTask.getFinishTime(),
+                        _scheduledTask.getProcessorID()});
+        return temp;
     }
 
 
@@ -150,11 +152,11 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         _earliestFinishProcessorID = earliestFinishProcessorID;
     }
 
-    public void set_earliestFinishTimeOfAllProcessor(int earliestFinishTimeOfAllProcessors) {
+    public void setEarliestFinishTimeOfAllProcessor(int earliestFinishTimeOfAllProcessors) {
         _earliestFinishTimeOfAllProcessors = earliestFinishTimeOfAllProcessors;
     }
 
-    public void set_remainingComputeTime(int remainingComputeTime) {
+    public void setRemainingComputeTime(int remainingComputeTime) {
         _remainingComputeTime = remainingComputeTime;
     }
 
@@ -167,14 +169,17 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         _hScore = hScore;
     }
 
+    public ScheduledTask getScheduledTask() {
+        return _scheduledTask;
+    }
+
     @Override
     public String toString(){
-
      return  "f: " + fScore +
-             " processorId: " + p_id
-             + " Task = " + node
-             + " startTime: " + startTime
-             + " finishTime: " + finishTime
+             " processorId: " + _scheduledTask.getProcessorID()
+             + " Task = " + _scheduledTask.getTask()
+             + " startTime: " + _scheduledTask.getStartTime()
+             + " finishTime: " + _scheduledTask.getFinishTime()
              + "   ||||| overall finish time: " +_overallFinishTime;
     }
 }

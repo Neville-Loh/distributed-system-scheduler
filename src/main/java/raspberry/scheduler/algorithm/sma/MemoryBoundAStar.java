@@ -36,6 +36,7 @@ public class MemoryBoundAStar implements Algorithm {
         TOTAL_NUM_PROCESSOR = totalProcessorNumber;
         numNode = _graph.getNumNodes();
         _criticalPathWeightTable = _graph.getCriticalPathWeightTable();
+
     }
 
     /**
@@ -76,17 +77,12 @@ public class MemoryBoundAStar implements Algorithm {
         Hashtable<INode, Integer> parentsLeft = this.getRootTable();
         int totalComputeTime = getTotalComputeTime();
         //Hashtable<MBSchedule, ForgottenSchedule> forgotten =  new Hashtable<MBSchedule, ForgottenSchedule>();
-
         // get all the no degree node, and create a schedule
         for (INode task: parentsLeft.keySet()){
             if (parentsLeft.get(task) == 0 ){
                 int remainingComputeTimeAfterTask = totalComputeTime - task.getValue();
-                MBSchedule newSchedule = new MBSchedule(
-                        null ,
-                        remainingComputeTimeAfterTask,
-                        0,
-                        task,
-                        0);
+                ScheduledTask scheduledTask = new ScheduledTask(0,task,0);
+                MBSchedule newSchedule = new MBSchedule(null , remainingComputeTimeAfterTask, scheduledTask);
                 newSchedule.setHScore(h(newSchedule));
 
                 //TODO remove
@@ -124,15 +120,15 @@ public class MemoryBoundAStar implements Algorithm {
                 if (parentsLeft.get(node) == 0 ){
                     for (int numProcessor=0; numProcessor < TOTAL_NUM_PROCESSOR; numProcessor++){
                         int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, node);
-                        Hashtable<INode, Integer> parentsLeftAfterSchedule = getChildTable(parentsLeft,node);
 
-                        MBSchedule newSchedule = cSchedule.createSubSchedule(numProcessor, node, earliestStartTime);
+                        ScheduledTask scheduledTask = new ScheduledTask(numProcessor,node,earliestStartTime);
+                        MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask);
                         newSchedule.setHScore(h(newSchedule));
 
                         //TODO remove
                         //System.out.println("\n" + newSchedule);
 
-
+                        Hashtable<INode, Integer> parentsLeftAfterSchedule = getChildTable(parentsLeft,node);
                         master.put(newSchedule,parentsLeftAfterSchedule);
                         _pq.add(newSchedule);
 
@@ -165,32 +161,40 @@ public class MemoryBoundAStar implements Algorithm {
 
     /**
      * Heuristic function
-     * @return
+     * @param schedule schedule that contained scheduled task T
+     * @return hScore the estimate cost of the current schedule to finish all non scheduled task
      */
     public int h(MBSchedule schedule){
-//        int emptyGaps = schedule.getOverallFinishTime() - schedule.getEarliestFinishTimeOfAllProcessorsProcessors();
-//        int perfectScheduling = schedule.getRemainingComputeTime() / TOTAL_NUM_PROCESSOR;
-//        return Math.max(schedule.getOverallFinishTime(), perfectScheduling - emptyGaps);
-
-        return schedule.finishTime + _criticalPathWeightTable.get(schedule.node);
+        ScheduledTask scheduledTask = schedule.getScheduledTask();
+        return scheduledTask.getFinishTime() + _criticalPathWeightTable.get(scheduledTask.getTask());
     }
 
 
     /**
+     * manhattanDistanceHeuristic, require storing the earliest start time
+     * @param schedule schedule that contained scheduled task T
+     * @return hScore the estimate cost of the current schedule to finish all non scheduled task
+     */
+    public int manhattanDistanceHeuristic(MBSchedule schedule){
+        int emptyGaps = schedule.getOverallFinishTime() - schedule.getEarliestFinishTimeOfAllProcessorsProcessors();
+        int perfectScheduling = schedule.getRemainingComputeTime() / TOTAL_NUM_PROCESSOR;
+        return Math.max(schedule.getOverallFinishTime(), perfectScheduling - emptyGaps);
+    }
+
+    /**
      * Calculate the earliest start time with given schedule and processor id
-     * @param parentSchedule
-     * @param processorId
-     * @param nodeToBeSchedule
-     * @return
+     * @param parentSchedule ??
+     * @param processorId ID of processor that the task
+     * @param nodeToBeSchedule The task schedule
+     * @return start time the earliest start time that a task begin in the given processor id
      */
     public int calculateEarliestStartTime(MBSchedule parentSchedule, int processorId, INode nodeToBeSchedule) {
         MBSchedule last_processorId_use = null; //last time processor with "processorId" was used.
         MBSchedule cParentSchedule = parentSchedule;
-
         //---------------------------------------- Getting start time
         // finding the first schedule that has same id
         while ( cParentSchedule != null){
-            if ( cParentSchedule.p_id == processorId ){
+            if ( cParentSchedule.getScheduledTask().getProcessorID() == processorId ){
                 last_processorId_use = cParentSchedule;
                 break;
             }
@@ -200,21 +204,22 @@ public class MemoryBoundAStar implements Algorithm {
         //last time parent was used. Needs to check for all processor.
         int finished_time_of_last_parent=0;
         if (last_processorId_use != null){
-            finished_time_of_last_parent = last_processorId_use.finishTime;
+            finished_time_of_last_parent = last_processorId_use.getScheduledTask().getFinishTime();
         }
         cParentSchedule = parentSchedule;
         while ( cParentSchedule != null){
             // for edges in current parent scheduled node
-            INode last_scheduled_node = cParentSchedule.node;
+            INode last_scheduled_node = cParentSchedule.getScheduledTask().getTask();
+
             for ( IEdge edge: _graph.getOutgoingEdges(last_scheduled_node.getName())){
 
                 // if edge points to  === childNode
-                if (edge.getChild() == nodeToBeSchedule && cParentSchedule.p_id != processorId){
+                if (edge.getChild() == nodeToBeSchedule && cParentSchedule.getScheduledTask().getProcessorID() != processorId){
                     //last_parent_processor[ cParentSchedule.p_id ] = true;
                     try {
-                        int communicationWeight = _graph.getEdgeWeight(cParentSchedule.node,nodeToBeSchedule);
-                        if (finished_time_of_last_parent < (cParentSchedule.finishTime + communicationWeight)){
-                            finished_time_of_last_parent = cParentSchedule.finishTime + communicationWeight;
+                        int communicationWeight = _graph.getEdgeWeight(cParentSchedule.getScheduledTask().getTask(),nodeToBeSchedule);
+                        if (finished_time_of_last_parent < (cParentSchedule.getScheduledTask().getFinishTime() + communicationWeight)){
+                            finished_time_of_last_parent = cParentSchedule.getScheduledTask().getFinishTime() + communicationWeight;
                         }
                     } catch (EdgeDoesNotExistException e){
                         System.out.println(e.getMessage());
@@ -227,8 +232,7 @@ public class MemoryBoundAStar implements Algorithm {
     }
 
     /**
-     * Some method that no one understand
-     * @return
+     * @return table of how many parent left
      */
     public Hashtable<INode, Integer> getRootTable(){
         Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>();
@@ -244,10 +248,10 @@ public class MemoryBoundAStar implements Algorithm {
     }
 
     /**
-     * Some other method that no one understand
+     * pop the child x, and recalculate dependency
      * @param parentTable
      * @param x
-     * @return
+     * @return table after popping the child
      */
     public Hashtable<INode, Integer> getChildTable(Hashtable<INode, Integer> parentTable, INode x){
         Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>(parentTable);
