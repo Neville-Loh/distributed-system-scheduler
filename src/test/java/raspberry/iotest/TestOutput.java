@@ -4,6 +4,7 @@ import org.junit.Test;
 import raspberry.scheduler.algorithm.Astar;
 import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.graph.IGraph;
+import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.InvalidFormatException;
 import raspberry.scheduler.io.Reader;
 import raspberry.scheduler.io.Writer;
@@ -19,7 +20,7 @@ public class TestOutput {
     public void testWriter() throws IOException, InvalidFormatException {
 
         //read in graph
-        Reader file1 = new Reader("src/test/resources/input/example1.dot");
+        GraphReader file1 = new GraphReader("src/test/resources/input/example1.dot");
         file1.read();
         IGraph graph = file1.getGraph();
 
