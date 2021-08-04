@@ -59,4 +59,15 @@ public class TwoWayPriorityQueue{
         return _ascendingFScore.size();
     }
 
+
+    /**
+     * Returns true if this queue contains the specified element.
+     * More formally, returns true if and only if this queue contains at least one element e such that o.equals(e).
+     * @param schedule to be search
+     * @return true if this queue contains the specified element
+     */
+    public boolean contains(MBSchedule schedule){
+        return _ascendingFScore.contains(schedule);
+    }
+
 }
