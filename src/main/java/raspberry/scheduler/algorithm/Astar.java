@@ -9,7 +9,7 @@ import raspberry.scheduler.Main;
 
 public class Astar implements Algorithm{
 
-    private Graph graph;
+    private IGraph graph;
 
     PriorityQueue<Schedule> pq;
     int numP;
@@ -19,7 +19,7 @@ public class Astar implements Algorithm{
 
     int maxCriticalPath;
 
-    public Astar(Graph graphToSolve, int numProcessors){
+    public Astar(IGraph graphToSolve, int numProcessors){
         this.graph = graphToSolve;
         pq = new PriorityQueue<Schedule>();
         visited = new ArrayList<Schedule>();
