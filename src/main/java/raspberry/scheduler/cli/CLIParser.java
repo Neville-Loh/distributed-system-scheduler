@@ -1,6 +1,9 @@
 package raspberry.scheduler.cli;
 
 import raspberry.scheduler.cli.CLIConfig;
+
+import javax.swing.text.html.parser.Parser;
+import java.awt.print.PrinterAbortException;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Objects;
@@ -45,9 +48,16 @@ public class CLIParser {
         // Have to add in exception if input is not an integer.
         CLIConfig.setDotFile(inputs[0]);
         System.out.println(String.format("---input file set ---- : %s",CLIConfig.getDotFile()));
-
-        CLIConfig.setNumProcessors(Integer.parseInt(inputs[1]));
-        System.out.println(String.format("---number of processors set ---- : %s",CLIConfig.get_numProcessors()));
+        try {
+            CLIConfig.setNumProcessors(Integer.parseInt(inputs[1]));
+        }catch(NumberFormatException e){
+            throw new ParserException("Please input a valid number of processors");
+        }
+        if(Integer.parseInt(inputs[1]) > 0) {
+            System.out.println(String.format("---number of processors set ---- : %s", CLIConfig.get_numProcessors()));
+        }else{
+            throw new ParserException("Number of processors cannot be less than 1");
+        }
 
         for (int i = 2; i < inputs.length; i++) {
 
@@ -56,8 +66,13 @@ public class CLIParser {
             // Have to add default values.
             if (Objects.equals(inputs[i], "-p")) {
                 try {
-                    CLIConfig.setNumCores(Integer.parseInt(inputs[i + 1]));
-                    System.out.println(String.format("---number of cores set---- : %s",inputs[i + 1]));
+                    if(Integer.parseInt(inputs[i+1])> 0){
+                        CLIConfig.setNumCores(Integer.parseInt(inputs[i + 1]));
+                        System.out.println(String.format("---number of cores set---- : %s", inputs[i + 1]));
+                        i++;
+                    } else{
+                        throw new ParserException("Number of cores cannot be less than 1");
+                    }
                 }
                 catch (ArrayIndexOutOfBoundsException e){
                     throw new ParserException(NO_INPUT_NUM_CORES);
@@ -78,13 +93,18 @@ public class CLIParser {
             else if (Objects.equals(inputs[i], "-o")) {
                 try {
                     CLIConfig.setOutputFile(inputs[i + 1]);
-                    System.out.println(String.format("---output filename set---- : %s",inputs[i + 1]));
+                    i++;
+                    System.out.println(String.format("---output filename set---- : %s",CLIConfig.getOutputFile()));
                 }
                 catch (ArrayIndexOutOfBoundsException e){
                     throw new ParserException(NO_OUTPUT_FILE_INPUT);
                 }
             }
+            else {
+                throw new ParserException(String.format("Invalid Argument: %s,   -help", inputs[i]));
+            }
         }
+
 
         // if user has not chosen to select an output file name, the default will be given.
         if (CLIConfig.getOutputFile() == null){

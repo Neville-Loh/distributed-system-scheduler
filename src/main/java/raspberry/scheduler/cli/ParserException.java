@@ -5,6 +5,7 @@ public class ParserException extends Exception{
 
     public ParserException(String message){
         _message = message;
+        System.out.println(message);
     }
 
 }
