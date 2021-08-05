@@ -18,8 +18,7 @@ public class CLIRunner {
 
         CLIConfig CLIConfig = CLIParser.parser(inputs);
         GraphReader reader = new GraphReader(CLIConfig.getDotFile());
-        reader.read();
-        IGraph graph = reader.getGraph();
+        IGraph graph = reader.read();
 
         Astar astar = new Astar(graph,CLIConfig.get_numProcessors());
         OutputSchedule outputSchedule = astar.findPath();

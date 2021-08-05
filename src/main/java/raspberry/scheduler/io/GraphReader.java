@@ -56,8 +56,4 @@ public class GraphReader {
         }
         return _graph;
     }
-
-    public IGraph getGraph() {
-        return _graph;
-    }
 }
