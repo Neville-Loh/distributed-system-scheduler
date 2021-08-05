@@ -1,4 +1,4 @@
-package main.java.raspberry.scheduler.cli;
+package raspberry.scheduler.cli;
 
 public class CLIConfig {
     /** CLI configuration interface **/

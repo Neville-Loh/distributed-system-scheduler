@@ -1,6 +1,6 @@
 package raspberry.scheduler.cli;
 
-import main.java.raspberry.scheduler.cli.CLIConfig;
+import raspberry.scheduler.cli.CLIConfig;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Objects;
@@ -30,8 +30,8 @@ public class CLIParser {
 
         // Check if the user requested for help.
         for (String input: inputs) {
-            if (input == "-help") {
-                throw new ParserException(HELP_MENU);
+            if (input.equals("-help")) {
+                System.out.println(HELP_MENU);
             }
         }
 
@@ -44,7 +44,10 @@ public class CLIParser {
         // Number of Processors is processed as a string.
         // Have to add in exception if input is not an integer.
         CLIConfig.setDotFile(inputs[0]);
+        System.out.println(String.format("---input file set ---- : %s",CLIConfig.getDotFile()));
+
         CLIConfig.setNumProcessors(Integer.parseInt(inputs[1]));
+        System.out.println(String.format("---number of processors set ---- : %s",CLIConfig.get_numProcessors()));
 
         for (int i = 2; i < inputs.length; i++) {
 
@@ -54,6 +57,7 @@ public class CLIParser {
             if (Objects.equals(inputs[i], "-p")) {
                 try {
                     CLIConfig.setNumCores(Integer.parseInt(inputs[i + 1]));
+                    System.out.println(String.format("---number of cores set---- : %s",inputs[i + 1]));
                 }
                 catch (ArrayIndexOutOfBoundsException e){
                     throw new ParserException(NO_INPUT_NUM_CORES);
@@ -61,7 +65,6 @@ public class CLIParser {
                 catch (NumberFormatException e){
                     throw new ParserException(NO_INTEGER_NUM_CORES);
                 }
-                break;
             }
 
             // Visualisation still needs to be implemented
@@ -75,11 +78,11 @@ public class CLIParser {
             else if (Objects.equals(inputs[i], "-o")) {
                 try {
                     CLIConfig.setOutputFile(inputs[i + 1]);
+                    System.out.println(String.format("---output filename set---- : %s",inputs[i + 1]));
                 }
                 catch (ArrayIndexOutOfBoundsException e){
                     throw new ParserException(NO_OUTPUT_FILE_INPUT);
                 }
-                break;
             }
         }
 
