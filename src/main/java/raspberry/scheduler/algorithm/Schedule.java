@@ -1,6 +1,7 @@
 package raspberry.scheduler.algorithm;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 
 import raspberry.scheduler.graph.INode;
 
@@ -38,9 +39,6 @@ public class Schedule implements Comparable<Schedule>{
             size = parentSchedule.size + 1;
         }
     }
-//    public Schedule(char id){
-//        char _id = id;
-//    }
 
     @Override
     public int compareTo(Schedule s){
@@ -48,13 +46,14 @@ public class Schedule implements Comparable<Schedule>{
     }
 
     //After computing the scheduling, call this method to get List of paths
-    public ArrayList<Schedule> getPath(){
-        // TODO: implement
+    public Hashtable<INode, int[]> getPath(){
+        Hashtable<INode, int[]> tmp;
         if (this.parent == null){
-            return new ArrayList<Schedule>( Arrays.asList(this) );
+            tmp = new Hashtable<INode, int[]>();
+        }else{
+            tmp = this.parent.getPath();
         }
-        ArrayList<Schedule> p = this.parent.getPath();
-        p.add(this);
-        return p;
+        tmp.put(this.node, new int[]{this.startTime,this.finishTime,this.p_id});
+        return tmp;
     }
 }

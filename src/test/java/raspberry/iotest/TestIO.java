@@ -2,35 +2,41 @@ package raspberry.iotest;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
-import java.net.URL;
-
-import org.junit.Before;
+import com.paypal.digraph.parser.GraphParserException;
 import org.junit.Test;
 
 
+import raspberry.scheduler.io.GraphReader;
+import raspberry.scheduler.io.InvalidFormatException;
 import raspberry.scheduler.io.Reader;
 
+import java.io.FileNotFoundException;
+
 public class TestIO {
-	
-	@Before
-	public void setup() {
-//		URL url = getClass().getResource("example.dot");
-		Reader file1 = new Reader("src/test/resources/example.dot");
 
+    /**
+     * test normal input
+     * @throws FileNotFoundException
+     */
+    @Test
+    public void testInput() throws  FileNotFoundException {
+//        Reader file1 = new Reader("src/test/resources/input/example1.dot");
+//        file1.read();
+        GraphReader graphReader = new GraphReader("src/test/resources/input/example.dot");
+        graphReader.read();
+    }
 
-//		System.out.println(directory.getAbsolutePath());
-	}
-
-	@Test
-	public void testNode() {
-		//fail("Not yet implemented");
-	}
-
-	@Test
-	public void testEdge() {
-		//fail("Not yet implemented");
-	}
-
-
+    /**
+     * test input file with incorrect first line format
+     */
+    @Test
+    public void testIncorrectInvalidFormat() throws FileNotFoundException {
+            try {
+                GraphReader graphReader = new GraphReader("src/test/resources/input/incorrectexample.dot");
+                graphReader.read();
+                fail();
+            } catch (GraphParserException e) {
+                // This exception is expected - ignore it.
+            }
+    }
 }

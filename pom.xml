@@ -41,6 +41,12 @@
             <artifactId>jfoenix</artifactId>
             <version>8.0.8</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.paypal.digraph/digraph-parser -->
+        <dependency>
+            <groupId>com.paypal.digraph</groupId>
+            <artifactId>digraph-parser</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
 
