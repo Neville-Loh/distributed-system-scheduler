@@ -1,101 +1,147 @@
 package raspberry.scheduler.cli;
 
 public class CLIConfig {
-    /** CLI configuration interface **/
+    /**
+     * @author Alan
+     * CLIConfig class holds all the required and optional settings given for the program
+     */
 
+    /**
+     * Required settings
+     */
     private int _numProcessors;
     private String _dotFile;
 
 
-    //Optional settings
-
-    //Number of parallel cores
+    /**
+     * Optional settings
+     **/
+    /**
+     * Number of parallel cores
+     */
     private int _numCores;
 
-    //output file name
+    /**
+     * output file name
+     */
     private String _outputFile;
-    //visualise the search
+    /**
+     * visualise the search
+     */
     private boolean _visualise;
 
-    //default values
-
-    //if no number of cores is defined - run sequentially
+    /**
+     * Default values
+     * If no number of cores is defined - run sequntially
+     * If no file name is defined - default is "INPUT-output.dot"
+     */
     public static final int SEQUENTIAL_EXEC = 1;
-    //if no file name is defined - default is "INPUT-output.dot"
     public static final int DEFAULT_NUMBER_OF_PROCESSORS = 1;
 
 
-    //Default constructor
-    public CLIConfig(){
+    public CLIConfig() {
         _visualise = false;
         _numCores = SEQUENTIAL_EXEC;
     }
 
-    // I made this into a string to resolve an issue.
-    //Sets the number of processors running the algorithm
-    public void setNumProcessors(int numProcessors){
+    /**
+     * Sets number of proccessors running for the program
+     *
+     * @param numProcessors is the number of processes set by the user
+     */
+    public void setNumProcessors(int numProcessors) {
         _numProcessors = numProcessors;
     }
-    //returns the number of processors running the algorithm
-    public int get_numProcessors(){
+
+    /**
+     * Returns the number of processes set
+     *
+     * @return _numProcessors - an int that gives the number of processors set
+     */
+    public int get_numProcessors() {
         return _numProcessors;
     }
 
-    // throws ParserConfigurationException <- add this later for checking whether the input is valid
-    // pnum = numProcessors in string format
-    public int get_numProcessors(String pnum){
-        _numProcessors = DEFAULT_NUMBER_OF_PROCESSORS;
-        _numProcessors = Integer.parseInt(pnum);
-        return _numProcessors;
-    }
 
-    //sets the specified input dot file
-    public void setDotFile(String fileName){
+    /**
+     * Sets the default input dot file read in by the program
+     *
+     * @param fileName the file name as a string for the input dot file
+     */
+    public void setDotFile(String fileName) {
         _dotFile = fileName;
     }
 
-    //returns input dot file name as a string
-    public String getDotFile(){
+    /**
+     * returns input dot file name as a string
+     *
+     * @return _dotFile - the input dot file name as a String
+     */
+    public String getDotFile() {
         return _dotFile;
     }
 
-    //sets the number of dedicated cores to run the program - default value is one.
-    public void setNumCores(int numCores){
+    /**
+     * /sets the number of dedicated cores to run the program - default value is one.
+     *
+     * @param numCores - the number of cores set by the user
+     */
+    public void setNumCores(int numCores) {
         _numCores = numCores;
     }
 
-    //returns the number of dedicated cores to run the program
-    public int getNumCores(){
+    /**
+     * returns the number of dedicated cores to run the program
+     *
+     * @return _numCores - the number of cores set to run the program
+     */
+    public int getNumCores() {
         return _numCores;
     }
 
-    //sets wether or not program has to be visualised - default is false
-    public void setVisualise(boolean visualise){
+    /**
+     * sets whether or not program has to be visualised - default is false
+     *
+     * @param visualise - boolean value - if false no vislisation, if true has visualisation.
+     */
+    public void setVisualise(boolean visualise) {
         _visualise = visualise;
     }
 
-    //returns a boolean value for visualise to represent whether the program needs to be visualised.
-    public boolean getVisualise(){
+    /**
+     * returns a boolean value for visualise to represent whether the program needs to be visualised.
+     *
+     * @return _visualise - a boolean value of true or false, where true means program needs to be visulised
+     * false meaning it doesn't
+     */
+    public boolean getVisualise() {
         return _visualise;
     }
 
-    //Sets the output file name - default name format is input file name + out.dot i.e. INPUT-output.dot
-    public void setOutputFile(String fileName){
-        _outputFile = fileName;
+    /**
+     *Sets the output file name - default name format is input file name + out.dot i.e. INPUT-output.dot
+     * @param fileName - the output file name given by the user. If filename has has .dot stated, it will be concatenated.
+     */
+    public void setOutputFile(String fileName) {
+        fileName = fileName.replaceAll(".dot", "");
+        _outputFile = fileName.concat(".dot");
     }
 
-    //returns the Output file name as a String
-    public String getOutputFile(){
+    /**
+     * returns the Output file name as a String
+     * @return _outputFile - returns the output file name as a string
+     */
+    public String getOutputFile() {
         return _outputFile;
     }
 
-    //sets the default Output file name as a string in the INPUT-output.dot format
-    public void defaultOutput(){
-        String inputFileName = _dotFile.substring(0, _dotFile.length() - 4);
-        _outputFile = _dotFile.concat(inputFileName);
+    /**
+     * sets the default Output file name as a string in the INPUT-output.dot format
+     */
+    public void defaultOutput() {
+        String inputFileName = _dotFile.replaceAll(".dot", "");
+        _outputFile = inputFileName.concat("-output.dot");
     }
-
-
 
 
 }
