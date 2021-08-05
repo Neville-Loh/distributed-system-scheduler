@@ -33,7 +33,7 @@ public class TestOutput {
         System.out.println("\nIs correct schedule: " + s.isValid() + "\n"+ "finished time: " + schedule.getFinishTime());
 
         //write to output file
-        Writer writer = new Writer("outputExample","src/test/resources/output", graph, schedule);
+        Writer writer = new Writer("src/test/resources/output/test.dot", graph, schedule);
         writer.write();
     }
 }

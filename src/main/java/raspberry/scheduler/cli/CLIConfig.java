@@ -92,7 +92,7 @@ public class CLIConfig {
     //sets the default Output file name as a string in the INPUT-output.dot format
     public void defaultOutput(){
         String inputFileName = _dotFile.substring(0, _dotFile.length() - 4);
-        _outputFile = _dotFile.concat(inputFileName);
+        _outputFile = inputFileName.concat("-output.dot");
     }
 
 

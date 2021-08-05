@@ -30,7 +30,7 @@ public class GraphReader {
         _filepath = filepath;
     }
 
-    public void read() throws FileNotFoundException {
+    public IGraph read() throws FileNotFoundException {
         GraphParser parser = new GraphParser(new FileInputStream(_filepath));
         System.out.println(parser.getGraphId());
 
@@ -54,6 +54,7 @@ public class GraphReader {
             int weight = Integer.parseInt((String) edge.getAttributes().get("Weight"));
             _graph.addEdge(edge.getNode1().getId(),edge.getNode2().getId(),weight);
         }
+        return _graph;
     }
 
     public IGraph getGraph() {
