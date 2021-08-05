@@ -7,7 +7,6 @@ import raspberry.scheduler.graph.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.InvalidFormatException;
-import raspberry.scheduler.io.Reader;
 import raspberry.scheduler.io.Writer;
 
 import java.io.IOException;
@@ -22,8 +21,7 @@ public class TestOutput {
 
         //read in graph
         GraphReader file1 = new GraphReader("src/test/resources/input/example1.dot");
-        file1.read();
-        IGraph graph = file1.getGraph();
+        IGraph graph = file1.read();
 
         //run algo and get output schedule
         Astar astar = new Astar(graph,2);
@@ -33,7 +31,7 @@ public class TestOutput {
         System.out.println("\nIs correct schedule: " + s.isValid() + "\n"+ "finished time: " + schedule.getFinishTime());
 
         //write to output file
-        Writer writer = new Writer("outputExample","src/test/resources/output", graph, schedule);
+        Writer writer = new Writer("src/test/resources/output/test.dot", graph, schedule);
         writer.write();
     }
 }
