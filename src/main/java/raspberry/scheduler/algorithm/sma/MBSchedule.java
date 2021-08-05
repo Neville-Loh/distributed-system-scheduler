@@ -17,10 +17,10 @@ import raspberry.scheduler.graph.INode;
  */
 public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     public MBSchedule parent;
+    private ScheduledTask _scheduledTask;
+
     public int size;
-    public int fScore;
-
-
+    private int _fScore;
     private int _hScore;
 
     private ScheduledTask _scheduledTask;
@@ -28,9 +28,17 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 
 
     private int _overallFinishTime;
+
+    // Manhattan heuristic specific attribute
     private int _earliestFinishProcessorID;
     private int _earliestFinishTimeOfAllProcessors;
     private int _remainingComputeTime;
+
+
+    // SMA specific attribute
+    private Hashtable<MBSchedule,Integer> _forgoten;
+
+
 
     /**
      * Class constructor
@@ -40,6 +48,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     public MBSchedule(MBSchedule parentSchedule, int remainingComputeTime, ScheduledTask scheduledTask)  {
         // scheduled task value
         _scheduledTask = scheduledTask;
+        _forgoten = null;
 
         // linked-list attribute
         parent = parentSchedule;
@@ -81,7 +90,18 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     }
 
 
+    /**
+     *
+     */
+    public void forget(MBSchedule subSchedule){
+        if (_forgoten == null){
+            _forgoten = new Hashtable<MBSchedule, Integer>();
+        }
+        subSchedule.setForgottenTableToNull();
+        _forgoten.put(subSchedule, subSchedule.getFScore());
+        _fScore = Math.min(_fScore,subSchedule.getFScore());
 
+    }
 
 
     /**
@@ -132,7 +152,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 
     @Override
     public int compareTo(MBSchedule s){
-        return Integer.compare(this.fScore, s.fScore);
+        return Integer.compare(this._fScore, s.getFScore());
     }
 
     @Override
@@ -199,8 +219,16 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         return _hScore;
     }
 
+    public Hashtable<MBSchedule, Integer> getForgottenTable() {
+        return _forgoten;
+    }
+
+    public void setForgottenTableToNull(){
+        _forgoten = null;
+    }
+
     public void setHScore(int hScore) {
-        fScore = _overallFinishTime + hScore;
+        _fScore = _overallFinishTime + hScore;
         _hScore = hScore;
     }
 
@@ -208,9 +236,13 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         return _scheduledTask;
     }
 
+    public int getFScore() {
+        return _fScore;
+    }
+
     @Override
     public String toString(){
-     return  "f: " + fScore +
+     return  "f: " + _fScore +
              " processorId: " + _scheduledTask.getProcessorID()
              + " Task = " + _scheduledTask.getTask()
              + " startTime: " + _scheduledTask.getStartTime()

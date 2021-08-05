@@ -20,7 +20,7 @@ public class MemoryBoundAStar implements Algorithm {
     private TwoWayPriorityQueue _pq;
     private final int TOTAL_NUM_PROCESSOR;
     private int numNode;
-    private final int MAX_NUMBER_NODE = 2000;
+    private final int MAX_NUMBER_NODE = 50000;
     private Hashtable<INode, Integer> _criticalPathWeightTable;
 
 
@@ -44,11 +44,14 @@ public class MemoryBoundAStar implements Algorithm {
      * @return computeTime
      */
     public int getTotalComputeTime(){
-        System.out.println("total compute time: " + _graph.getAllNodes().stream().mapToInt(INode::getValue).sum());
         return _graph.getAllNodes().stream().mapToInt(INode::getValue).sum();
     }
 
 
+    /**
+     *
+     * @return OutputSchedule
+     */
     @Override
     public OutputSchedule findPath() {
         int totalComputeTime = getTotalComputeTime();
@@ -82,50 +85,47 @@ public class MemoryBoundAStar implements Algorithm {
             }
 
             Collection<INode> nodes;
-//            if (forgotten.containsKey(cSchedule)){
-//                nodes = forgotten.get(cSchedule).getNodes();
-//            } else {
-//                nodes = parentsLeft.keySet();
-//            }
+            if (cSchedule.getForgottenTable() != null){
+                cSchedule.getForgottenTable().keySet().forEach(forgottenSchedule ->
+                        _pq.add(forgottenSchedule));
+                cSchedule.setForgottenTableToNull();
+            } else {
 
-            nodes = parentsLeft.keySet();
+                nodes = parentsLeft.keySet();
+                for (INode node: nodes){
+                    if (parentsLeft.get(node) == 0 ){
+                        for (int numProcessor=0; numProcessor < TOTAL_NUM_PROCESSOR; numProcessor++){
+                            int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, node);
 
-            for (INode node: nodes){
-                if (parentsLeft.get(node) == 0 ){
-                    for (int numProcessor=0; numProcessor < TOTAL_NUM_PROCESSOR; numProcessor++){
-                        int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, node);
+                            ScheduledTask scheduledTask = new ScheduledTask(numProcessor,node,earliestStartTime);
+                            MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask);
+                            newSchedule.setHScore(h(newSchedule));
 
-                        ScheduledTask scheduledTask = new ScheduledTask(numProcessor,node,earliestStartTime);
-                        MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask);
-                        newSchedule.setHScore(h(newSchedule));
+                            //TODO remove
+                            //System.out.println("\n" + newSchedule);
 
-                        //TODO remove
-                        //System.out.println("\n" + newSchedule);
+                            Hashtable<INode, Integer> parentsLeftAfterSchedule = getChildTable(parentsLeft,node);
+                            master.put(newSchedule,parentsLeftAfterSchedule);
+                            _pq.add(newSchedule);
 
-                        Hashtable<INode, Integer> parentsLeftAfterSchedule = newSchedule.parentsLeftsWithoutTask(node,_graph);
-                        newSchedule.setParentsLeftOfSchedulableTask(
-                                newSchedule.parentsLeftsWithoutTask(node,_graph));
-                        _pq.add(newSchedule);
-
+                        }
                     }
                 }
             }
 
-//            while (_pq.size() > MAX_NUMBER_NODE){
-//                ForgottenSchedule forgottenSchedule;
-//                MBSchedule badSchedule = _pq.pollMax();
-//                MBSchedule badScheduleParent = badSchedule.parent;
-//
-//                // if badNode parent already forget some other node
-//                if (forgotten.containsKey(badScheduleParent)){
-//                    forgottenSchedule = forgotten.get(badScheduleParent);
-//
-//                } else {
-//                    forgottenSchedule = new ForgottenSchedule(badSchedule.fScore);
-//                    forgotten.put(badScheduleParent,forgottenSchedule);
-//                }
-//                forgottenSchedule.addNode(badSchedule.node);
-//            }
+            // Forget Routine
+            while (_pq.size() > MAX_NUMBER_NODE){
+                MBSchedule badSchedule = _pq.pollMax();
+                //System.out.println(badSchedule);
+                if (badSchedule.parent != null){
+                    MBSchedule badScheduleParent = badSchedule.parent;
+                    badScheduleParent.forget(badSchedule);
+                    // if parent is not in the queue
+                    if (!_pq.contains(badScheduleParent)) {
+                        _pq.add(badScheduleParent);
+                    }
+                }
+            }
         }
 
         System.out.print("\n === THE FINAL ANSWER ===");

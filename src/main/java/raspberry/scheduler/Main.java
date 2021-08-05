@@ -37,12 +37,11 @@ public class Main {
         //GraphReader r = new GraphReader("Nodes_10_Random.dot"); //50
         //GraphReader r = new GraphReader("Nodes_11_OutTree.dot"); //350
         r.read();
-
         g = r.getGraph();
 
         //g = new Graph("test graph");
         //makeGraph(g);
-        //g.getCriticalPathWeightTable();
+        g.getCriticalPathWeightTable();
 
         Astar a = new Astar(g,2);
         MemoryBoundAStar mba = new MemoryBoundAStar(g,2);
