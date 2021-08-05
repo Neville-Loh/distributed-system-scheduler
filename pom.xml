@@ -16,7 +16,6 @@
     </properties>
 
 
-
     <!-- Dependencies List-->
     <dependencies>
         <dependency>
@@ -69,7 +68,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>${javafx.maven.plugin.version}</version>
                 <configuration>
-                    <mainClass>raspberry.scheduler.app.App</mainClass>
+                    <mainClass>raspberry.scheduler.cli.CLIRunner</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -85,7 +84,7 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        raspberry.scheduler.app.App
+                                        raspberry.scheduler.cli.CLIRunner
                                     </mainClass>
                                 </manifest>
                             </archive>
