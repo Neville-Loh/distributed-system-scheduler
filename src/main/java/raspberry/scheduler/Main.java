@@ -4,7 +4,6 @@ import raspberry.scheduler.algorithm.Astar;
 import raspberry.scheduler.algorithm.sma.MemoryBoundAStar;
 import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.graph.EdgeDoesNotExistException;
-import raspberry.scheduler.graph.Graph;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.InvalidFormatException;
@@ -32,11 +31,11 @@ public class Main {
 
 
 
-        //GraphReader r = new GraphReader("Nodes_7_OutTree.dot"); //28
+        GraphReader r = new GraphReader("Nodes_7_OutTree.dot"); //28
         //GraphReader r = new GraphReader("Nodes_8_Random.dot"); //581
         //GraphReader r = new GraphReader("Nodes_9_SeriesParallel.dot"); //55
         //GraphReader r = new GraphReader("Nodes_10_Random.dot"); //50
-        GraphReader r = new GraphReader("Nodes_11_OutTree.dot"); //350
+        //GraphReader r = new GraphReader("Nodes_11_OutTree.dot"); //350
         r.read();
         g = r.getGraph();
 

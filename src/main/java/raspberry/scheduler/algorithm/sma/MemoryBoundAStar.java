@@ -54,33 +54,29 @@ public class MemoryBoundAStar implements Algorithm {
      */
     @Override
     public OutputSchedule findPath() {
-        Hashtable<MBSchedule, Hashtable<INode, Integer>> master = new Hashtable<MBSchedule, Hashtable<INode, Integer>>();
-        Hashtable<INode, Integer> parentsLeft = this.getRootTable();
         int totalComputeTime = getTotalComputeTime();
-        //Hashtable<MBSchedule, ForgottenSchedule> forgotten =  new Hashtable<MBSchedule, ForgottenSchedule>();
-        // get all the no degree node, and create a schedule
-        for (INode task: parentsLeft.keySet()){
-            if (parentsLeft.get(task) == 0 ){
-                int remainingComputeTimeAfterTask = totalComputeTime - task.getValue();
-                ScheduledTask scheduledTask = new ScheduledTask(0,task,0);
-                MBSchedule newSchedule = new MBSchedule(null , remainingComputeTimeAfterTask, scheduledTask);
-                newSchedule.setHScore(h(newSchedule));
-
-                //TODO remove
-                System.out.println(newSchedule);
-
-                master.put(newSchedule,getChildTable(parentsLeft,task));
-                _pq.add(newSchedule);
-            }
-        }
-        System.out.print("\n=== WHILE LOOP ===");
+        Hashtable<INode, Integer> parentsLeft;
         MBSchedule cSchedule;
+
+
+
+        for (INode task: _graph.getNodesWithNoInDegree()){
+            int remainingComputeTimeAfterTask = totalComputeTime - task.getValue();
+            ScheduledTask scheduledTask = new ScheduledTask(0,task,0);
+            MBSchedule newSchedule = new MBSchedule(null , remainingComputeTimeAfterTask, scheduledTask);
+            newSchedule.setHScore(h(newSchedule));
+            //TODO remove
+            System.out.println(newSchedule);
+
+            newSchedule.setParentsLeftOfSchedulableTask(
+                    newSchedule.parentsLeftsWithoutTask(task,_graph));
+            _pq.add(newSchedule);
+        }
         while (true){
             System.out.printf("\nPQ SIZE :  %d", _pq.size());
             // pull current node
             cSchedule = _pq.pollMin();
-            parentsLeft = master.get(cSchedule);
-            master.remove(cSchedule);
+            parentsLeft = cSchedule.getParentsLeftOfSchedulableTask();
             //System.out.println(" --------Pulled scheduled = " + cSchedule);
 
             // if all task is scheduled
@@ -150,7 +146,7 @@ public class MemoryBoundAStar implements Algorithm {
 
 
     /**
-     * manhattanDistanceHeuristic, require storing the earliest start time
+     * Manhattan Distance Heuristic, require storing the earliest start time
      * @param schedule schedule that contained scheduled task T
      * @return hScore the estimate cost of the current schedule to finish all non scheduled task
      */
@@ -159,6 +155,7 @@ public class MemoryBoundAStar implements Algorithm {
         int perfectScheduling = schedule.getRemainingComputeTime() / TOTAL_NUM_PROCESSOR;
         return Math.max(schedule.getOverallFinishTime(), perfectScheduling - emptyGaps);
     }
+
 
     /**
      * Calculate the earliest start time with given schedule and processor id
@@ -179,7 +176,6 @@ public class MemoryBoundAStar implements Algorithm {
             }
             cParentSchedule = cParentSchedule.parent;
         }
-
         //last time parent was used. Needs to check for all processor.
         int finished_time_of_last_parent=0;
         if (last_processorId_use != null){
@@ -210,36 +206,7 @@ public class MemoryBoundAStar implements Algorithm {
         return finished_time_of_last_parent;
     }
 
-    /**
-     * @return table of how many parent left
-     */
-    public Hashtable<INode, Integer> getRootTable(){
-        Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>();
-        for (INode i : _graph.getAllNodes()){
-            tmp.put(i,0);
-        }
-        for (INode i : _graph.getAllNodes()){
-            for (IEdge j : _graph.getOutgoingEdges(i.getName())){
-                tmp.put( j.getChild(), tmp.get(j.getChild()) + 1);
-            }
-        }
-        return tmp;
-    }
 
-    /**
-     * pop the child x, and recalculate dependency
-     * @param parentTable
-     * @param x
-     * @return table after popping the child
-     */
-    public Hashtable<INode, Integer> getChildTable(Hashtable<INode, Integer> parentTable, INode x){
-        Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>(parentTable);
-        tmp.remove(x);
-        for (IEdge i : _graph.getOutgoingEdges(x.getName())){
-            tmp.put( i.getChild(),  tmp.get(i.getChild()) - 1 );
-        }
-        return tmp;
-    }
 
 
 }

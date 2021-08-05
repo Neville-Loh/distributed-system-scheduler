@@ -5,6 +5,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 import raspberry.scheduler.algorithm.Schedule;
+import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 
@@ -21,6 +22,9 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     public int size;
     private int _fScore;
     private int _hScore;
+
+    private ScheduledTask _scheduledTask;
+    private Hashtable<INode, Integer> _parentsLeftOfSchedulableTask;
 
 
     private int _overallFinishTime;
@@ -68,14 +72,17 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 
         }
 
+        // setup new scheduled
+
+
 
     }
 
 
     /**
-     *
-     * @param scheduledTask
-     * @return
+     * Create sub-schedule using the calling class as parent
+     * @param scheduledTask task to be schedule
+     * @return sub-schedule
      */
     public MBSchedule createSubSchedule(ScheduledTask scheduledTask){
         int remainingComputeTime = _remainingComputeTime - scheduledTask.getTask().getValue();
@@ -115,6 +122,27 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         return temp;
     }
 
+    /**
+     * pop the child x, and recalculate dependency
+     * @param dependencyGraph graph which contain the task dependency
+     * @param task task to be scheduled
+     * @return table after popping the child
+     */
+    public Hashtable<INode, Integer> parentsLeftsWithoutTask(INode task, IGraph dependencyGraph){
+        Hashtable<INode, Integer> temp;
+        if (parent!= null){
+            temp = new Hashtable<INode, Integer>(parent.getParentsLeftOfSchedulableTask());
+        } else {
+            temp = dependencyGraph.getInDegreeCountOfAllNodes();
+        }
+        temp.remove(task);
+        dependencyGraph.getOutgoingEdges(task.getName()).forEach( edge ->
+                temp.put( edge.getChild(),  temp.get(edge.getChild()) - 1 ));
+        return temp;
+    }
+
+
+
 
     /*
      * Comparator and Iterator method
@@ -144,7 +172,16 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 
     /*
      * Getter and Setter Method
+     * Currently store all method, optimizing version will store less
      */
+
+    public Hashtable<INode, Integer> getParentsLeftOfSchedulableTask() {
+        return _parentsLeftOfSchedulableTask;
+    }
+
+    public void setParentsLeftOfSchedulableTask(Hashtable<INode, Integer> parentsLeftOfSchedulableTask) {
+        _parentsLeftOfSchedulableTask = parentsLeftOfSchedulableTask;
+    }
 
     public int getOverallFinishTime() {
         return _overallFinishTime;
