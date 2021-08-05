@@ -26,21 +26,33 @@ public class GraphReader {
     private IGraph _graph;
     private String _filepath;
 
+    /**
+     * GraphReader constructor to read input file
+     * @param filepath the filepath of the input .dot file
+     */
     public GraphReader(String filepath) {
         _filepath = filepath;
     }
 
+    /**
+     * reads the input file and converts it into our IGraph object
+     * @return graph , an IGraph object
+     * @throws FileNotFoundException
+     */
     public IGraph read() throws FileNotFoundException {
+        //create parser from library that will read in dot file
         GraphParser parser = new GraphParser(new FileInputStream(_filepath));
         System.out.println(parser.getGraphId());
 
         //initialise graph with name
         _graph = new Graph(parser.getGraphId());
+
+        //get nodes and edges from parser
         Map<String, GraphNode> nodes = parser.getNodes();
         Map<String, GraphEdge> edges = parser.getEdges();
 
         System.out.println("--- nodes:");
-        // add nodes
+        // add nodes to _graph
         for (GraphNode node : nodes.values()) {
             System.out.println(node.getId() + " " + node.getAttributes());
             int weight = Integer.parseInt((String) node.getAttributes().get("Weight"));
@@ -48,7 +60,7 @@ public class GraphReader {
         }
 
         System.out.println("--- edges:");
-        // add edges
+        // add edges to _graph
         for (GraphEdge edge : edges.values()) {
             System.out.println(edge.getNode1().getId() + "->" + edge.getNode2().getId() + " " + edge.getAttributes());
             int weight = Integer.parseInt((String) edge.getAttributes().get("Weight"));

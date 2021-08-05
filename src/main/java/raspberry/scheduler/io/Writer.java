@@ -51,6 +51,7 @@ public class Writer {
 
         //get filename without .dot extension
         String name = _filename.substring(0, _filename.lastIndexOf('.'));
+
         //write first line
         pw.println(String.format("digraph \"%s\" {", name));
 
@@ -77,9 +78,7 @@ public class Writer {
         //retrieve file name without the path
         Path p = Paths.get(_filepath);
         _filename = p.getFileName().toString();
-        System.out.println("----------------");
-        System.out.println(_filename);
-        System.out.println("----------------");
+
         try {
             File file = new File(_filepath);
             if (file.createNewFile()) {
