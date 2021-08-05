@@ -20,7 +20,7 @@ public class MemoryBoundAStar implements Algorithm {
     private TwoWayPriorityQueue _pq;
     private final int TOTAL_NUM_PROCESSOR;
     private int numNode;
-    private final int MAX_NUMBER_NODE = 50000;
+    private final int MAX_NUMBER_NODE = 8;
     private Hashtable<INode, Integer> _criticalPathWeightTable;
 
 
@@ -58,54 +58,47 @@ public class MemoryBoundAStar implements Algorithm {
         Hashtable<INode, Integer> parentsLeft;
         MBSchedule cSchedule;
 
+        MBSchedule head = new MBSchedule();
 
 
+        // Initial set up for starting point
         for (INode task: _graph.getNodesWithNoInDegree()){
             int remainingComputeTimeAfterTask = totalComputeTime - task.getValue();
             ScheduledTask scheduledTask = new ScheduledTask(0,task,0);
             MBSchedule newSchedule = new MBSchedule(null , remainingComputeTimeAfterTask, scheduledTask);
             newSchedule.setHScore(h(newSchedule));
-            //TODO remove
-            System.out.println(newSchedule);
-
             newSchedule.setParentsLeftOfSchedulableTask(
                     newSchedule.parentsLeftsWithoutTask(task,_graph));
             _pq.add(newSchedule);
         }
+
+
+        //
         while (true){
             System.out.printf("\nPQ SIZE :  %d", _pq.size());
-            // pull current node
             cSchedule = _pq.pollMin();
-            parentsLeft = cSchedule.getParentsLeftOfSchedulableTask();
-            //System.out.println(" --------Pulled scheduled = " + cSchedule);
-
             // if all task is scheduled
             if (cSchedule.size == numNode){
                 break;
             }
 
+            parentsLeft = cSchedule.getParentsLeftOfSchedulableTask();
             Collection<INode> nodes;
             if (cSchedule.getForgottenTable() != null){
                 cSchedule.getForgottenTable().keySet().forEach(forgottenSchedule ->
                         _pq.add(forgottenSchedule));
                 cSchedule.setForgottenTableToNull();
             } else {
-
                 nodes = parentsLeft.keySet();
                 for (INode node: nodes){
                     if (parentsLeft.get(node) == 0 ){
                         for (int numProcessor=0; numProcessor < TOTAL_NUM_PROCESSOR; numProcessor++){
                             int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, node);
-
                             ScheduledTask scheduledTask = new ScheduledTask(numProcessor,node,earliestStartTime);
                             MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask);
                             newSchedule.setHScore(h(newSchedule));
-
-                            //TODO remove
-                            //System.out.println("\n" + newSchedule);
-
-                            Hashtable<INode, Integer> parentsLeftAfterSchedule = getChildTable(parentsLeft,node);
-                            master.put(newSchedule,parentsLeftAfterSchedule);
+                            newSchedule.setParentsLeftOfSchedulableTask(
+                                    newSchedule.parentsLeftsWithoutTask(node,_graph));
                             _pq.add(newSchedule);
 
                         }
@@ -116,7 +109,7 @@ public class MemoryBoundAStar implements Algorithm {
             // Forget Routine
             while (_pq.size() > MAX_NUMBER_NODE){
                 MBSchedule badSchedule = _pq.pollMax();
-                //System.out.println(badSchedule);
+                System.out.println(badSchedule);
                 if (badSchedule.parent != null){
                     MBSchedule badScheduleParent = badSchedule.parent;
                     badScheduleParent.forget(badSchedule);
@@ -127,7 +120,6 @@ public class MemoryBoundAStar implements Algorithm {
                 }
             }
         }
-
         System.out.print("\n === THE FINAL ANSWER ===");
         Helper.printPath(cSchedule);
         return new Solution(cSchedule,TOTAL_NUM_PROCESSOR);

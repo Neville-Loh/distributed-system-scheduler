@@ -151,7 +151,7 @@ public class Graph implements IGraph{
                 result.put(edge.getChild(), result.get(edge.getChild()) + 1);
             });
         });
-        return null;
+        return result;
     }
 
     private int dfs(String node){

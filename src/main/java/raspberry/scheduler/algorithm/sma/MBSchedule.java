@@ -23,7 +23,6 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     private int _fScore;
     private int _hScore;
 
-    private ScheduledTask _scheduledTask;
     private Hashtable<INode, Integer> _parentsLeftOfSchedulableTask;
 
 
@@ -40,6 +39,9 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 
 
 
+    public MBSchedule(){
+
+    }
     /**
      * Class constructor
      * @param parentSchedule
