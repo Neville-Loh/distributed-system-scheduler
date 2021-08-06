@@ -84,7 +84,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         int remainingComputeTime = _remainingComputeTime - scheduledTask.getTask().getValue();
         MBSchedule subSchedule = new MBSchedule(this, remainingComputeTime, scheduledTask);
         subSchedule.setParentsLeftOfSchedulableTask(
-                parentsLeftsWithoutTask(scheduledTask.getTask(),dependencyGraph));
+                subSchedule.parentsLeftsWithoutTask(scheduledTask.getTask(),dependencyGraph));
         return subSchedule;
     }
 

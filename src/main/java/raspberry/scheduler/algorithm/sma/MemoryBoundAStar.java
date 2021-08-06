@@ -105,33 +105,29 @@ public class MemoryBoundAStar implements Algorithm {
                  */
                 Hashtable<ScheduledTask, Integer> forgottenSchedule = cSchedule.getForgottenTable();
                 for (ScheduledTask scheduledTask: forgottenSchedule.keySet()){
-                    MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask);
-                    newSchedule.setFScore(forgottenSchedule.get(scheduledTask));
-                    newSchedule.setParentsLeftOfSchedulableTask(
-                            newSchedule.parentsLeftsWithoutTask(scheduledTask.getTask(), _graph));
-                    //forgottenSchedule.remove(scheduledTask);
-                    _pq.add(newSchedule);
+                    MBSchedule subSchedule = cSchedule.createSubSchedule(scheduledTask, _graph);
+                    subSchedule.setFScore(forgottenSchedule.get(scheduledTask));
+                    _pq.add(subSchedule);
                 }
                 cSchedule.setForgottenTableToNull();
 
             } else {
                 parentsLeft = cSchedule.getParentsLeftOfSchedulableTask();
-                Collection<INode> nodes = parentsLeft.keySet();
-                for (INode node: nodes){
-                    if (parentsLeft.get(node) == 0 ){
+                Collection<INode> taskList = parentsLeft.keySet();
+                for (INode task: taskList){
+                    if (parentsLeft.get(task) == 0 ){
                         for (int numProcessor=0; numProcessor < TOTAL_NUM_PROCESSOR; numProcessor++){
-                            int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, node);
-                            ScheduledTask scheduledTask = new ScheduledTask(numProcessor,node,earliestStartTime);
-                            MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask);
-                            newSchedule.setHScore(h(newSchedule));
-                            newSchedule.setParentsLeftOfSchedulableTask(
-                                    newSchedule.parentsLeftsWithoutTask(node,_graph));
-                            _pq.add(newSchedule);
+                            int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, task);
+                            MBSchedule subSchedule = cSchedule.createSubSchedule(
+                                    new ScheduledTask(numProcessor,task,earliestStartTime), _graph);
+                            subSchedule.setHScore(h(subSchedule));
+                            _pq.add(subSchedule);
 
                         }
                     }
                 }
             }
+
 
             if (VERBOSE) System.out.println("After Exploring: " + iterCount);
             if (VERBOSE) System.out.println(_pq);

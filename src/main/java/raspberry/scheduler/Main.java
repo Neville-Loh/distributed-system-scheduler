@@ -44,7 +44,7 @@ public class Main {
         g.getCriticalPathWeightTable();
 
         Astar a = new Astar(g,4);
-        MemoryBoundAStar mba = new MemoryBoundAStar(g,2, 8);
+        MemoryBoundAStar mba = new MemoryBoundAStar(g,2, 20);
         OutputSchedule output = mba.findPath();
 
 
