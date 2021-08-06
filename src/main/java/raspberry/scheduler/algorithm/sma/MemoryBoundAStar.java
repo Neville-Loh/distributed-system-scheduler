@@ -23,7 +23,7 @@ public class MemoryBoundAStar implements Algorithm {
     private int numNode;
     private final int MAX_NUMBER_NODE;
     private Hashtable<INode, Integer> _criticalPathWeightTable;
-    private boolean VERBOSE = false;
+    private boolean VERBOSE = true;
 
 
     /**
@@ -52,7 +52,7 @@ public class MemoryBoundAStar implements Algorithm {
 
 
     /**
-     *
+     * Find the optimal schedule with the given dependency graph when initiate
      * @return OutputSchedule
      */
     @Override
@@ -60,10 +60,12 @@ public class MemoryBoundAStar implements Algorithm {
         int totalComputeTime = getTotalComputeTime();
         Hashtable<INode, Integer> parentsLeft;
         MBSchedule cSchedule;
-        //MBSchedule head = new MBSchedule();
 
-
-        // Initial set up for starting point
+        /*
+         * Add all task that can be scheduled to the priority queue as starting point
+         * The initial placement for the task is processor 0, since there are no difference
+         * between processor.
+         */
         for (INode task: _graph.getNodesWithNoInDegree()){
             int remainingComputeTimeAfterTask = totalComputeTime - task.getValue();
             ScheduledTask scheduledTask = new ScheduledTask(0,task,0);
@@ -75,7 +77,9 @@ public class MemoryBoundAStar implements Algorithm {
         }
 
 
-        //
+        /*
+         * While loop
+         */
         int iterCount = 0;
         while (true){
             if (!VERBOSE) System.out.printf("\nPQ SIZE :  %d\n", _pq.size());
@@ -91,14 +95,22 @@ public class MemoryBoundAStar implements Algorithm {
                 break;
             }
 
-            //System.out.println("------ pooped " + cSchedule);
 
             parentsLeft = cSchedule.getParentsLeftOfSchedulableTask();
             Collection<INode> nodes;
+
+
             if (cSchedule.getForgottenTable() != null){
-                cSchedule.getForgottenTable().keySet().forEach(forgottenSchedule ->
-                        _pq.add(forgottenSchedule));
+                /*
+                 * Remember Routine
+                 * Remember about the low f score schedule
+                 */
+                cSchedule.getForgottenTable().forEach((forgottenSchedule, fScore) ->{
+                        forgottenSchedule.setFScore(fScore);
+                        _pq.add(forgottenSchedule);
+                        });
                 cSchedule.setForgottenTableToNull();
+
             } else {
                 nodes = parentsLeft.keySet();
                 for (INode node: nodes){
@@ -117,10 +129,13 @@ public class MemoryBoundAStar implements Algorithm {
                 }
             }
 
-//            System.out.println("After Exploring: " + iterCount);
-//            System.out.println(_pq);
-            // Forget Routine
+            if (VERBOSE) System.out.println("After Exploring: " + iterCount);
+            if (VERBOSE) System.out.println(_pq);
 
+            /*
+             * Forget Routine
+             * Forget about the low f score schedule
+             */
             ArrayList<MBSchedule> startingPoint = new ArrayList<MBSchedule>();
             while (_pq.size() > (MAX_NUMBER_NODE - startingPoint.size())){
                 MBSchedule badSchedule = _pq.pollMax();
@@ -136,17 +151,15 @@ public class MemoryBoundAStar implements Algorithm {
                         if (VERBOSE) System.out.println("Adding " + badScheduleParent + " back to queue");
                         _pq.add(badScheduleParent);
                     }
-
                 } else {
                     if (VERBOSE) System.out.println("Adding badSchedule: " + badSchedule +" to starting point");
                     startingPoint.add(badSchedule);
                 }
             }
             _pq.addAll(startingPoint);
-            startingPoint = null;
-            //System.out.println();
             iterCount++;
         }
+
         System.out.print("\n === THE FINAL ANSWER ===");
         Helper.printPath(cSchedule);
         return new Solution(cSchedule,TOTAL_NUM_PROCESSOR);
@@ -155,6 +168,7 @@ public class MemoryBoundAStar implements Algorithm {
 
     /**
      * Heuristic function
+     * calculate the critical path and estimate the cost
      * @param schedule schedule that contained scheduled task T
      * @return hScore the estimate cost of the current schedule to finish all non scheduled task
      */

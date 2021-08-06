@@ -32,8 +32,8 @@ public class Main {
 
 
 
-        GraphReader r = new GraphReader("Nodes_7_OutTree.dot"); //28
-        //GraphReader r = new GraphReader("Nodes_8_Random.dot"); //581
+        //GraphReader r = new GraphReader("Nodes_7_OutTree.dot"); //28
+        GraphReader r = new GraphReader("Nodes_8_Random.dot"); //581
         //GraphReader r = new GraphReader("Nodes_9_SeriesParallel.dot"); //55
         //GraphReader r = new GraphReader("Nodes_10_Random.dot"); //50
         //GraphReader r = new GraphReader("Nodes_11_OutTree.dot"); //350
@@ -44,7 +44,7 @@ public class Main {
         g.getCriticalPathWeightTable();
 
         Astar a = new Astar(g,4);
-        MemoryBoundAStar mba = new MemoryBoundAStar(g,2, 60);
+        MemoryBoundAStar mba = new MemoryBoundAStar(g,2, 30);
         OutputSchedule output = mba.findPath();
 
 
