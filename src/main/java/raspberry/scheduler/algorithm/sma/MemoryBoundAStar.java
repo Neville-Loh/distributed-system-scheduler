@@ -105,8 +105,11 @@ public class MemoryBoundAStar implements Algorithm {
                  */
                 Hashtable<ScheduledTask, Integer> forgottenSchedule = cSchedule.getForgottenTable();
                 for (ScheduledTask scheduledTask: forgottenSchedule.keySet()){
-                    MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask, _graph);
+                    MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask);
                     newSchedule.setFScore(forgottenSchedule.get(scheduledTask));
+                    newSchedule.setParentsLeftOfSchedulableTask(
+                            newSchedule.parentsLeftsWithoutTask(scheduledTask.getTask(), _graph));
+                    //forgottenSchedule.remove(scheduledTask);
                     _pq.add(newSchedule);
                 }
                 cSchedule.setForgottenTableToNull();
@@ -118,9 +121,11 @@ public class MemoryBoundAStar implements Algorithm {
                     if (parentsLeft.get(node) == 0 ){
                         for (int numProcessor=0; numProcessor < TOTAL_NUM_PROCESSOR; numProcessor++){
                             int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, node);
-                            ScheduledTask scheduledTask = new ScheduledTask(numProcessor,node, earliestStartTime);
-                            MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask, _graph);
+                            ScheduledTask scheduledTask = new ScheduledTask(numProcessor,node,earliestStartTime);
+                            MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask);
                             newSchedule.setHScore(h(newSchedule));
+                            newSchedule.setParentsLeftOfSchedulableTask(
+                                    newSchedule.parentsLeftsWithoutTask(node,_graph));
                             _pq.add(newSchedule);
 
                         }
