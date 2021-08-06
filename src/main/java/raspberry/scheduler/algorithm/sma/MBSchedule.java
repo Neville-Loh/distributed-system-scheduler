@@ -1,7 +1,5 @@
 package raspberry.scheduler.algorithm.sma;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 
 import raspberry.scheduler.algorithm.Schedule;
@@ -36,6 +34,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 
     // SMA specific attribute
     private Hashtable<MBSchedule,Integer> _forgoten;
+    private int _minForgottenFScore;
 
 
 
@@ -57,6 +56,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         _remainingComputeTime = remainingComputeTime;
         if (parentSchedule == null){
             size = 1;
+            _overallFinishTime = scheduledTask.getFinishTime();
 
             // Manhattan distance heuristic
             //_earliestFinishProcessorID = 1;
@@ -98,10 +98,14 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     public void forget(MBSchedule subSchedule){
         if (_forgoten == null){
             _forgoten = new Hashtable<MBSchedule, Integer>();
+            _minForgottenFScore = subSchedule.getFScore();
+        } else {
+            _minForgottenFScore = Math.min(_minForgottenFScore,subSchedule.getFScore());
         }
+        _fScore = _minForgottenFScore;
         subSchedule.setForgottenTableToNull();
         _forgoten.put(subSchedule, subSchedule.getFScore());
-        _fScore = Math.min(_fScore,subSchedule.getFScore());
+
 
     }
 
@@ -242,15 +246,39 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         return _fScore;
     }
 
+//    @Override
+//    public String toString(){
+//     return  "f: " + _fScore +
+//             " processorId: " + _scheduledTask.getProcessorID()
+//             + " Task = " + _scheduledTask.getTask()
+//             + " startTime: " + _scheduledTask.getStartTime()
+//             + " finishTime: " + _scheduledTask.getFinishTime()
+//             + "   ||||| overall finish time: " +_overallFinishTime
+//             + "\nforgotten: " + _forgoten +"\n";
+//    }
+
     @Override
-    public String toString(){
-     return  "f: " + _fScore +
-             " processorId: " + _scheduledTask.getProcessorID()
-             + " Task = " + _scheduledTask.getTask()
-             + " startTime: " + _scheduledTask.getStartTime()
-             + " finishTime: " + _scheduledTask.getFinishTime()
-             + "   ||||| overall finish time: " +_overallFinishTime;
+    public String toString() {
+        String result = "f: " + _fScore + "   ";
+        MBSchedule cSchedule = this;
+        ArrayList<String> temp = new ArrayList<String>();
+
+        while (cSchedule != null) {
+            temp.add(cSchedule.getScheduledTask().getTask().getName() +
+                    cSchedule.getScheduledTask().getProcessorID());
+            cSchedule = cSchedule.parent;
+        }
+        Collections.reverse(temp);
+        for (String s : temp) {
+            result += s + " ";
+        }
+        return  "(" + result + ")";
     }
+
+    public String getName(){
+        return "";
+    }
+
 }
 
 

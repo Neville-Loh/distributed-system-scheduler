@@ -1,6 +1,7 @@
 package raspberry.scheduler.algorithm.sma;
 
 import java.lang.Math;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 
@@ -20,8 +21,9 @@ public class MemoryBoundAStar implements Algorithm {
     private TwoWayPriorityQueue _pq;
     private final int TOTAL_NUM_PROCESSOR;
     private int numNode;
-    private final int MAX_NUMBER_NODE = 8;
+    private final int MAX_NUMBER_NODE;
     private Hashtable<INode, Integer> _criticalPathWeightTable;
+    private boolean VERBOSE = false;
 
 
     /**
@@ -29,12 +31,13 @@ public class MemoryBoundAStar implements Algorithm {
      * @param taskDependencyGraph dependency digraph of the task
      * @param totalProcessorNumber the total number of processor available for schedule
      */
-    public MemoryBoundAStar(IGraph taskDependencyGraph, int totalProcessorNumber){
+    public MemoryBoundAStar(IGraph taskDependencyGraph, int totalProcessorNumber, int memoryLimit){
         _graph = taskDependencyGraph;
         _pq = new TwoWayPriorityQueue();
         TOTAL_NUM_PROCESSOR = totalProcessorNumber;
         numNode = _graph.getNumNodes();
         _criticalPathWeightTable = _graph.getCriticalPathWeightTable();
+        MAX_NUMBER_NODE = memoryLimit;
 
     }
 
@@ -57,8 +60,7 @@ public class MemoryBoundAStar implements Algorithm {
         int totalComputeTime = getTotalComputeTime();
         Hashtable<INode, Integer> parentsLeft;
         MBSchedule cSchedule;
-
-        MBSchedule head = new MBSchedule();
+        //MBSchedule head = new MBSchedule();
 
 
         // Initial set up for starting point
@@ -74,13 +76,22 @@ public class MemoryBoundAStar implements Algorithm {
 
 
         //
+        int iterCount = 0;
         while (true){
-            System.out.printf("\nPQ SIZE :  %d", _pq.size());
+            if (!VERBOSE) System.out.printf("\nPQ SIZE :  %d\n", _pq.size());
+
+            if (VERBOSE) System.out.println("\n====================");
+            if (VERBOSE) System.out.println("Start: "+ iterCount);
+            if (VERBOSE) System.out.println(_pq);
             cSchedule = _pq.pollMin();
+            if (VERBOSE) System.out.println("BEST = "+ cSchedule);
+
             // if all task is scheduled
             if (cSchedule.size == numNode){
                 break;
             }
+
+            //System.out.println("------ pooped " + cSchedule);
 
             parentsLeft = cSchedule.getParentsLeftOfSchedulableTask();
             Collection<INode> nodes;
@@ -106,19 +117,35 @@ public class MemoryBoundAStar implements Algorithm {
                 }
             }
 
+//            System.out.println("After Exploring: " + iterCount);
+//            System.out.println(_pq);
             // Forget Routine
-            while (_pq.size() > MAX_NUMBER_NODE){
+
+            ArrayList<MBSchedule> startingPoint = new ArrayList<MBSchedule>();
+            while (_pq.size() > (MAX_NUMBER_NODE - startingPoint.size())){
                 MBSchedule badSchedule = _pq.pollMax();
-                System.out.println(badSchedule);
+//                if (VERBOSE) System.out.println(_pq);
+                if (VERBOSE) System.out.println("bad schedulde = " +badSchedule);
+                if (VERBOSE) System.out.println("Starting point = " + startingPoint);
                 if (badSchedule.parent != null){
                     MBSchedule badScheduleParent = badSchedule.parent;
                     badScheduleParent.forget(badSchedule);
                     // if parent is not in the queue
-                    if (!_pq.contains(badScheduleParent)) {
+                    if (VERBOSE) System.out.println("Forget -----" + badScheduleParent+ " Forgetting " + badSchedule);
+                    if (!_pq.contains(badScheduleParent) && !startingPoint.contains(badScheduleParent)) {
+                        if (VERBOSE) System.out.println("Adding " + badScheduleParent + " back to queue");
                         _pq.add(badScheduleParent);
                     }
+
+                } else {
+                    if (VERBOSE) System.out.println("Adding badSchedule: " + badSchedule +" to starting point");
+                    startingPoint.add(badSchedule);
                 }
             }
+            _pq.addAll(startingPoint);
+            startingPoint = null;
+            //System.out.println();
+            iterCount++;
         }
         System.out.print("\n === THE FINAL ANSWER ===");
         Helper.printPath(cSchedule);
