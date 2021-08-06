@@ -1,6 +1,5 @@
 package raspberry.scheduler.algorithm.sma;
-import java.util.Collections;
-import java.util.PriorityQueue;
+import java.util.*;
 
 
 /**
@@ -36,8 +35,9 @@ public class TwoWayPriorityQueue{
      * @return MBSchedule
      */
     public MBSchedule pollMin(){
-        _descendingFScore.poll();
-        return _ascendingFScore.poll();
+        MBSchedule schedule = _ascendingFScore.poll();
+        _descendingFScore.remove(schedule);
+        return schedule;
     }
 
     /**
@@ -46,8 +46,9 @@ public class TwoWayPriorityQueue{
      * @return MBSchedule
      */
     public MBSchedule pollMax(){
-        _ascendingFScore.poll();
-        return  _descendingFScore.poll();
+        MBSchedule schedule = _descendingFScore.poll();
+        _ascendingFScore.remove(schedule);
+        return  schedule;
     }
 
     /**
@@ -70,4 +71,29 @@ public class TwoWayPriorityQueue{
         return _ascendingFScore.contains(schedule);
     }
 
+
+    public PriorityQueue<MBSchedule> getPQ(){
+        return _ascendingFScore;
+    }
+
+
+    public void addAll(Collection<MBSchedule> collection){
+        _ascendingFScore.addAll(collection);
+        _descendingFScore.addAll(collection);
+    }
+
+
+    @Override
+    public String toString(){
+        ArrayList<MBSchedule> list = new ArrayList<MBSchedule>();
+        list.addAll(_ascendingFScore);
+        Collections.sort(list);
+        String result = "---------------------------------\n"
+                + "PQ SIZE: " + _ascendingFScore.size() + "\n";
+
+        for (MBSchedule mbSchedule : list) {
+            result += mbSchedule + " forgotten: " + mbSchedule.getForgottenTable()+ "\n";
+        }
+        return result + "---------------------------------";
+    }
 }
