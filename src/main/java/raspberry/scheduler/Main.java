@@ -40,11 +40,11 @@ public class Main {
         r.read();
         g = r.getGraph();
 
-        //g = makeGraph();
+        g = makeGraph();
         g.getCriticalPathWeightTable();
 
         Astar a = new Astar(g,4);
-        MemoryBoundAStar mba = new MemoryBoundAStar(g,2, 30);
+        MemoryBoundAStar mba = new MemoryBoundAStar(g,2, 8);
         OutputSchedule output = mba.findPath();
 
 

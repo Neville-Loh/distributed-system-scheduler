@@ -41,4 +41,10 @@ public class ScheduledTask {
     public int getFinishTime() {
         return _startTime + _task.getValue();
     }
+
+
+    @Override
+    public String toString(){
+        return _task + "" + _processorID;
+    }
 }

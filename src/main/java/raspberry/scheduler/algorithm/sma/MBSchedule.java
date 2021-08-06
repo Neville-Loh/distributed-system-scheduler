@@ -2,6 +2,7 @@ package raspberry.scheduler.algorithm.sma;
 import java.util.*;
 import java.util.function.Consumer;
 
+import raspberry.scheduler.algorithm.Schedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 
@@ -27,7 +28,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 
 
     // SMA specific attribute
-    private Hashtable<MBSchedule,Integer> _forgotten;
+    private Hashtable<ScheduledTask,Integer> _forgotten;
     private int _minForgottenFScore;
 
 
@@ -79,6 +80,14 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         return new MBSchedule(this, remainingComputeTime, scheduledTask);
     }
 
+    public MBSchedule createSubSchedule(ScheduledTask scheduledTask, IGraph dependencyGraph){
+        int remainingComputeTime = _remainingComputeTime - scheduledTask.getTask().getValue();
+        MBSchedule subSchedule = new MBSchedule(this, remainingComputeTime, scheduledTask);
+        subSchedule.setParentsLeftOfSchedulableTask(
+                parentsLeftsWithoutTask(scheduledTask.getTask(),dependencyGraph));
+        return subSchedule;
+    }
+
     /**
      * pop the child x, and recalculate dependency
      * @param dependencyGraph graph which contain the task dependency
@@ -123,23 +132,23 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
      */
     public void forget(MBSchedule subSchedule){
         if (_forgotten == null){
-            _forgotten = new Hashtable<MBSchedule, Integer>();
+            _forgotten = new Hashtable<ScheduledTask, Integer>();
             _minForgottenFScore = subSchedule.getFScore();
         } else {
             _minForgottenFScore = Math.min(_minForgottenFScore,subSchedule.getFScore());
         }
         _fScore = _minForgottenFScore;
-        subSchedule.setForgottenTableToNull();
+        //subSchedule.setForgottenTableToNull();
 
         // compare if the schedule f score is lower than the forgotten f score in table
-        //_forgotten.put(subSchedule, subSchedule.getFScore());
+        _forgotten.put(subSchedule.getScheduledTask(), subSchedule.getFScore());
 
-        if (_forgotten.containsKey(subSchedule)){
-            int minFScore = Math.min(_forgotten.get(subSchedule), subSchedule.getFScore());
-            _forgotten.put(subSchedule, minFScore);
-        } else {
-            _forgotten.put(subSchedule, subSchedule.getFScore());
-        }
+//        if (_forgotten.containsKey(subSchedule)){
+//            int minFScore = Math.min(_forgotten.get(subSchedule), subSchedule.getFScore());
+//            _forgotten.put(subSchedule, minFScore);
+//        } else {
+//            _forgotten.put(subSchedule, subSchedule.getFScore());
+//        }
 
 
     }
@@ -273,7 +282,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         return _hScore;
     }
 
-    public Hashtable<MBSchedule, Integer> getForgottenTable() {
+    public Hashtable<ScheduledTask, Integer> getForgottenTable() {
         return _forgotten;
     }
 

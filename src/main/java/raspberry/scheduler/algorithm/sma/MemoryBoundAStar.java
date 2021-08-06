@@ -7,6 +7,7 @@ import java.util.Hashtable;
 
 import raspberry.scheduler.algorithm.Algorithm;
 import raspberry.scheduler.algorithm.OutputSchedule;
+import raspberry.scheduler.algorithm.Schedule;
 import raspberry.scheduler.algorithm.Solution;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.graph.*;
@@ -96,32 +97,30 @@ public class MemoryBoundAStar implements Algorithm {
             }
 
 
-            parentsLeft = cSchedule.getParentsLeftOfSchedulableTask();
-            Collection<INode> nodes;
-
 
             if (cSchedule.getForgottenTable() != null){
                 /*
                  * Remember Routine
                  * Remember about the low f score schedule
                  */
-                cSchedule.getForgottenTable().forEach((forgottenSchedule, fScore) ->{
-                        forgottenSchedule.setFScore(fScore);
-                        _pq.add(forgottenSchedule);
-                        });
+                Hashtable<ScheduledTask, Integer> forgottenSchedule = cSchedule.getForgottenTable();
+                for (ScheduledTask scheduledTask: forgottenSchedule.keySet()){
+                    MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask, _graph);
+                    newSchedule.setFScore(forgottenSchedule.get(scheduledTask));
+                    _pq.add(newSchedule);
+                }
                 cSchedule.setForgottenTableToNull();
 
             } else {
-                nodes = parentsLeft.keySet();
+                parentsLeft = cSchedule.getParentsLeftOfSchedulableTask();
+                Collection<INode> nodes = parentsLeft.keySet();
                 for (INode node: nodes){
                     if (parentsLeft.get(node) == 0 ){
                         for (int numProcessor=0; numProcessor < TOTAL_NUM_PROCESSOR; numProcessor++){
                             int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, node);
-                            ScheduledTask scheduledTask = new ScheduledTask(numProcessor,node,earliestStartTime);
-                            MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask);
+                            ScheduledTask scheduledTask = new ScheduledTask(numProcessor,node, earliestStartTime);
+                            MBSchedule newSchedule = cSchedule.createSubSchedule(scheduledTask, _graph);
                             newSchedule.setHScore(h(newSchedule));
-                            newSchedule.setParentsLeftOfSchedulableTask(
-                                    newSchedule.parentsLeftsWithoutTask(node,_graph));
                             _pq.add(newSchedule);
 
                         }
@@ -138,6 +137,7 @@ public class MemoryBoundAStar implements Algorithm {
              */
             ArrayList<MBSchedule> startingPoint = new ArrayList<MBSchedule>();
             while (_pq.size() > (MAX_NUMBER_NODE - startingPoint.size())){
+                if (VERBOSE) System.out.println("----------------------");
                 MBSchedule badSchedule = _pq.pollMax();
 //                if (VERBOSE) System.out.println(_pq);
                 if (VERBOSE) System.out.println("bad schedulde = " +badSchedule);
@@ -155,6 +155,7 @@ public class MemoryBoundAStar implements Algorithm {
                     if (VERBOSE) System.out.println("Adding badSchedule: " + badSchedule +" to starting point");
                     startingPoint.add(badSchedule);
                 }
+                if (VERBOSE) System.out.println("----------------------");
             }
             _pq.addAll(startingPoint);
             iterCount++;
