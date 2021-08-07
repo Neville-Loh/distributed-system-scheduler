@@ -1,21 +1,7 @@
 
 package raspberry.scheduler;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 import raspberry.scheduler.algorithm.*;
-import raspberry.scheduler.graph.Edge;
 import raspberry.scheduler.graph.Graph;
-import raspberry.scheduler.graph.Node;
-import raspberry.scheduler.io.Reader;
-
-import java.awt.image.AreaAveragingScaleFilter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.List;
 
 
 public class Main {
@@ -26,11 +12,9 @@ public class Main {
 
         // This is unit test. (I will make proper Junit test later)
         long startTime = System.nanoTime();
-        test_Astar2();
+        test_Astar();
         long endTime = System.nanoTime();
-        System.out.println(endTime-startTime);
-        //A2:10977208735
-        //A3:3813091995
+        System.out.printf("\n===== TOTAL RUNNING TIME : %.2f seconds=====",(endTime-startTime)/1000000000.0);
     }
 
 
@@ -38,22 +22,12 @@ public class Main {
         System.out.println("======== RUNNING Astar ========");
 
         Graph g = new Graph("test graph");
-//        makeGraph(g);
-        Astar a = new Astar(g,4);
-
-        a.findPath();
-
-    }
-
-    public static void test_Astar2(){
-        System.out.println("======== RUNNING Astar 2 ========");
-
-        Graph g = new Graph("test graph");
         makeGraph(g);
-        Astar2 a = new Astar2(g,4);
+        Astar a = new Astar(g,2);
 
         a.findPath();
     }
+
 
     private static void makeGraph(Graph graph) {
         graph.addNode("0" , 50);
@@ -78,6 +52,7 @@ public class Main {
         graph.addNode("10" , 20);
         graph.addEdge("3" , "10", 4);
     }
+
     public static void makeGraph2(Graph graph){
         graph.addNode("1" , 57);
         graph.addNode("2" , 114);

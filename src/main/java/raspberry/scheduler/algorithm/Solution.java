@@ -13,16 +13,9 @@ public class Solution implements OutputSchedule{
 
     public Solution(Schedule schedule, int numP){
         _table = schedule.getPath();
-        _finshTime = schedule.finishTime;
+        _finshTime = schedule._finishTime;
         _totalProcessorNum = numP;
     }
-
-    public Solution(Schedule2 schedule, int numP){
-        _table = schedule.getPath();
-        _finshTime = schedule.finishTime;
-        _totalProcessorNum = numP;
-    }
-
 
     @Override
     public int getTotalProcessorNum() {
