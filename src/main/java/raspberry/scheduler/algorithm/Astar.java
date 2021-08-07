@@ -14,6 +14,7 @@ public class Astar implements Algorithm{
     PriorityQueue<Schedule> pq;
     int numP;
     List<Schedule> visited;
+    int visitCounter;
     int numNode;
     Hashtable<String, Integer> heuristic = new Hashtable<String, Integer>();
 
@@ -54,22 +55,24 @@ public class Astar implements Algorithm{
                 pq.add(newSchedule);
             }
         }
-        System.out.print("ROOT TABLE :\n");
-        //printHashTable(rootTable);
-        System.out.println("");
-
-        System.out.println("Printing MASSSTERETABLE");
-        for (Schedule sc: master.keySet()){
-            printPath(sc);
-            //printHashTable(master.get(sc));
-        }
-        System.out.println("ENDDDDD");
+//        System.out.print("ROOT TABLE :\n");
+//        //printHashTable(rootTable);
+//        System.out.println("");
+//
+//        System.out.println("Printing MASSSTERETABLE");
+//        for (Schedule sc: master.keySet()){
+//            printPath(sc);
+//            //printHashTable(master.get(sc));
+//        }
+//        System.out.println("ENDDDDD");
 
         System.out.print("\n=== WHILE LOOP ===");
         Schedule cSchedule;
+        visitCounter = 0;
         while (true){
-            System.out.printf("\n PQ SIZE :  %d", pq.size());
+//            System.out.printf("\n PQ SIZE :  %d", pq.size());
             cSchedule = pq.poll();
+            visitCounter++;
 //            System.out.printf("===== %d =====\n", cSchedule.finishTime);
             //todo replace num_node,Main.NUM_NODE
             if (cSchedule.size == numNode){
@@ -103,7 +106,10 @@ public class Astar implements Algorithm{
             }
         }
 
-        System.out.print("\n === THE FINAL ANSWER ===");
+        System.out.println("\n=== THE FINAL ANSWER ===");
+        System.out.printf("NUM VISITED NODE   : %d\n", visitCounter);
+        System.out.printf("NUM PQ NODE        : %d ", pq.size());
+
         printPath(cSchedule);
         return new Solution(cSchedule,numP);
     }

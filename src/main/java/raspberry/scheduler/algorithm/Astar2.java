@@ -14,10 +14,11 @@ public class Astar2 implements Algorithm{
     PriorityQueue<Schedule2> pq;
     int numP;
     Hashtable<Integer,ArrayList<Schedule2>> visited;
+
     int numNode;
     Hashtable<String, Integer> heuristic = new Hashtable<String, Integer>();
-
     int maxCriticalPath;
+
 
     public Astar2(IGraph graphToSolve, int numProcessors){
         this.graph = graphToSolve;
@@ -43,37 +44,44 @@ public class Astar2 implements Algorithm{
 
         for (INode i: rootTable.keySet()){
             if (rootTable.get(i) == 0 ){
-                Schedule2 newSchedule = new Schedule2( 0,
+                Schedule2 newSchedule = new Schedule2( 0, 0, null, i, 1 );
+                newSchedule.addHeuristic(
                         Collections.max(Arrays.asList(
-                                h(i.getName()),
-                                h1(rootTable, i.getValue()),
-                                maxCriticalPath-i.getValue(),
-                                h2(rootTable, 0,i.getValue(), null)
-                        )),
-                        null, i, 1 );
+                                h(newSchedule),
+                                h1(getChildTable(rootTable,i), newSchedule)
+//                                maxCriticalPath-i.getValue()
+//                                        h2(newTable, start,node.getValue(), cSchedule)
+                        ))
+                );
                 master.put(newSchedule,getChildTable(rootTable,i));
                 pq.add(newSchedule);
             }
         }
 
         int duplicate = 0;
+//        int duplicat2 = 0;
         System.out.print("\n=== WHILE LOOP ===");
         Schedule2 cSchedule;
         while (true){
 //            System.out.printf("\n PQ SIZE :  %d", pq.size());
+//            System.out.printf("\n Visited SIZE :  %d\n", visited.size());
             cSchedule = pq.poll();
-            ArrayList<Schedule2> listVisitedForSize = visited.get(cSchedule.getHash());
+//107450
 
-            if ( listVisitedForSize != null && listVisitedForSize.contains(cSchedule) ) {
-                duplicate++;
+            ArrayList<Schedule2> listVisitedForSize = visited.get(cSchedule.getHash());
+            if ( listVisitedForSize != null && listVisitedForSize.contains(cSchedule)){
+                duplicate ++;
+//            }
+//            if ( listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize,cSchedule)){
+//                duplicate++;
                 continue;
             }else{
                 if (listVisitedForSize == null){
                     listVisitedForSize = new ArrayList<Schedule2>();
+                    visited.put(cSchedule.getHash(),listVisitedForSize);
                 }
                 listVisitedForSize.add(cSchedule);
-                visited.put(cSchedule.getHash(),listVisitedForSize);
-            }
+            }//107444
 
 
             //todo replace num_node,Main.NUM_NODE
@@ -86,7 +94,7 @@ public class Astar2 implements Algorithm{
             int pidBound;  // Schedule.pid -> 1~ n,
                             // numP -> 1~n
             if (currentMaxPid+1 > numP){
-                pidBound = numNode;
+                pidBound = numP;
             }else{
                 pidBound = currentMaxPid + 1;
             }
@@ -96,17 +104,17 @@ public class Astar2 implements Algorithm{
                     //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
                     for (int j=1; j<=pidBound; j++){
                         int start = calculateCost(cSchedule, j, node);
-                        Schedule2 x = new Schedule2(start , cSchedule, node, j);
                         Hashtable<INode, Integer> newTable = getChildTable(cTable,node);
                         Schedule2 newSchedule = new Schedule2(
-                                start,
+                                start,0, cSchedule, node, j );
+                        newSchedule.addHeuristic(
                                 Collections.max(Arrays.asList(
-                                        h(node.getName()),
-                                        h1(newTable, start+node.getValue()),
-                                        maxCriticalPath-start-node.getValue(),
-                                        h2(newTable, start,node.getValue(), cSchedule)
-                                )),
-                                cSchedule, node, j );
+                                        h(newSchedule),
+                                        h1(newTable, newSchedule)
+//                                        maxCriticalPath-start-node.getValue()
+//                                        h2(newTable, start,node.getValue(), cSchedule)
+                                ))
+                        );
                         master.put(newSchedule,newTable);
                         pq.add(newSchedule);
                     }
@@ -125,28 +133,34 @@ public class Astar2 implements Algorithm{
 
     // Compute heuristic weight
     // Currently our heuristic function is undecided. --> just returns 0.
-    public int h(String s){
-        return heuristic.get(s);
+//    public int h(String s){
+//        return heuristic.get(s);
+//    }
+
+    public int h(Schedule2 cSchedule){
+        int max = 0;
+        for ( String s: cSchedule.lastForEachProcessor.values()){
+            int tmp = heuristic.get(s) + cSchedule.scheduling.get(s).get(1) +
+                    graph.getNode(s).getValue();
+            if ( tmp > max){
+                max = tmp;
+            }
+        }
+
+        return max - cSchedule.finishTime;
     }
 
-    public int h1(Hashtable<INode, Integer> x ,int finishTime){
-        int sum = finishTime;
+    public int h1(Hashtable<INode, Integer> x ,Schedule2 cSchedule){
+        int sum = 0;
+        for ( String s: cSchedule.lastForEachProcessor.values()){
+            sum += cSchedule.scheduling.get(s).get(1) +
+                    graph.getNode(s).getValue();
+        }
+
         for (INode i: x.keySet()){
             sum += i.getValue();
         }
-        return sum/numP - finishTime;
-    }
-
-    public int h2(Hashtable<INode, Integer> x, int start, int cost, Schedule2 parent){
-        int sum = cost;
-        for ( int i=0; i<numP; i++){
-            sum += getLastPTime(parent, i);
-        }
-        for (INode i: x.keySet()){
-            sum += i.getValue();
-        }
-        int spreadOutTime =  sum/numP;
-        return spreadOutTime-start-cost;
+        return sum/numP - cSchedule.finishTime;
     }
 
     public int getLastPTime(Schedule2 cParentSchedule, int processorId){
@@ -283,16 +297,33 @@ public class Astar2 implements Algorithm{
         if ( e.size() == 0){
             return 0;
         } else if (e.size() == 1){
-            return getHRecursive(e.get(0).getChild()) + n.getValue();
+            return getHRecursive(e.get(0).getChild()) + e.get(0).getChild().getValue();
         }
         int max = 0;
         for ( IEdge i : e){
-            int justCost = getHRecursive(i.getChild()) + n.getValue();
+            int justCost = getHRecursive(i.getChild()) + i.getChild().getValue();
             if ( max < justCost ){
                 max = justCost;
             }
         }
         return max;
+    }
+
+
+    public Boolean isIrrelevantDuplicate( ArrayList<Schedule2> scheduleList, Schedule2 cSchedule){
+        Boolean thisIsIrrelevant = true;
+
+        for (Schedule2 s : scheduleList){
+//            if (s.equals(cSchedule)){
+//                System.out.println("DUPLCIATE");
+//            }
+            if (s.equals(cSchedule) && s.t > cSchedule.t) {
+                System.out.printf("%d -> %d\n", s.t, cSchedule.t);
+                thisIsIrrelevant = false;
+            }
+        }
+
+        return thisIsIrrelevant;
     }
 
 

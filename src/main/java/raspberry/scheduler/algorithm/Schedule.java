@@ -22,6 +22,7 @@ public class Schedule implements Comparable<Schedule>{
     public Schedule parent;
     public int size;
 
+
     public Schedule(int cost, int heuristic, Schedule parentSchedule, INode childNode, int processorId){
         node = childNode;
         p_id = processorId;
@@ -44,6 +45,7 @@ public class Schedule implements Comparable<Schedule>{
     public int compareTo(Schedule s){
         return this.t > s.t ? 1 : this.t < s.t ? -1 : 0;
     }
+
 
     //After computing the scheduling, call this method to get List of paths
     public Hashtable<INode, int[]> getPath(){

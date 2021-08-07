@@ -23,6 +23,7 @@ public class Solution implements OutputSchedule{
         _totalProcessorNum = numP;
     }
 
+
     @Override
     public int getTotalProcessorNum() {
         return _totalProcessorNum;

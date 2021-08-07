@@ -23,6 +23,8 @@ public class Schedule2 implements Comparable<Schedule2>{
     public Schedule2 parent;
     public int size;
     public Hashtable<String, List<Integer>> scheduling;
+    public Hashtable<Integer, String> lastForEachProcessor;
+
     public int maxPid; //The largest pid currently used to schedule
 
     public Schedule2(int cost, int heuristic, Schedule2 parentSchedule, INode childNode, int processorId){
@@ -36,9 +38,11 @@ public class Schedule2 implements Comparable<Schedule2>{
         t = finishTime + heuristic;
 
         parent = parentSchedule;
+
         if (parentSchedule == null){
             size = 1;
             scheduling = new Hashtable<String, List<Integer>>();
+            lastForEachProcessor = new Hashtable<Integer, String>();
             maxPid = processorId;
         }else{
             if (processorId > parentSchedule.maxPid){
@@ -48,16 +52,17 @@ public class Schedule2 implements Comparable<Schedule2>{
             }
             size = parentSchedule.size + 1;
             scheduling = (Hashtable<String, List<Integer>>) parentSchedule.scheduling.clone();
+            lastForEachProcessor = (Hashtable<Integer, String>) parentSchedule.lastForEachProcessor.clone();
         }
 
         List<Integer> thisTask = Arrays.asList(processorId,startTime);
         scheduling.put(childNode.getName(), thisTask);
-    }
 
-    public Schedule2(int cost,Schedule2 parentSchedule,  INode childNode,int processorId){
-        scheduling = (Hashtable<String, List<Integer>>) parentSchedule.scheduling.clone();
-        List<Integer> thisTask = Arrays.asList(processorId,cost);
-        scheduling.put(childNode.getName(), thisTask);
+        lastForEachProcessor.put(processorId, childNode.getName());
+    }
+    public void addHeuristic(int h){
+        this.h = h;
+        t = finishTime + h;
     }
 
     @Override
