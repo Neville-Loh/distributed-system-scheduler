@@ -10,33 +10,39 @@ import java.util.*;
 public class BNB implements Algorithm {
 
     IGraph _graph;
-    PriorityQueue<Schedule> _pq;
     int _numP;
-    List<Schedule> _visited;
-    Stack<Schedule> _scheduleStack;
     int _bound;
     int _numNode;
-    Hashtable<String, Integer> parentHeuristicTable;
     int _maxCriticalPath;
+    Hashtable<String, Integer> _heuristicTable;
+    Stack<Schedule> _scheduleStack;
 
+    /**
+     * BNB algorithm constructor.
+     * @param graphToSolve : graph to solve. (graph represents the tasks and dependencies)
+     * @param numProcessors : number of processors allowed to use for scheduling.
+     */
     public BNB(IGraph graphToSolve, int numProcessors){
         _graph = graphToSolve;
-        _pq = new PriorityQueue<Schedule>();
-        _visited = new ArrayList<Schedule>();
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
     }
 
+    /**
+     * Compute the optimal scheduling
+     * @return OutputSchedule : the optimal path/scheduling.
+     */
     @Override
     public OutputSchedule findPath() {
-        // DO dfs , get the "min"
-        // Do dfs while the cost is lower than "min"
-
         _bound = Integer.MAX_VALUE; /// Set init bound to infinity.
         BNB_DFS();
         return null;
     }
 
+    /**
+     * computes the path using DFS as a search algorithm.
+     * and uses branch and bound to narrow down the search space.
+     */
     public void BNB_DFS(){
         //Compute topological order and return it.
         Schedule shortestPath = null;
@@ -45,8 +51,8 @@ public class BNB implements Algorithm {
 
         Hashtable<INode, Integer> rootTable = getRootTable();
         Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
-        parentHeuristicTable = new Heuristic().getHeuristicTable(_graph);
-        _maxCriticalPath = Collections.max( parentHeuristicTable.values() );
+        _heuristicTable = new Heuristic().getHeuristicTable(_graph);
+        _maxCriticalPath = Collections.max( _heuristicTable.values() );
 
         for (INode i : rootTable.keySet()){
             if (rootTable.get(i) == 0 ) {
@@ -76,8 +82,7 @@ public class BNB implements Algorithm {
             if (cSchedule._lowerBound >= _bound) {
                 // Bounded. Meaning, this current schedule is too slow.
                 // We already know better schedule so ignore.
-            }else if( getLowerBound(parentHeuristicTable, cSchedule.node,
-                    cTable, _maxCriticalPath, _numP) >= _bound ){
+            }else if( getLowerBound( cSchedule.node, cTable) >= _bound ){
                 // REASON TO SEPRATE the first "IF" and second "else if" statement is for optimization.
                 // We also already know better schedle.
             }else{
@@ -90,6 +95,7 @@ public class BNB implements Algorithm {
                 }else {
                     for (INode i : cTable.keySet()) {
                         if (cTable.get(i) == 0) {
+                            // this node "i" has outDegree of 0, so add childs to the stack.
                             for (int j = 0; j < _numP; j++) {
                                 int start = calculateCost(cSchedule, j, i);
                                 Schedule newSchedule = new Schedule(start, cSchedule, i, j);
@@ -101,7 +107,6 @@ public class BNB implements Algorithm {
                     }
                 }
             }
-
             if (_scheduleStack.isEmpty()){
                 System.out.println("-- BOUND_DFS FINISHED --");
                 break;
@@ -110,14 +115,19 @@ public class BNB implements Algorithm {
         printPath(shortestPath);
     }
 
+    /**
+     * Computes the earliest time we can schedule a task in a specific processor.
+     * @param parentSchedule : parent schedule of this partial schedule.
+     * @param processorId : the specific processor we want to scheude task into.
+     * @param nodeToBeSchedule : node/task to be scheduled.
+     * @return Integer : representing the earliest time. (start time)
+     */
     public int calculateCost(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
         // Find last finish time for current processor id.
         Schedule last_processorId_use = null; //last time processor with "processorId" was used.
         Schedule cParentSchedule = parentSchedule;
 
-        //---------------------------------------- Geting start time
-        // finding the first schedule that has same id
         while ( cParentSchedule != null){
             if ( cParentSchedule.p_id == processorId ){
                 last_processorId_use = cParentSchedule;
@@ -134,7 +144,6 @@ public class BNB implements Algorithm {
 
         cParentSchedule = parentSchedule;
         while ( cParentSchedule != null){
-
             // for edges in current parent scheduled node
             INode last_scheduled_node = cParentSchedule.node;
             for ( IEdge edge: _graph.getOutgoingEdges(last_scheduled_node.getName())){
@@ -155,7 +164,10 @@ public class BNB implements Algorithm {
         return finished_time_of_last_parent;
     }
 
-
+    /**
+     * Print hashtable : Used for debugging purposes.
+     * @param table : table to print. ( i think this was mainly used for printing outDegreeEdge table)
+     */
     public void printHashTable(Hashtable<INode, Integer> table){
         System.out.printf("{ ");
         for (INode i: table.keySet()){
@@ -164,6 +176,11 @@ public class BNB implements Algorithm {
         System.out.printf(" }\n");
     }
 
+    /**
+     * Creates intial outDegree table for the graph.
+     * @return : Hashtable : Key : Node
+     *                      Value : Integer representing number of outDegree edges.
+     */
     public Hashtable<INode, Integer> getRootTable(){
         Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>();
         for (INode i : _graph.getAllNodes()){
@@ -177,6 +194,13 @@ public class BNB implements Algorithm {
         return tmp;
     }
 
+    /**
+     * Creates outDegree table for child node.
+     * @param parentTable : parent schedule's outDegree table.
+     * @param x : Node :that was just scheduled
+     * @return : Hashtable : Key : Node
+     *                      Value : Integer representing number of outDegree edges.
+     */
     public Hashtable<INode, Integer> getChildTable(Hashtable<INode, Integer> parentTable, INode x){
         Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>(parentTable);
         tmp.remove(x);
@@ -186,6 +210,10 @@ public class BNB implements Algorithm {
         return tmp;
     }
 
+    /**
+     * Print the path to command line/ terminal.
+     * @param x : Partial schedule to print.
+     */
     public void printPath(Schedule x){
         System.out.println("");
         Hashtable<INode, int[]> path = x.getPath();
@@ -197,17 +225,21 @@ public class BNB implements Algorithm {
         }
     }
 
+    /**
+     * Compute the upperBound of this partial schedule.
+     * @return
+     */
     public int getUpperBound(){
         return Integer.MAX_VALUE;
     }
 
-    //This is bascially heuristic function.
-    public int getLowerBound(Hashtable<String, Integer> heuristicTable, INode i,
-                             Hashtable<INode, Integer> rootTable,
-                             int maxCriticalPath,
-                             int numP){
-        return new Heuristic().getH(heuristicTable,i,rootTable,maxCriticalPath,numP);
+    /**
+     * Compute the lower bound of this partial schedule.
+     * @param i : Node that we are going to be scheduling.
+     * @param outDegreeTable : table representing the outDegree edge of each nodes.
+     * @return : Integer representing the lower bound of this partial schedule
+     */
+    public int getLowerBound( INode i, Hashtable<INode, Integer> outDegreeTable){
+        return new Heuristic().getH( _heuristicTable,i, outDegreeTable, _maxCriticalPath, _numP);
     }
-
-
 }
