@@ -20,6 +20,11 @@ public class Schedule implements Comparable<Schedule>{
     public Hashtable<Integer, String> lastForEachProcessor; //the last task schedule, for each processor.
     public int maxPid; //The largest pid currently used to schedule
 
+
+    public int _upperBound;    // For BNB. Represents the worst case. <- Bad schedling.
+    public int _lowerBound;   // For BNB. Represents the base case. <- perfect schedling.
+
+
     /**
      * Constructor for partial schedule
      * @param startTime : the earliest start time a node can be scheudled.

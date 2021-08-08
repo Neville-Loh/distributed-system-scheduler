@@ -1,5 +1,6 @@
 package raspberry.scheduler.graph;
 
+import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;

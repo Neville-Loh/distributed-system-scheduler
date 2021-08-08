@@ -1,13 +1,12 @@
 package raspberry.scheduler.algorithm;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 import raspberry.scheduler.graph.*;
 
 // TODO : Replace, Main.NUM_NODE with some other variable.
-import raspberry.scheduler.Main;
+import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 public class Astar implements Algorithm{
 

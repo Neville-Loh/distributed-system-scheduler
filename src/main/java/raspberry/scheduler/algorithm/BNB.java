@@ -1,6 +1,6 @@
 package raspberry.scheduler.algorithm;
 
-import raspberry.scheduler.graph.EdgeDoesNotExistException;
+import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.INode;
 import raspberry.scheduler.graph.IGraph;
@@ -35,15 +35,14 @@ public class BNB implements Algorithm {
     @Override
     public OutputSchedule findPath() {
         _bound = Integer.MAX_VALUE; /// Set init bound to infinity.
-        BNB_DFS();
-        return null;
+        return BNB_DFS();
     }
 
     /**
      * computes the path using DFS as a search algorithm.
      * and uses branch and bound to narrow down the search space.
      */
-    public void BNB_DFS(){
+    public OutputSchedule BNB_DFS(){
         //Compute topological order and return it.
         Schedule shortestPath = null;
         // Stack - Keeps track of all available/scheduable tasks.
@@ -82,11 +81,11 @@ public class BNB implements Algorithm {
             if (cSchedule._lowerBound >= _bound) {
                 // Bounded. Meaning, this current schedule is too slow.
                 // We already know better schedule so ignore.
-            }else if( getLowerBound( cSchedule.node, cTable) >= _bound ){
+            }else if( getLowerBound( cSchedule._node, cTable) >= _bound ){
                 // REASON TO SEPRATE the first "IF" and second "else if" statement is for optimization.
                 // We also already know better schedle.
             }else{
-                if (cSchedule.size == _numNode ){
+                if (cSchedule._size == _numNode ){
                     if (cSchedule._lowerBound < _bound){
                         _bound = cSchedule._lowerBound;
                         shortestPath = cSchedule;
@@ -113,6 +112,7 @@ public class BNB implements Algorithm {
             }
         }
         printPath(shortestPath);
+        return new Solution(shortestPath,_numP);
     }
 
     /**
@@ -129,37 +129,37 @@ public class BNB implements Algorithm {
         Schedule cParentSchedule = parentSchedule;
 
         while ( cParentSchedule != null){
-            if ( cParentSchedule.p_id == processorId ){
+            if ( cParentSchedule._pid == processorId ){
                 last_processorId_use = cParentSchedule;
                 break;
             }
-            cParentSchedule = cParentSchedule.parent;
+            cParentSchedule = cParentSchedule._parent;
         }
 
         //last time parent was used. Needs to check for all processor.
         int finished_time_of_last_parent=0;
         if (last_processorId_use != null){
-            finished_time_of_last_parent = last_processorId_use.finishTime;
+            finished_time_of_last_parent = last_processorId_use._finishTime;
         }
 
         cParentSchedule = parentSchedule;
         while ( cParentSchedule != null){
             // for edges in current parent scheduled node
-            INode last_scheduled_node = cParentSchedule.node;
+            INode last_scheduled_node = cParentSchedule._node;
             for ( IEdge edge: _graph.getOutgoingEdges(last_scheduled_node.getName())){
-                if (edge.getChild() == nodeToBeSchedule && cParentSchedule.p_id != processorId){
+                if (edge.getChild() == nodeToBeSchedule && cParentSchedule._pid != processorId){
                     try {
-                        int communicationWeight = _graph.getEdgeWeight(cParentSchedule.node,nodeToBeSchedule);
+                        int communicationWeight = _graph.getEdgeWeight(cParentSchedule._node,nodeToBeSchedule);
                         //  finished_time_of_last_parent  <
-                        if (finished_time_of_last_parent < (cParentSchedule.finishTime + communicationWeight)){
-                            finished_time_of_last_parent = cParentSchedule.finishTime + communicationWeight;
+                        if (finished_time_of_last_parent < (cParentSchedule._finishTime + communicationWeight)){
+                            finished_time_of_last_parent = cParentSchedule._finishTime + communicationWeight;
                         }
                     } catch (EdgeDoesNotExistException e){
                         System.out.println(e.getMessage());
                     }
                 }
             }
-            cParentSchedule = cParentSchedule.parent;
+            cParentSchedule = cParentSchedule._parent;
         }
         return finished_time_of_last_parent;
     }

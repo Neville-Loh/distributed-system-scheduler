@@ -12,23 +12,20 @@ public class Solution implements OutputSchedule{
     private int _finshTime;
     private int _totalProcessorNum;
 
-    public Solution(Schedule schedule, int numP){
+    public Solution(MBSchedule schedule, int numP){
         _table = schedule.getPath();
-<<<<<<< HEAD
         for (INode node: _table.keySet()){
             _finshTime = Math.max(getStartTime(node) + node.getValue(), _finshTime);
         }
         _totalProcessorNum = numP;
     }
 
-    public Solution(MBSchedule schedule, int numP){
+
+    public Solution(Schedule schedule, int numP){
         _table = schedule.getPath();
         for (INode node: _table.keySet()){
             _finshTime = Math.max(getStartTime(node) + node.getValue(), _finshTime);
         }
-=======
-        _finshTime = schedule._finishTime;
->>>>>>> origin/optimize-SearchExpansion
         _totalProcessorNum = numP;
     }
 
