@@ -4,6 +4,7 @@ import raspberry.scheduler.graph.INode;
 
 /**
  * Interface that represent a scheduling algorithm output
+ * @author Neivlle
  */
 public interface OutputSchedule {
     /**

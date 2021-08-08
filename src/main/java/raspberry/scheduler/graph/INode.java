@@ -1,7 +1,5 @@
 package raspberry.scheduler.graph;
 
-import java.util.List;
-
 /**
  * Interface for graph data representation of the applications
  * @author Neville
@@ -15,7 +13,8 @@ public interface INode {
     int getValue();
 
     /**
-     * String
+     * Get the name of the graph
+     * @return name name of the graph
      */
     String getName();
 }

@@ -5,7 +5,11 @@ import raspberry.scheduler.cli.exception.ParserException;
 import java.io.File;
 import java.util.Objects;
 
-// This class handles the parsing of the commands and exceptions thrown when the program is accessed from the command line.
+/**
+ * This class handles the parsing of the commands and exceptions thrown when the program is accessed
+ * from the command line.
+ * @author Alan
+ */
 public class CLIParser {
     public static final String WRONG_ARGUMENTS = "The arguments entered are not registered. Please try -help for more options.";
     public static final String HELP_MENU = "Help Menu: \n \n" +
@@ -20,6 +24,7 @@ public class CLIParser {
     public static final String NO_INPUT_NUM_CORES = "No input was detected for number of cores.";
     public static final String NO_INTEGER_NUM_CORES = "Please enter an valid integer for number of cores.";
     public static final String NO_OUTPUT_FILE_INPUT = "Please enter a name for the output file.";
+
 
     /*
      * Takes in command inputs and creates CLIConfig object
@@ -41,9 +46,10 @@ public class CLIParser {
             throw new ParserException(WRONG_ARGUMENTS);
         }
 
-        // Get the Input File Name (inputs[0]) and Number of Processors (inputs[1]).
-        // Number of Processors is processed as a string.
-        // Have to add in exception if input is not an integer.
+        /*
+         * Get the Input File Name (inputs[0]) and Number of Processors (inputs[1]).
+         * Number of Processors is processed as a string.
+         */
         CLIConfig.setDotFile(inputs[0]);
         try {
             CLIConfig.setNumProcessors(Integer.parseInt(inputs[1]));

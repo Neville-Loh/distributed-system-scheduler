@@ -8,7 +8,7 @@ import raspberry.scheduler.graph.INode;
 /**
  * Linked list implementation of schedule. Memory heavy and compute optimized version
  * of the normal variant.
- *
+ * Currently this is in development
  * @author Neville
  */
 public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
@@ -31,10 +31,12 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     private int _minForgottenFScore;
 
 
-
+    /**
+     * Empty class constructor for
+     */
     public MBSchedule(){
-
     }
+
     /**
      * Class constructor
      * @param parentSchedule
@@ -51,20 +53,9 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         if (parentSchedule == null){
             size = 1;
             _overallFinishTime = scheduledTask.getFinishTime();
-
-            // Manhattan distance heuristic
-            //_earliestFinishProcessorID = 1;
         }else{
             size = parentSchedule.size + 1;
             _overallFinishTime = Math.max(parent.getOverallFinishTime(), _scheduledTask.getFinishTime());
-
-//            // Manhattan distance heuristic
-//            if (_earliestFinishProcessorID == this.parent.getEarliestFinishProcessorID()){
-//                _earliestFinishTimeOfAllProcessors = _scheduledTask.getFinishTime();
-//            } else if (_earliestFinishProcessorID){
-//
-//            }
-
         }
     }
 
@@ -131,9 +122,8 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         _fScore = _minForgottenFScore;
         subSchedule.setForgottenTableToNull();
 
-        // compare if the schedule f score is lower than the forgotten f score in table
         //_forgotten.put(subSchedule, subSchedule.getFScore());
-
+        // compare if the schedule f score is lower than the forgotten f score in table
         if (_forgotten.containsKey(subSchedule)){
             int minFScore = Math.min(_forgotten.get(subSchedule), subSchedule.getFScore());
             _forgotten.put(subSchedule, minFScore);

@@ -1,41 +1,46 @@
 package raspberry.scheduler.graph;
 
+
+/**
+ * Class represent edges
+ * @author Neville
+ */
 public class Edge implements IEdge{
+    private INode _parentNode;
+    private INode _childNode;
+    private int _weight;
 
-    private INode parentNode;
-    private INode childNode;
-    private int weight;
-
+    /**
+     *
+     * @param parent
+     * @param child
+     * @param communicatonCost
+     */
     public Edge(INode parent, INode child, int communicatonCost){
-        parentNode = parent;
-        childNode = child;
-        weight = communicatonCost;
+        _parentNode = parent;
+        _childNode = child;
+        _weight = communicatonCost;
     }
 
 
     @Override
     public int getWeight() {
-        return weight;
+        return _weight;
     }
 
     @Override
     public INode getChild() {
-        return childNode;
+        return _childNode;
     }
 
     @Override
     public INode getParent() {
-        return parentNode;
+        return _parentNode;
     }
     
     @Override
     public String toString() {
-    	return String.format("(pointsto=%s, weight=%d)", childNode.getName(), weight);
-//=======
-//    //  ***  Temporary, we will only be using this constructor. ***???????????????
-//    public Edge(Node parent, Node child, int communicatonCost){
-//        childNode = child;
-//        child.addParent(parent, communicatonCost);
-//>>>>>>> master
+    	return String.format("(pointsto=%s, weight=%d)", _childNode.getName(), _weight);
+
     }
 }

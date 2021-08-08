@@ -7,6 +7,10 @@ import raspberry.scheduler.graph.IGraph;
 
 import java.util.*;
 
+/**
+ *
+ * @author Takahiro
+ */
 public class BNB implements Algorithm {
 
     IGraph _graph;
