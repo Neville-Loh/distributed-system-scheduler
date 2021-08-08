@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 
 public class Schedule implements Comparable<Schedule>{
@@ -15,16 +14,41 @@ public class Schedule implements Comparable<Schedule>{
 
     public int startTime; //the time this node start running.
     public int finishTime; //the time at this node finish running
-    public Hashtable<INode,Boolean> isScheduled;
 
-//    public Schedule parent;
+    //    public Schedule parent;
     public INode node;
     public int p_id;
-//    public ArrayList<Schedule> path;
+    //    public ArrayList<Schedule> path;
     public Schedule parent;
     public int size;
 
-    public Schedule(int cost, int heuristic, Schedule parentSchedule, INode childNode, int processorId, IGraph graph)  {
+    public int _upperBound;    // For BNB. Represents the worst case. <- Bad schedling.
+    public int _lowerBound;   // For BNB. Represents the base case. <- perfect schedling.
+
+
+    public Schedule(int cost, Schedule parentSchedule, INode childNode, int processorId){
+        node = childNode;
+        p_id = processorId;
+
+        startTime = cost;
+        finishTime = cost + childNode.getValue();
+        t = finishTime;
+
+        parent = parentSchedule;
+        if (parentSchedule == null){
+            size = 1;
+            _lowerBound = finishTime;
+        }else{
+            size = parentSchedule.size + 1;
+            if ( finishTime > parentSchedule._lowerBound){
+                _lowerBound = finishTime;
+            }else{
+                _lowerBound = parentSchedule._lowerBound;
+            }
+        }
+    }
+
+    public Schedule(int cost, int heuristic, Schedule parentSchedule, INode childNode, int processorId){
         node = childNode;
         p_id = processorId;
 
@@ -37,25 +61,8 @@ public class Schedule implements Comparable<Schedule>{
         parent = parentSchedule;
         if (parentSchedule == null){
             size = 1;
-            isScheduled = new Hashtable<INode, Boolean>();
-            for (INode node: graph.getAllNodes()){
-                isScheduled.put(node, false);
-            }
-            System.out.println("created?????");
         }else{
             size = parentSchedule.size + 1;
-            Hashtable<INode, Boolean> tmp = new Hashtable<INode, Boolean>();
-            tmp.putAll(parent.isScheduled);
-            System.out.println(tmp);
-            isScheduled = tmp;
-//            isScheduled.putAll(parent.isScheduled);
-//            for (INode node: graph.getAllNodes()){
-//                isScheduled.put(node, false);
-//                if
-//                if isScheduled.get(node) parent.isScheduled()
-//                isScheduled.put(node, false);
-//            }
-            isScheduled.replace(childNode,true);
         }
     }
 
@@ -75,16 +82,5 @@ public class Schedule implements Comparable<Schedule>{
         }
         tmp.put(this.node, new int[]{this.startTime,this.finishTime,this.p_id});
         return tmp;
-    }
-
-
-    public void printPath(){
-        System.out.println("");
-        Hashtable<INode, int[]> path = this.getPath();
-        //path.sort((o1, o2) -> o1.node.getName().compareTo(o2.node.getName()));
-        for (INode i: path.keySet()){
-            System.out.printf("%s : {start:%d}, {finish:%d}, {p_id:%d} \n",
-                    i.getName(), path.get(i)[0], path.get(i)[1], path.get(i)[2]);
-        }
     }
 }
