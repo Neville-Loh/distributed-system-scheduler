@@ -9,7 +9,7 @@ import raspberry.scheduler.Main;
 
 public class Astar implements Algorithm{
 
-    public IGraph graph;
+    private IGraph graph;
 
     PriorityQueue<Schedule> pq;
     int numP;
@@ -35,15 +35,21 @@ public class Astar implements Algorithm{
 
         for (INode i: rootTable.keySet()){
             if (rootTable.get(i) == 0 ){
-                Schedule newSchedule = new Schedule(
-                        0,
-                        h(rootTable,null, 0, i ),
-                        null, i, 0,
-                        graph);
+                Schedule newSchedule = new Schedule( 0, h(rootTable), null, i, 0 );
                 master.put(newSchedule,getChildTable(rootTable,i));
                 pq.add(newSchedule);
             }
         }
+        System.out.print("ROOT TABLE :\n");
+        //printHashTable(rootTable);
+        System.out.println("");
+
+        System.out.println("Printing MASSSTERETABLE");
+        for (Schedule sc: master.keySet()){
+            printPath(sc);
+            //printHashTable(master.get(sc));
+        }
+        System.out.println("ENDDDDD");
 
         System.out.print("\n=== WHILE LOOP ===");
         Schedule cSchedule;
@@ -62,10 +68,9 @@ public class Astar implements Algorithm{
                     //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
                     for (int j=0; j<numP; j++){
 //                        System.out.println("\n------------");
+                        int start = calculateCost(cSchedule, j, node);
                         Hashtable<INode, Integer> newTable = getChildTable(cTable,node);
-                        int earliestStartTime = calculateEarliestStartTime(cSchedule, j, node);
-                        Schedule newSchedule = new Schedule(earliestStartTime,
-                                h(newTable, cSchedule, earliestStartTime, node), cSchedule, node, j ,graph);
+                        Schedule newSchedule = new Schedule( start, h(newTable), cSchedule, node, j );
                         master.put(newSchedule,newTable);
                         pq.add(newSchedule);
 
@@ -83,67 +88,15 @@ public class Astar implements Algorithm{
 
     // Compute heuristic weight
     // Currently our heuristic function is undecided. --> just returns 0.
-    public int h(Hashtable<INode, Integer> parentsleft, Schedule schedule, int earliestStartTime, INode currentTask){
-
-        ///////////////////////////
-        Hashtable<Integer, Integer> processorFinishTime = new Hashtable<Integer,Integer>();
-        Schedule cSchedule = schedule;
-
-        int earliestFinishTime = 0;
-        if (cSchedule != null){
-            earliestFinishTime = cSchedule.finishTime;
-        }
-
-
-        while (cSchedule != null){
-            if (!processorFinishTime.containsKey(cSchedule.p_id)){
-                processorFinishTime.put(cSchedule.p_id,cSchedule.finishTime);
-                earliestFinishTime = Math.min(earliestFinishTime, cSchedule.finishTime);
-            }
-            if (processorFinishTime.size() >= numP){
-                break;
-            }
-            cSchedule = cSchedule.parent;
-        }
-
-
-
-        if (processorFinishTime.size() < numP){
-            earliestFinishTime = 0;
-        }
-        ///////////////////////////
-//        int sum = 0;
-//        for (INode node: parentsleft.keySet()){
-//            if parentsleft.get(node) !
-//                    graph.getAllNodes()
-//            sum += node.getValue();
-//        }
-
-
+    public int h(Hashtable<INode, Integer> x){
         int sum = 0;
-        if (schedule != null) {
-            for (INode node : schedule.isScheduled.keySet()) {
-                if (!schedule.isScheduled.get(node)) {
-                    sum += node.getValue();
-                }
-            }
-        } else {
-            for (INode node : graph.getAllNodes()) {
-                sum += node.getValue();
-            }
-            sum -= currentTask.getValue();
+        for (INode i: x.keySet()){
+            sum += i.getValue();
         }
-        return (sum - (earliestStartTime- earliestFinishTime))/numP;
+        return sum/numP;
     }
 
-    /**
-     * so easy, calculating the cost
-     * @param parentSchedule
-     * @param processorId
-     * @param nodeToBeSchedule
-     * @return
-     */
-    public int calculateEarliestStartTime(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
+    public int calculateCost(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
         // Find last finish time for current processor id.
         Schedule last_processorId_use = null; //last time processor with "processorId" was used.
@@ -165,7 +118,11 @@ public class Astar implements Algorithm{
             finished_time_of_last_parent = last_processorId_use.finishTime;
         }
 
+
         // -------------------------------------------- getting start time
+        //Boolean [] last_parent_processor = new Boolean[this.numP];
+
+
         cParentSchedule = parentSchedule;
         while ( cParentSchedule != null){
 
@@ -179,12 +136,14 @@ public class Astar implements Algorithm{
 
                     try {
                         int communicationWeight = graph.getEdgeWeight(cParentSchedule.node,nodeToBeSchedule);
+                        //  finished_time_of_last_parent  <
                         if (finished_time_of_last_parent < (cParentSchedule.finishTime + communicationWeight)){
                             finished_time_of_last_parent = cParentSchedule.finishTime + communicationWeight;
                         }
                     } catch (EdgeDoesNotExistException e){
                         System.out.println(e.getMessage());
                     }
+
                 }
             }
             cParentSchedule = cParentSchedule.parent;
@@ -208,6 +167,10 @@ public class Astar implements Algorithm{
     public Hashtable<INode, Integer> getChildTable(Hashtable<INode, Integer> parentTable, INode x){
         Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>(parentTable);
         tmp.remove(x);
+
+        System.out.println(this.graph.getOutgoingEdges(x.getName()));
+        System.out.println(graph.toString());
+
 
         for (IEdge i : this.graph.getOutgoingEdges(x.getName())){
             tmp.put( i.getChild(),  tmp.get(i.getChild()) - 1 );
