@@ -48,11 +48,11 @@ public class Writer {
         FileWriter fileWriter = new FileWriter(_filepath);
         PrintWriter pw = new PrintWriter(fileWriter);
 
-        //get filename without .dot extension
-        String name = _filename.substring(0, _filename.lastIndexOf('.'));
+        //get graph name
+        String outputGraphName = "output" + _graph.getName();
 
         //write first line
-        pw.println(String.format("digraph \"%s\" {", name));
+        pw.println(String.format("digraph \"%s\" {", outputGraphName));
 
         for (INode node : _graph.getAllNodes()) {
             //write node lines in the correct format
