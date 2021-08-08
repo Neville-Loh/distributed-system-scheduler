@@ -7,7 +7,7 @@ import java.util.Hashtable;
 import raspberry.scheduler.graph.INode;
 
 /**
- * The Scehdule class represents a partial schedule of the tasks
+ * The Schedule class represents a partial schedule of the tasks
  * Schedule has a Linked list implementation connected to parents
  *
  * @author Takahiro

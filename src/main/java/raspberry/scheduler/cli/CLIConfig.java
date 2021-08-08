@@ -1,33 +1,24 @@
 package raspberry.scheduler.cli;
 
+/**
+ * CLIConfig class holds all the required and optional settings given for the program
+ * @author Alan
+ */
 public class CLIConfig {
-    /**
-     * @author Alan
-     * CLIConfig class holds all the required and optional settings given for the program
-     */
 
-    /**
+    /*
      * Required settings
      */
     private int _numProcessors;
     private String _dotFile;
 
-
-    /**
-     * Optional settings
-     **/
-    /**
-     * Number of parallel cores
-     */
+    // number of parallel cores
     private int _numCores;
 
-    /**
-     * output file name
-     */
+    // name of the output file
     private String _outputFile;
-    /**
-     * visualise the search
-     */
+
+    // is visualise or not
     private boolean _visualise;
 
     /**
@@ -38,7 +29,9 @@ public class CLIConfig {
     public static final int SEQUENTIAL_EXEC = 1;
     public static final int DEFAULT_NUMBER_OF_PROCESSORS = 1;
 
-
+    /**
+     * Constructor
+     */
     public CLIConfig() {
         _visualise = false;
         _numCores = SEQUENTIAL_EXEC;
@@ -46,7 +39,6 @@ public class CLIConfig {
 
     /**
      * Sets number of proccessors running for the program
-     *
      * @param numProcessors is the number of processes set by the user
      */
     public void setNumProcessors(int numProcessors) {
@@ -55,7 +47,6 @@ public class CLIConfig {
 
     /**
      * Returns the number of processes set
-     *
      * @return _numProcessors - an int that gives the number of processors set
      */
     public int get_numProcessors() {
@@ -65,7 +56,6 @@ public class CLIConfig {
 
     /**
      * Sets the default input dot file read in by the program
-     *
      * @param fileName the file name as a string for the input dot file
      */
     public void setDotFile(String fileName) {
@@ -74,7 +64,6 @@ public class CLIConfig {
 
     /**
      * returns input dot file name as a string
-     *
      * @return _dotFile - the input dot file name as a String
      */
     public String getDotFile() {
@@ -101,8 +90,7 @@ public class CLIConfig {
 
     /**
      * sets whether or not program has to be visualised - default is false
-     *
-     * @param visualise - boolean value - if false no vislisation, if true has visualisation.
+     * @param visualise - boolean value - if false no visualisation, if true has visualisation.
      */
     public void setVisualise(boolean visualise) {
         _visualise = visualise;
@@ -110,8 +98,7 @@ public class CLIConfig {
 
     /**
      * returns a boolean value for visualise to represent whether the program needs to be visualised.
-     *
-     * @return _visualise - a boolean value of true or false, where true means program needs to be visulised
+     * @return _visualise - a boolean value of true or false, where true means program needs to be visualised
      * false meaning it doesn't
      */
     public boolean getVisualise() {
@@ -134,6 +121,7 @@ public class CLIConfig {
     public String getOutputFile() {
         return _outputFile;
     }
+
 
     /**
      * sets the default Output file name as a string in the INPUT-output.dot format

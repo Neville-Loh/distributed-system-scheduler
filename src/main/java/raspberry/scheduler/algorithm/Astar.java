@@ -5,11 +5,12 @@ import java.util.List;
 
 import raspberry.scheduler.graph.*;
 
-// TODO : Replace, Main.NUM_NODE with some other variable.
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
+/**
+ *
+ */
 public class Astar implements Algorithm {
-
     private IGraph _graph;
     int _numP;
     int _numNode;
@@ -39,10 +40,12 @@ public class Astar implements Algorithm {
      */
     @Override
     public OutputSchedule findPath() {
-        // find the path
-        // "master" stores, schedule and its counterTable.
-        // "rootTable" is the table all counterTable is based of off.
-        //  --> stores a node and number of incoming edges.
+        /*
+         * find the path
+         * "master" stores, schedule and its counterTable.
+         * "rootTable" is the table all counterTable is based of off.
+         * --> stores a node and number of incoming edges.
+         */
         getH();
 
         Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
@@ -66,7 +69,6 @@ public class Astar implements Algorithm {
 
         while (true) {
             cSchedule = _pq.poll();
-
             ArrayList<Schedule> listVisitedForSize = _visited.get(cSchedule.getHash());
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
                 duplicate++;
@@ -79,7 +81,7 @@ public class Astar implements Algorithm {
                 listVisitedForSize.add(cSchedule);
             }
 
-
+            // Return if all task is scheduled
             if (cSchedule.getSize() == _numNode) {
                 break;
             }
@@ -137,9 +139,9 @@ public class Astar implements Algorithm {
     }
 
     /**
-     * Find the best case scheduling where all task are evenly spread out throughtout the different processors.
+     * Find the best case scheduling where all task are evenly spread out throughout the different processors.
      *
-     * @param x         : Hashtable represting the outDegree table. (All the tasks in the table has not been scheduled yet)
+     * @param x         : Hashtable representing the outDegree table. (All the tasks in the table has not been scheduled yet)
      * @param cSchedule : current schedule . Used to find the last task which was scheduled for each processor.
      * @return Integer : Representing the best case scheduling.
      */
@@ -159,7 +161,7 @@ public class Astar implements Algorithm {
      * Computes the earliest time we can schedule a task in a specific processor.
      *
      * @param parentSchedule   : parent schedule of this partial schedule.
-     * @param processorId      : the specific processor we want to scheude task into.
+     * @param processorId      : the specific processor we want to schedule task into.
      * @param nodeToBeSchedule : node/task to be scheduled.
      * @return Integer : representing the earliest time. (start time)
      */
@@ -209,7 +211,7 @@ public class Astar implements Algorithm {
     }
 
     /**
-     * Creates intial outDegree table for the graph.
+     * Creates initial outDegree table for the graph.
      *
      * @return : Hashtable : Key : Node
      * Value : Integer representing number of outDegree edges.

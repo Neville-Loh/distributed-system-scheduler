@@ -7,15 +7,19 @@ import java.util.Hashtable;
 
 /**
  * Solution class that represent a scheduling algorithm output
+ * @author Takahiro
  */
 public class Solution implements OutputSchedule {
-
-    //    private Schedule _solution;
     private Hashtable<INode, int[]> _table;
     private int _finshTime;
     private int _totalProcessorNum;
 
 
+    /**
+     * Class constructor
+     * @param schedule a linked list that contain a valid solution
+     * @param numP the specified number of processors that algorithm takes in as input
+     */
     public Solution(Schedule schedule, int numP) {
         _table = schedule.getPath();
         for (INode node : _table.keySet()) {
@@ -24,7 +28,12 @@ public class Solution implements OutputSchedule {
         _totalProcessorNum = numP;
     }
 
-
+    /**
+     * Class constructor
+     * duplicated method, create interface and refactor in next release
+     * @param schedule a linked list that contain a valid solution
+     * @param numP the specified number of processors that algorithm takes in as input
+     */
     public Solution(MBSchedule schedule, int numP) {
         _table = schedule.getPath();
         for (INode node : _table.keySet()) {

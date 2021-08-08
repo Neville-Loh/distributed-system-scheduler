@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
+/**
+ * @author Takahiro
+ */
 public class Heuristic {
 
     /**
@@ -21,7 +24,7 @@ public class Heuristic {
      * Computes all heuristic function and return the best heuristic. (largest value)
      *
      * @param heuristicTable  : table containing a node name as key,
-     *                        and heuristic cost based on dependencie as value.
+     *                        and heuristic cost based on dependencies as value.
      * @param i               : Node that we are going to be scheduling.
      * @param rootTable       : table representing the outDegree edge of each nodes.
      * @param maxCriticalPath : maximum critical path cost based on dependencies.
@@ -40,9 +43,9 @@ public class Heuristic {
     }
 
     /**
-     * Find the best case scheduling where all task are evenly spread out throughtout the different processors.
+     * Find the best case scheduling where all task are evenly spread out throughout the different processors.
      *
-     * @param x          : Hashtable represting the outDegree table. (All the tasks in the table has not been scheduled yet)
+     * @param x          : Hashtable representing the outDegree table. (All the tasks in the table has not been scheduled yet)
      * @param finishTime : finish time of task that was previously just scheduled.
      * @param numP       : number of processors allowed to use for scheduling.
      * @return Integer : Representing the heuristics of best case scheduling.
@@ -56,11 +59,11 @@ public class Heuristic {
     }
 
     /**
-     * Find the best case scheduling where all task are evenly spread out throughtout the different processors.
+     * Find the best case scheduling where all task are evenly spread out throughout the different processors.
      * Different to h1(), this function also take into account the already scheduled tasks.
      * Better heuristic but requires more computation.
      *
-     * @param x      : Hashtable represting the outDegree table. (All the tasks in the table has not been scheduled yet)
+     * @param x      : Hashtable representing the outDegree table. (All the tasks in the table has not been scheduled yet)
      * @param start  : start time of task that was previously just scheduled.
      * @param cost   : cost of task that was previously just scheduled.
      * @param parent : parent schedule.
@@ -120,7 +123,7 @@ public class Heuristic {
      *
      * @param n     : Node to find heuristic cost for.
      * @param graph : graph representing the tasks and its dependencies.
-     * @return : Integer representiing the heuristic cost of node n.
+     * @return : Integer representing the heuristic cost of node n.
      */
     public int getHRecursive(INode n, IGraph graph) {
         List<IEdge> e = graph.getOutgoingEdges(n.getName());

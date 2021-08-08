@@ -15,6 +15,7 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 /**
  * Rough implementation of famous algorithm SMA
+ * Currently this is in development
  * @author Neville L.
  */
 public class MemoryBoundAStar implements Algorithm {

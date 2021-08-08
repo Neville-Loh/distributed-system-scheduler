@@ -1,6 +1,8 @@
 package raspberry.scheduler.algorithm.sma;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.PriorityQueue;
 
 /**
  * Implementation of a two way priority queue which make use of the
@@ -72,17 +74,33 @@ public class TwoWayPriorityQueue{
     }
 
 
-    public PriorityQueue<MBSchedule> getPQ(){
-        return _ascendingFScore;
-    }
-
-
+    /**
+     * Adds all of the elements in the specified collection to this queue.
+     * Attempts to addAll of a queue to itself result in IllegalArgumentException.
+     * Further, the behavior of this operation is undefined if the specified collection
+     * is modified while the operation is in progress.
+     * @see java.util.PriorityQueue
+     * @param collection collections of MSchedule
+     */
     public void addAll(Collection<MBSchedule> collection){
         _ascendingFScore.addAll(collection);
         _descendingFScore.addAll(collection);
     }
 
+    /**
+     * Get Method
+     * Return the ascending priority queue
+     * @return priorityQueue
+     */
+    public PriorityQueue<MBSchedule> getPQ(){
+        return _ascendingFScore;
+    }
 
+    /**
+     * String method, return a string
+     * where each line represent an item of the prioirty queue
+     * @return outputString with specified format
+     */
     @Override
     public String toString(){
         ArrayList<MBSchedule> list = new ArrayList<MBSchedule>();

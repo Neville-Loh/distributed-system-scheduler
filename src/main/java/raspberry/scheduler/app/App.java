@@ -6,19 +6,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import raspberry.scheduler.graph.Graph;
-import raspberry.scheduler.algorithm.Astar;
 
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-
-import java.util.Objects;
-
+/**
+ * FrontEnd
+ */
 public class App extends Application{
 
     private Stage primaryStage;
@@ -32,7 +23,6 @@ public class App extends Application{
         public void start(Stage primaryStage) throws Exception {
             Parent root = FXMLLoader.load(getClass().getResource("/view/StartScreenView.fxml")
             );
-
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.show();

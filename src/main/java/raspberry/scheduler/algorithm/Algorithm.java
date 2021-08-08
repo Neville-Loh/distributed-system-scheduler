@@ -1,14 +1,15 @@
 package raspberry.scheduler.algorithm;
 
-
 /**
- *
+ * Represent the scheduling algorithm
+ * @Author Takahiro
  */
 public interface Algorithm {
-
     /**
-     * @return
+     * Finds a valid and optimal solution given with specified parameters
+     * in constructor
+     * @return outputSchedule a schedule that represent the result
      */
-    public OutputSchedule findPath();
+    OutputSchedule findPath();
 
 }
