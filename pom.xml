@@ -64,14 +64,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>${javafx.maven.plugin.version}</version>
-                <configuration>
-                    <mainClass>raspberry.scheduler.cli.CLIRunner</mainClass>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
@@ -84,7 +76,7 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        raspberry.scheduler.cli.CLIRunner
+                                        raspberry.scheduler.Main
                                     </mainClass>
                                 </manifest>
                             </archive>

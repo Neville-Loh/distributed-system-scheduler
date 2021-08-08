@@ -19,20 +19,16 @@ public class TestOutput {
      */
     @Test
     public void testWriter() throws IOException, InvalidFormatException, EdgeDoesNotExistException {
-
         //read in graph
-
         GraphReader file1 = new GraphReader("src/test/resources/input/example1.dot");
         IGraph graph = file1.read();
 
         //run algo and get output schedule
         Astar astar = new Astar(graph,2);
         OutputSchedule schedule = astar.findPath();
-        System.out.println("\nIs correct schedule: " + OutputChecker.isValid(graph,schedule) + "\n"+ "finished time: " + schedule.getFinishTime());
 
         //write to output file
-
-        Writer writer = new Writer("src/test/resources/output/test.dot", graph, schedule);
+        Writer writer = new Writer("src/test/resources/output/outputExample.dot", graph, schedule);
         writer.write();
     }
 }

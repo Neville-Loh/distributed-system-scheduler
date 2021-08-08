@@ -81,13 +81,12 @@ public class Writer {
         try {
             File file = new File(_filepath);
             if (file.createNewFile()) {
-                System.out.println("File created: " + file.getName());
+                System.out.println("File created: " + _filepath);
             } else {
                 System.out.println("File already exists.");
             }
         } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }
