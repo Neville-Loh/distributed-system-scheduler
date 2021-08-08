@@ -1,4 +1,5 @@
 package raspberry.iotest;
+
 import org.junit.Before;
 import raspberry.scheduler.cli.CLIConfig;
 import raspberry.scheduler.cli.CLIParser;
@@ -10,6 +11,7 @@ import static org.junit.Assert.fail;
 
 /**
  * Unit test for
+ *
  * @author Alan
  * This test class is for the Command line interface
  */
@@ -20,35 +22,29 @@ public class TestCLI {
 
 
     /**
-     *  Set up new
+     * Set up new
      */
     @Before
-    public void setup(){
-       _parser =  new CLIParser();
-       _correctConfig = new CLIConfig();
+    public void setup() {
+        _parser = new CLIParser();
+        _correctConfig = new CLIConfig();
 
     }
 
     /**
      * Test when no inputs are given i.e. no input file and no number of processes - should throw an exception.
+     *
      * @throws ParserException
      */
     @Test
     public void testCLINoArgs() {
-        try{
+        try {
             String[] testArgs = {};
             _parser.parser(testArgs);
             fail();
-        }catch(ParserException e){
-//            if(e.getMessage().equals("The arguments entered are not registered. Please try -help for more options.")){
-             System.out.println(e.getMessage());
-       //     }else{
-           //     System.out.println(e.getMessage());
-           //     fail();
-        //    }
-
+        } catch (ParserException e) {
+            //Should throw exception
         }
-
     }
 
     /**
@@ -56,32 +52,33 @@ public class TestCLI {
      * Should throw a @ParserException
      */
     @Test
-    public void testOnlyInputFileIsGiven(){
+    public void testOnlyInputFileIsGiven() {
         try {
             String[] testArgs = {"input.dot"};
             _parser.parser(testArgs);
             fail();
-        }catch(ParserException e){
-            System.out.println(e.getMessage());
+        } catch (ParserException e) {
+           // Should throw exception
         }
     }
 
     /**
      * Test when no optional inputs are given i.e. no -o is stated
+     *
      * @throws ParserException
      */
     @Test
-    public void testSimpleInputs(){
+    public void testSimpleInputs() {
         try {
             String[] testArgs = {"input.dot", "4"};
             _correctConfig.setDotFile(testArgs[0]);
             _correctConfig.setNumProcessors(Integer.parseInt(testArgs[1]));
             CLIConfig testConfig = _parser.parser(testArgs);
 
-            String[] testConfigStr = {testConfig.getDotFile(),String.valueOf(testConfig.get_numProcessors())};
-            String[] correctConfigStr = {_correctConfig.getDotFile(),String.valueOf(_correctConfig.get_numProcessors())};
-            assertEquals(correctConfigStr,testConfigStr);
-        }catch(ParserException e){
+            String[] testConfigStr = {testConfig.getDotFile(), String.valueOf(testConfig.get_numProcessors())};
+            String[] correctConfigStr = {_correctConfig.getDotFile(), String.valueOf(_correctConfig.get_numProcessors())};
+            assertEquals(correctConfigStr, testConfigStr);
+        } catch (ParserException e) {
             System.out.println(e.getMessage());
             fail();
         }
@@ -104,13 +101,13 @@ public class TestCLI {
      * test that the correct output file name is set when an outfile file name is given
      */
     @Test
-    public void testOutputFileName(){
+    public void testOutputFileName() {
         try {
-            String[] testArgs = {"input.dot", "4","-o","output"};
+            String[] testArgs = {"input.dot", "4", "-o", "output"};
             String expectedFileName = "output.dot";
             CLIConfig testConfig = _parser.parser(testArgs);
-            assertEquals(expectedFileName,testConfig.getOutputFile());
-        }catch(ParserException e){
+            assertEquals(expectedFileName, testConfig.getOutputFile());
+        } catch (ParserException e) {
             fail();
         }
     }
@@ -124,9 +121,8 @@ public class TestCLI {
             String[] testArgs = {"input.dot", "4"};
             String defaultName = "input-output.dot";
             CLIConfig testConfig = _parser.parser(testArgs);
-            System.out.println(testConfig.getOutputFile());
-            assertEquals(defaultName,testConfig.getOutputFile());
-        }catch(ParserException e){
+            assertEquals(defaultName, testConfig.getOutputFile());
+        } catch (ParserException e) {
             fail();
         }
 
@@ -138,44 +134,45 @@ public class TestCLI {
      */
     @Test
     public void testNOOutputFileName() {
-        try{
+        try {
             String[] testArgs = {"input.dot", "4", "-o"};
             CLIConfig testConfig = _parser.parser(testArgs);
             fail();
-        }catch(ParserException e){
-            System.out.println(e.getMessage());
+        } catch (ParserException e) {
+            //Should throw exception
         }
     }
+
     /**
      * This test will have the option selected for setting the number of cores - but invalid number of cores is given
      * thus it should throw an exception.
      */
     @Test
     public void testNoNumCores() {
-        try{
+        try {
             String[] testArgs = {"input.dot", "4", "-p", "-4"};
             CLIConfig testConfig = _parser.parser(testArgs);
             fail();
-        }catch(ParserException e){
-            System.out.println(e.getMessage());
+        } catch (ParserException e) {
+            //Should throw exception
         }
     }
 
-    /**test valid num cores is set correctly
-     *
+    /**
+     * test valid num cores is set correctly
      */
     @Test
     public void testNumCores() {
         try {
-            String[] testArgs = {"input.dot", "4","-p","2"};
+            String[] testArgs = {"input.dot", "4", "-p", "2"};
             _correctConfig.setDotFile(testArgs[0]);
             _correctConfig.setNumProcessors(Integer.parseInt(testArgs[1]));
             _correctConfig.setNumCores(Integer.parseInt(testArgs[3]));
             CLIConfig testConfig = _parser.parser(testArgs);
-            String[] testConfigStr = {testConfig.getDotFile(),String.valueOf(testConfig.get_numProcessors()),String.valueOf(testConfig.getNumCores())};
-            String[] correctConfigStr = {_correctConfig.getDotFile(),String.valueOf(_correctConfig.get_numProcessors()),String.valueOf(_correctConfig.getNumCores())};
-            assertEquals(correctConfigStr,testConfigStr);
-        }catch(ParserException e){
+            String[] testConfigStr = {testConfig.getDotFile(), String.valueOf(testConfig.get_numProcessors()), String.valueOf(testConfig.getNumCores())};
+            String[] correctConfigStr = {_correctConfig.getDotFile(), String.valueOf(_correctConfig.get_numProcessors()), String.valueOf(_correctConfig.getNumCores())};
+            assertEquals(correctConfigStr, testConfigStr);
+        } catch (ParserException e) {
             System.out.println(e.getMessage());
             fail();
         }
@@ -184,13 +181,14 @@ public class TestCLI {
     /**
      * test that when invalid arguments are given an exception is thrown - i.e. expected int for num process but gives a string instead
      */
-    @Test public void testInvalidArgs() {
-        try{
-            String[] testArgs = {"input.dot","five"};
+    @Test
+    public void testInvalidArgs() {
+        try {
+            String[] testArgs = {"input.dot", "five"};
             CLIConfig testConfig = _parser.parser(testArgs);
             fail();
-        }catch(NumberFormatException | ParserException e){
-            System.out.println(e.getMessage());
+        } catch (NumberFormatException | ParserException e) {
+            //Should throw exception
         }
     }
 
@@ -199,12 +197,12 @@ public class TestCLI {
      */
     @Test
     public void testInvalidOptions() {
-        try{
-            String[] testArgs = {"input.dot","4","-pie","2"};
+        try {
+            String[] testArgs = {"input.dot", "4", "-pie", "2"};
             CLIConfig testConfig = _parser.parser(testArgs);
             fail();
-        } catch(ParserException e ){
-            System.out.println(e.getMessage());
+        } catch (ParserException e) {
+            //Should throw exception
         }
 
     }
@@ -214,23 +212,13 @@ public class TestCLI {
      */
 
     @Test
-    public void testHelp(){
-        try{
+    public void testHelp() {
+        try {
             String[] help = {"--help"};
             CLIConfig testConfig = _parser.parser(help);
             fail();
-        } catch(ParserException e){
-            System.out.println(e.getMessage());
+        } catch (ParserException e) {
+            //Should throw exception
         }
-
     }
-////test for when an input file that doesn't exist is given an exception is thrown
-//    @Test
-//    public void testInvaidInputFile() throws ParserException {
-//try{}
-//catch(Exception e){
-//
-//}
-//    }
-
 }
