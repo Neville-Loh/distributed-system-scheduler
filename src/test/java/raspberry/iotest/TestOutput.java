@@ -7,7 +7,7 @@ import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.io.GraphReader;
-import raspberry.scheduler.io.InvalidFormatException;
+import raspberry.scheduler.io.exceptions.InvalidFormatException;
 import raspberry.scheduler.io.Writer;
 
 import java.io.IOException;
