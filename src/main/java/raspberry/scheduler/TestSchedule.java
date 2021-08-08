@@ -1,8 +1,7 @@
-package raspberry.iotest;
+package raspberry.scheduler;
 
 import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.algorithm.Schedule;
-import raspberry.scheduler.graph.EdgeDoesNotExistException;
+import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;

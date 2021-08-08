@@ -1,11 +1,8 @@
 package raspberry.scheduler.cli;
 
-import raspberry.scheduler.cli.CLIConfig;
+import raspberry.scheduler.cli.exception.ParserException;
 
-import javax.swing.text.html.parser.Parser;
-import java.awt.print.PrinterAbortException;
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.Objects;
 
 // This class handles the parsing of the commands and exceptions thrown when the program is accessed from the command line.

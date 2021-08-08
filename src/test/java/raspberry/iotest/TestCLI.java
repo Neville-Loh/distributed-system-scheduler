@@ -1,13 +1,11 @@
 package raspberry.iotest;
 
 
-import org.junit.Assert;
 import org.junit.Before;
 import raspberry.scheduler.cli.CLIConfig;
 import raspberry.scheduler.cli.CLIParser;
-import raspberry.scheduler.cli.ParserException;
+import raspberry.scheduler.cli.exception.ParserException;
 import org.junit.Test;
-import org.junit.Assert.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

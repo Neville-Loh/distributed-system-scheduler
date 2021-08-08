@@ -2,12 +2,11 @@ package raspberry.scheduler.cli;
 
 import raspberry.scheduler.algorithm.Astar;
 import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.cli.CLIConfig;
+import raspberry.scheduler.cli.exception.ParserException;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.Writer;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class CLIRunner {

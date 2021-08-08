@@ -1,4 +1,4 @@
-package raspberry.scheduler.graph;
+package raspberry.scheduler.graph.exceptions;
 
 public class EdgeDoesNotExistException extends Exception{
     public EdgeDoesNotExistException(String errorMessage) {

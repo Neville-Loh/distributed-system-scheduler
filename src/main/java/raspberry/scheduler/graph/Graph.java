@@ -1,13 +1,17 @@
 package raspberry.scheduler.graph;
 
 
+import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
+
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Graph implements IGraph{
     private String name;
     public Hashtable<String, INode> nodes;
-    public Hashtable<String, List<IEdge>> InDegreeAdjacencyList;
-    public Hashtable<String, List<IEdge>> OutDegreeAdjacencyList;
+    public Hashtable<String, List<IEdge>> _inDegreeAdjacencyList;
+    public Hashtable<String, List<IEdge>> _outDegreeAdjacencyList;
+    private Hashtable<String,Integer> _criticalPathWeightTable;
 
     /**
      * Constructor
@@ -16,8 +20,8 @@ public class Graph implements IGraph{
     public Graph(String name){
         this.name = name;
         nodes = new Hashtable<String, INode>();
-        InDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
-        OutDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
+        _inDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
+        _outDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
     }
 
     @Override
@@ -28,8 +32,8 @@ public class Graph implements IGraph{
     @Override
     public void addNode(String id, int value) {
         INode node = new Node(id, value);
-        InDegreeAdjacencyList.put(id, new ArrayList<IEdge>());
-        OutDegreeAdjacencyList.put(id, new ArrayList<IEdge>());
+        _inDegreeAdjacencyList.put(id, new ArrayList<IEdge>());
+        _outDegreeAdjacencyList.put(id, new ArrayList<IEdge>());
         nodes.put(id,node);
     }
 
@@ -38,23 +42,33 @@ public class Graph implements IGraph{
         INode p = nodes.get(parentNodeID);
         INode c = nodes.get(childNodeID);
         IEdge e = new Edge(p, c, weight);
-        OutDegreeAdjacencyList.get(parentNodeID).add(e);
-        InDegreeAdjacencyList.get(childNodeID).add(e);
+        _outDegreeAdjacencyList.get(parentNodeID).add(e);
+        _inDegreeAdjacencyList.get(childNodeID).add(e);
     }
 
     @Override
     public List<IEdge> getOutgoingEdges(String id) {
-        return OutDegreeAdjacencyList.get(id);
+        return _outDegreeAdjacencyList.get(id);
+    }
+
+    @Override
+    public List<IEdge> getOutgoingEdges(INode node) {
+        return getOutgoingEdges(node.getName());
     }
 
     @Override
     public List<IEdge> getIngoingEdges(String id) {
-        return InDegreeAdjacencyList.get(id);
+        return _inDegreeAdjacencyList.get(id);
+    }
+
+    @Override
+    public List<IEdge> getIngoingEdges(INode node) {
+        return getIngoingEdges(node.getName());
     }
 
     @Override
     public int getEdgeWeight(INode parent, INode child) throws EdgeDoesNotExistException {
-        for (IEdge edge : OutDegreeAdjacencyList.get(parent.getName())){
+        for (IEdge edge : _outDegreeAdjacencyList.get(parent.getName())){
             if (edge.getChild() == child){
                 return edge.getWeight();
             }
@@ -76,9 +90,9 @@ public class Graph implements IGraph{
     @Override
     public String toString(){
     	StringBuilder output = new StringBuilder("Graph: " + this.name + "\n");
-    	for (String name: OutDegreeAdjacencyList.keySet()) {
+    	for (String name: _outDegreeAdjacencyList.keySet()) {
     	    String key = name.toString();
-    	    String value = OutDegreeAdjacencyList.get(name).toString();
+    	    String value = _outDegreeAdjacencyList.get(name).toString();
     	    output.append("Node:")
                     .append(key)
                     .append(" cost=")
@@ -87,10 +101,76 @@ public class Graph implements IGraph{
                     .append(value)
                     .append("\n");
     	}
-    	return output.toString();
+        return output.toString();
     }
 
 
+    @Override
+    public Hashtable<INode,Integer> getCriticalPathWeightTable(){
+        _criticalPathWeightTable = new Hashtable<String, Integer>();
+        ArrayList<String> start = new ArrayList<String>();
+        _inDegreeAdjacencyList.forEach( (k,v) -> {
+            if (v.size() == 0){
+                start.add(k);
+            }
+            _criticalPathWeightTable.put(k,-1);
+        });
+        start.forEach(node -> {
+            int val = dfs(node);
+            if (_criticalPathWeightTable.containsKey(node)){
+                _criticalPathWeightTable.put(node, Math.max(_criticalPathWeightTable.get((node)), val));
+            } else {
+                _criticalPathWeightTable.put(node, val);
+            }
+        });
+
+        System.out.println("table" + _criticalPathWeightTable);
+
+        Hashtable<INode, Integer> result = new Hashtable<INode, Integer>();
+        _criticalPathWeightTable.forEach((k,v) -> result.put(nodes.get(k), v - nodes.get(k).getValue()));
+        System.out.println("result" + result);
+        return result;
+    }
+
+    @Override
+    public Collection<INode> getNodesWithNoInDegree() {
+        ArrayList<INode> result = new ArrayList<INode>();
+        _inDegreeAdjacencyList.forEach( (nodeID, inEdges) -> {
+            if (inEdges.size() == 0){
+                result.add(nodes.get(nodeID));
+            }
+        });
+        return result;
+    }
+
+    @Override
+    public Hashtable<INode, Integer> getInDegreeCountOfAllNodes() {
+        Hashtable<INode, Integer> result = new Hashtable<INode, Integer>();
+        this.getAllNodes().forEach( node -> result.put(node,0));
+        this.getAllNodes().forEach( node -> {
+            this.getOutgoingEdges(node.getName()).forEach( edge -> {
+                result.put(edge.getChild(), result.get(edge.getChild()) + 1);
+            });
+        });
+        return result;
+    }
+
+    private int dfs(String node){
+        List<IEdge> edges = getOutgoingEdges(node);
+        int computeTime = nodes.get(node).getValue();
+        if (edges.size() == 0 ){
+            _criticalPathWeightTable.put(node,computeTime);
+            return computeTime;
+        } else {
+            AtomicInteger currentMax = new AtomicInteger(_criticalPathWeightTable.get(node));
+            edges.forEach(edge -> {
+                currentMax.set(Math.max(currentMax.get(),computeTime + dfs(edge.getChild().getName())));
+            });
+            _criticalPathWeightTable.put(node,currentMax.intValue());
+            return currentMax.intValue();
+        }
+
+    }
 //    // This path would be optimal solution for 1 processor scheduling.
 //    public Stack getTopologicalOrder_DFS(){
 //        //Compute topological order and return it.

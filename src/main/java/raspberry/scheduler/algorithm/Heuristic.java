@@ -83,10 +83,10 @@ public class Heuristic {
      */
     public int getLastPTime(Schedule cParentSchedule, int processorId){
         while ( cParentSchedule != null){
-            if ( cParentSchedule.p_id == processorId ){
-                return cParentSchedule.finishTime;
+            if ( cParentSchedule._pid == processorId ){
+                return cParentSchedule._finishTime;
             }
-            cParentSchedule = cParentSchedule.parent;
+            cParentSchedule = cParentSchedule._parent;
         }
         return 0;
     }

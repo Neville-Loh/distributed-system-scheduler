@@ -1,9 +1,10 @@
 package raspberry.iotest;
 
 import org.junit.Test;
+import raspberry.scheduler.TestSchedule;
 import raspberry.scheduler.algorithm.Astar;
 import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.graph.EdgeDoesNotExistException;
+import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.InvalidFormatException;
@@ -20,6 +21,7 @@ public class TestOutput {
     public void testWriter() throws IOException, InvalidFormatException, EdgeDoesNotExistException {
 
         //read in graph
+
         GraphReader file1 = new GraphReader("src/test/resources/input/example1.dot");
         IGraph graph = file1.read();
 
@@ -31,6 +33,7 @@ public class TestOutput {
         System.out.println("\nIs correct schedule: " + s.isValid() + "\n"+ "finished time: " + schedule.getFinishTime());
 
         //write to output file
+
         Writer writer = new Writer("src/test/resources/output/test.dot", graph, schedule);
         writer.write();
     }
