@@ -30,8 +30,6 @@ public class Astar implements Algorithm {
         _visited = new Hashtable<Integer, ArrayList<Schedule>>();
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
-        System.out.printf("NUM_NODE : %d\n", _numNode);
-        System.out.printf("NUM_P    : %d\n", _numP);
     }
 
     /**
@@ -46,9 +44,6 @@ public class Astar implements Algorithm {
         // "rootTable" is the table all counterTable is based of off.
         //  --> stores a node and number of incoming edges.
         getH();
-        for (String j : _heuristic.keySet()) {
-            System.out.printf("%s_%d ", j, _heuristic.get(j));
-        }
 
         Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
         Hashtable<INode, Integer> rootTable = this.getRootTable();
@@ -60,24 +55,19 @@ public class Astar implements Algorithm {
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
                                 h1(getChildTable(rootTable, i), newSchedule)
-//                                _maxCriticalPath-newSchedule._finishTime
                         )));
                 master.put(newSchedule, getChildTable(rootTable, i));
                 _pq.add(newSchedule);
             }
         }
 
-        System.out.print("\n=== WHILE LOOP ===");
         Schedule cSchedule;
         int duplicate = 0; // Duplicate counter, Used for debugging purposes.
 
         while (true) {
-//            System.out.printf("\n PQ SIZE :  %d", pq.size());
             cSchedule = _pq.poll();
 
             ArrayList<Schedule> listVisitedForSize = _visited.get(cSchedule.getHash());
-//            if ( listVisitedForSize != null && listVisitedForSize.contains(cSchedule)){
-//                duplicate ++;
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
                 duplicate++;
                 continue;
@@ -115,7 +105,6 @@ public class Astar implements Algorithm {
                                 Collections.max(Arrays.asList(
                                         h(newSchedule),
                                         h1(newTable, newSchedule)
-//                                        _maxCriticalPath-newSchedule._finishTime
                                 )));
                         master.put(newSchedule, newTable);
                         _pq.add(newSchedule);
@@ -124,11 +113,6 @@ public class Astar implements Algorithm {
             }
         }
 
-        System.out.print("\n === THE FINAL ANSWER ===\n");
-        System.out.printf("NUM VISITED NODE   : %d\n", _visited.size());
-        System.out.printf("NUM DUPLICATE NODE : %d\n", duplicate);
-        System.out.printf("NUM PQ NODE        : %d", _pq.size());
-        printPath(cSchedule);
         return new Solution(cSchedule, _numP);
     }
 
@@ -300,7 +284,6 @@ public class Astar implements Algorithm {
             _heuristic.put(i.getName(), getHRecursive(i));
         }
         _maxCriticalPath = Collections.max(_heuristic.values());
-        System.out.printf("MAX : %d\n", Collections.max(_heuristic.values()));
     }
 
     /**
