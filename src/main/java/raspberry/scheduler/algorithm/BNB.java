@@ -78,16 +78,16 @@ public class BNB implements Algorithm {
                 _bound = cBound;
             }
 
-            if (cSchedule._lowerBound >= _bound) {
+            if (cSchedule.getLowerBound() >= _bound) {
                 // Bounded. Meaning, this current schedule is too slow.
                 // We already know better schedule so ignore.
-            }else if( getLowerBound( cSchedule._node, cTable) >= _bound ){
+            }else if( getLowerBound( cSchedule.getNode(), cTable) >= _bound ){
                 // REASON TO SEPRATE the first "IF" and second "else if" statement is for optimization.
                 // We also already know better schedle.
             }else{
-                if (cSchedule._size == _numNode ){
-                    if (cSchedule._lowerBound < _bound){
-                        _bound = cSchedule._lowerBound;
+                if (cSchedule.getSize() == _numNode ){
+                    if (cSchedule.getLowerBound() < _bound){
+                        _bound = cSchedule.getLowerBound();
                         shortestPath = cSchedule;
                         System.out.printf("BOUND : %d\n",_bound);
                     }
@@ -129,37 +129,37 @@ public class BNB implements Algorithm {
         Schedule cParentSchedule = parentSchedule;
 
         while ( cParentSchedule != null){
-            if ( cParentSchedule._pid == processorId ){
+            if ( cParentSchedule.getPid() == processorId ){
                 last_processorId_use = cParentSchedule;
                 break;
             }
-            cParentSchedule = cParentSchedule._parent;
+            cParentSchedule = cParentSchedule.getParent();
         }
 
         //last time parent was used. Needs to check for all processor.
         int finished_time_of_last_parent=0;
         if (last_processorId_use != null){
-            finished_time_of_last_parent = last_processorId_use._finishTime;
+            finished_time_of_last_parent = last_processorId_use.getFinishTime();
         }
 
         cParentSchedule = parentSchedule;
         while ( cParentSchedule != null){
             // for edges in current parent scheduled node
-            INode last_scheduled_node = cParentSchedule._node;
+            INode last_scheduled_node = cParentSchedule.getNode();
             for ( IEdge edge: _graph.getOutgoingEdges(last_scheduled_node.getName())){
-                if (edge.getChild() == nodeToBeSchedule && cParentSchedule._pid != processorId){
+                if (edge.getChild() == nodeToBeSchedule && cParentSchedule.getPid() != processorId){
                     try {
-                        int communicationWeight = _graph.getEdgeWeight(cParentSchedule._node,nodeToBeSchedule);
+                        int communicationWeight = _graph.getEdgeWeight(cParentSchedule.getNode(),nodeToBeSchedule);
                         //  finished_time_of_last_parent  <
-                        if (finished_time_of_last_parent < (cParentSchedule._finishTime + communicationWeight)){
-                            finished_time_of_last_parent = cParentSchedule._finishTime + communicationWeight;
+                        if (finished_time_of_last_parent < (cParentSchedule.getFinishTime() + communicationWeight)){
+                            finished_time_of_last_parent = cParentSchedule.getFinishTime() + communicationWeight;
                         }
                     } catch (EdgeDoesNotExistException e){
                         System.out.println(e.getMessage());
                     }
                 }
             }
-            cParentSchedule = cParentSchedule._parent;
+            cParentSchedule = cParentSchedule.getParent();
         }
         return finished_time_of_last_parent;
     }

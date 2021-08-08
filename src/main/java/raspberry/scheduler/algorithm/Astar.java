@@ -88,14 +88,14 @@ public class Astar implements Algorithm{
             }
 
 
-            if (cSchedule._size == _numNode){
+            if (cSchedule.getSize() == _numNode){
                 break;
             }
             Hashtable<INode, Integer> cTable = master.get(cSchedule);
             master.remove(cSchedule);
 
             // Find the next empty processor. (
-            int currentMaxPid = cSchedule.maxPid;
+            int currentMaxPid = cSchedule.getMaxPid();
             int pidBound;
             if (currentMaxPid+1 > _numP){
                 pidBound = _numP;
@@ -139,14 +139,14 @@ public class Astar implements Algorithm{
      */
     public int h(Schedule cSchedule){
         int max = 0;
-        for ( String s: cSchedule.lastForEachProcessor.values()){
-            int tmp = _heuristic.get(s) + cSchedule.scheduling.get(s).get(1) +
+        for ( String s: cSchedule.getLastForEachProcessor().values()){
+            int tmp = _heuristic.get(s) + cSchedule.getScheduling().get(s).get(1) +
                     _graph.getNode(s).getValue();
             if ( tmp > max){
                 max = tmp;
             }
         }
-        return max - cSchedule._finishTime;
+        return max - cSchedule.getFinishTime();
     }
 
     /**
@@ -157,14 +157,14 @@ public class Astar implements Algorithm{
      */
     public int h1(Hashtable<INode, Integer> x ,Schedule cSchedule){
         int sum = 0;
-        for ( String s: cSchedule.lastForEachProcessor.values()){
-            sum += cSchedule.scheduling.get(s).get(1) +
+        for ( String s: cSchedule.getLastForEachProcessor().values()){
+            sum += cSchedule.getScheduling().get(s).get(1) +
                     _graph.getNode(s).getValue();
         }
         for (INode i: x.keySet()){
             sum += i.getValue();
         }
-        return sum/_numP - cSchedule._finishTime;
+        return sum/_numP - cSchedule.getFinishTime();
     }
 
     /**
@@ -181,40 +181,40 @@ public class Astar implements Algorithm{
         Schedule cParentSchedule = parentSchedule;
 
         while ( cParentSchedule != null){
-            if ( cParentSchedule._pid == processorId ){
+            if ( cParentSchedule.getPid() == processorId ){
                 last_processorId_use = cParentSchedule;
                 break;
             }
-            cParentSchedule = cParentSchedule._parent;
+            cParentSchedule = cParentSchedule.getParent();
         }
 
         //last time parent was used. Needs to check for all processor.
         int finished_time_of_last_parent=0;
         if (last_processorId_use != null){
-            finished_time_of_last_parent = last_processorId_use._finishTime;
+            finished_time_of_last_parent = last_processorId_use.getFinishTime();
         }
 
         cParentSchedule = parentSchedule;
         while ( cParentSchedule != null){
             // for edges in current parent scheduled node
-            INode last_scheduled_node = cParentSchedule._node;
+            INode last_scheduled_node = cParentSchedule.getNode();
             for ( IEdge edge: _graph.getOutgoingEdges(last_scheduled_node.getName())){
 
                 // if edge points to  === childNode
-                if (edge.getChild() == nodeToBeSchedule && cParentSchedule._pid != processorId){
+                if (edge.getChild() == nodeToBeSchedule && cParentSchedule.getPid() != processorId){
                     //last_parent_processor[ cParentSchedule.p_id ] = true;
                     try {
-                        int communicationWeight = _graph.getEdgeWeight(cParentSchedule._node,nodeToBeSchedule);
+                        int communicationWeight = _graph.getEdgeWeight(cParentSchedule.getNode(),nodeToBeSchedule);
                         //  finished_time_of_last_parent  <
-                        if (finished_time_of_last_parent < (cParentSchedule._finishTime + communicationWeight)){
-                            finished_time_of_last_parent = cParentSchedule._finishTime + communicationWeight;
+                        if (finished_time_of_last_parent < (cParentSchedule.getFinishTime() + communicationWeight)){
+                            finished_time_of_last_parent = cParentSchedule.getFinishTime() + communicationWeight;
                         }
                     } catch (EdgeDoesNotExistException e){
                         System.out.println(e.getMessage());
                     }
                 }
             }
-            cParentSchedule = cParentSchedule._parent;
+            cParentSchedule = cParentSchedule.getParent();
         }
         return finished_time_of_last_parent;
     }
@@ -330,8 +330,8 @@ public class Astar implements Algorithm{
      */
     public Boolean isIrrelevantDuplicate( ArrayList<Schedule> scheduleList, Schedule cSchedule){
         for (Schedule s : scheduleList){
-            if (s.equals(cSchedule) && s._t > cSchedule._t) {
-                System.out.printf("%d -> %d\n", s._t, cSchedule._t);
+            if (s.equals(cSchedule) && s.getTotal() > cSchedule.getTotal()) {
+                System.out.printf("%d -> %d\n", s.getTotal(), cSchedule.getTotal());
                 return false;
             }
         }

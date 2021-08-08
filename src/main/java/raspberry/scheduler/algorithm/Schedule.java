@@ -8,21 +8,21 @@ import raspberry.scheduler.graph.INode;
 
 public class Schedule implements Comparable<Schedule>{
 
-    public int _h; // h: Heuristic weight
-    public int _t; // t: Total weight
-    public int _startTime; //the time this node start running.
-    public int _finishTime; //the time at this node finish running
-    public INode _node;
-    public int _pid;  //Processor Id
-    public Schedule _parent; // Parent Schedule
-    public int _size; // Size of the partial schedule. # of tasks scheduled.
-    public Hashtable<String, List<Integer>> scheduling; // partial schedule. //TODO : Implement this idea with less memory intensive manner.
-    public Hashtable<Integer, String> lastForEachProcessor; //the last task schedule, for each processor.
-    public int maxPid; //The largest pid currently used to schedule
+    private int _h; // h: Heuristic weight
+    private int _total; // t: Total weight
+    private int _startTime; //the time this node start running.
+    private int _finishTime; //the time at this node finish running
+    private INode _node;
+    private int _pid;  //Processor Id
+    private Schedule _parent; // Parent Schedule
+    private int _size; // Size of the partial schedule. # of tasks scheduled.
+    private Hashtable<String, List<Integer>> _scheduling; // partial schedule. //TODO : Implement this idea with less memory intensive manner.
+    private Hashtable<Integer, String> _lastForEachProcessor; //the last task schedule, for each processor.
+    private int _maxPid; //The largest pid currently used to schedule
 
 
-    public int _upperBound;    // For BNB. Represents the worst case. <- Bad schedling.
-    public int _lowerBound;   // For BNB. Represents the base case. <- perfect schedling.
+    private int _upperBound;    // For BNB. Represents the worst case. <- Bad schedling.
+    private int _lowerBound;   // For BNB. Represents the base case. <- perfect schedling.
 
 
     /**
@@ -38,26 +38,26 @@ public class Schedule implements Comparable<Schedule>{
         _startTime = startTime;
         _finishTime = startTime + node.getValue();
         _h = 0;
-        _t = _finishTime + _h;
+        _total = _finishTime + _h;
         _parent = parentSchedule;
 
         if (parentSchedule == null){
             _size = 1;
-            scheduling = new Hashtable<String, List<Integer>>();
-            lastForEachProcessor = new Hashtable<Integer, String>();
-            maxPid = processorId;
+            _scheduling = new Hashtable<String, List<Integer>>();
+            _lastForEachProcessor = new Hashtable<Integer, String>();
+            _maxPid = processorId;
         }else{
-            if (processorId > parentSchedule.maxPid){
-                maxPid = processorId;
+            if (processorId > parentSchedule.getMaxPid()){
+                _maxPid = processorId;
             }else{
-                maxPid = parentSchedule.maxPid;
+                _maxPid = parentSchedule.getMaxPid();
             }
             _size = parentSchedule._size + 1;
-            scheduling = (Hashtable<String, List<Integer>>) parentSchedule.scheduling.clone();
-            lastForEachProcessor = (Hashtable<Integer, String>) parentSchedule.lastForEachProcessor.clone();
+            _scheduling = (Hashtable<String, List<Integer>>) parentSchedule.getScheduling().clone();
+            _lastForEachProcessor = (Hashtable<Integer, String>) parentSchedule.getLastForEachProcessor().clone();
         }
-        scheduling.put(node.getName(), Arrays.asList(processorId,startTime));
-        lastForEachProcessor.put(processorId, node.getName());
+        _scheduling.put(node.getName(), Arrays.asList(processorId,startTime));
+        _lastForEachProcessor.put(processorId, node.getName());
     }
 
     /**
@@ -67,19 +67,19 @@ public class Schedule implements Comparable<Schedule>{
      */
     public void addHeuristic(int h){
         _h = h;
-        _t = _finishTime + h;
+        _total = _finishTime + h;
     }
 
     /**
      * Compare two Schedule instance. Uses to put Schedule in priority Queue
-     * @param s : A schedule to compare to
+     * @param schedule : A schedule to compare to
      * @return : 1 : if s's total weight is smaller,
      *          -1 : if s's total weight is bigger,
      *           0 : Two scheudle has same total weight.
      */
     @Override
-    public int compareTo(Schedule s){
-        return this._t > s._t ? 1 : this._t < s._t ? -1 : 0;
+    public int compareTo(Schedule schedule){
+        return _total > schedule.getTotal() ? 1 : _total < schedule.getTotal() ? -1 : 0;
     }
 
     /**
@@ -98,10 +98,10 @@ public class Schedule implements Comparable<Schedule>{
             Schedule schedule = (Schedule)otherSchedule;
             if (schedule._size != schedule._size){
                 return false;
-            }else if(schedule.maxPid != schedule.maxPid){
+            }else if(schedule.getMaxPid() != schedule.getMaxPid()){
                 return false;
             }
-            return this.scheduling.equals(schedule.scheduling);
+            return _scheduling.equals(schedule.getScheduling());
         }
     }
 
@@ -137,11 +137,119 @@ public class Schedule implements Comparable<Schedule>{
     public int getHash() {
         final int prime = 31;
         int value = 0;
-        for (String i: scheduling.keySet()){
-            value = prime * value + ( scheduling.get(i).hashCode() );
+        for (String i: _scheduling.keySet()){
+            value = prime * value + ( _scheduling.get(i).hashCode() );
             value = prime * value + ( i.hashCode() );
             value = prime * value + ( _size );
         }
         return value;
+    }
+
+    /*
+    Getter and Setters
+     */
+
+    public int getH() {
+        return _h;
+    }
+
+    public void setH(int h) {
+        _h = h;
+    }
+
+    public int getTotal() {
+        return _total;
+    }
+
+    public void setTotal(int total) {
+        _total = total;
+    }
+
+    public int getStartTime() {
+        return _startTime;
+    }
+
+    public void setStartTime(int startTime) {
+        _startTime = startTime;
+    }
+
+    public int getFinishTime() {
+        return _finishTime;
+    }
+
+    public void setFinishTime(int finishTime) {
+        _finishTime = finishTime;
+    }
+
+    public INode getNode() {
+        return _node;
+    }
+
+    public void setNode(INode node) {
+        _node = node;
+    }
+
+    public int getPid() {
+        return _pid;
+    }
+
+    public void setPid(int pid) {
+        _pid = pid;
+    }
+
+    public Schedule getParent() {
+        return _parent;
+    }
+
+    public void setParent(Schedule parent) {
+        _parent = parent;
+    }
+
+    public int getSize() {
+        return _size;
+    }
+
+    public void setSize(int size) {
+        _size = size;
+    }
+
+    public Hashtable<String, List<Integer>> getScheduling() {
+        return _scheduling;
+    }
+
+    public void setScheduling(Hashtable<String, List<Integer>> scheduling) {
+        _scheduling = scheduling;
+    }
+
+    public Hashtable<Integer, String> getLastForEachProcessor() {
+        return _lastForEachProcessor;
+    }
+
+    public void setLastForEachProcessor(Hashtable<Integer, String> lastForEachProcessor) {
+        _lastForEachProcessor = lastForEachProcessor;
+    }
+
+    public int getMaxPid() {
+        return _maxPid;
+    }
+
+    public void setMaxPid(int maxPid) {
+        _maxPid = maxPid;
+    }
+
+    public int getUpperBound() {
+        return _upperBound;
+    }
+
+    public void setUpperBound(int upperBound) {
+        _upperBound = upperBound;
+    }
+
+    public int getLowerBound() {
+        return _lowerBound;
+    }
+
+    public void setLowerBound(int lowerBound) {
+        _lowerBound = lowerBound;
     }
 }
