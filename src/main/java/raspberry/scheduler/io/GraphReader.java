@@ -71,7 +71,7 @@ public class GraphReader {
         GraphParser parser = new GraphParser(new FileInputStream(_filepath));
 
         //initialise graph with name
-        IGraph _graph = new Graph(parser.getGraphId());
+        IGraph _graph = new Graph(parser.getGraphId().replaceAll("\"",""));
 
         //get nodes and edges from parser
         Map<String, GraphNode> nodes = parser.getNodes();

@@ -23,7 +23,7 @@ public class Graph implements IGraph{
      * @param name name of the graph
      */
     public Graph(String name){
-        this._name = name;
+        _name = name;
         _nodes = new Hashtable<String, INode>();
         _inDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
         _outDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
