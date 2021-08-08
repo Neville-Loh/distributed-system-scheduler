@@ -149,107 +149,117 @@ public class Schedule implements Comparable<Schedule>{
     Getter and Setters
      */
 
+    /**
+     * get Heuristic weight
+     * @return _h
+     */
     public int getH() {
         return _h;
     }
 
-    public void setH(int h) {
-        _h = h;
-    }
-
+    /**
+     * get Total weight
+     * @return _total
+     */
     public int getTotal() {
         return _total;
     }
 
-    public void setTotal(int total) {
-        _total = total;
-    }
 
+    /**
+     * get Start Time the time this node start running.
+     * @return _startTime the time this node start running.
+     */
     public int getStartTime() {
         return _startTime;
     }
 
-    public void setStartTime(int startTime) {
-        _startTime = startTime;
-    }
 
+    /**
+     * get finish time the time at this node finish running
+     * @return _finishTime the time at this node finish running
+     */
     public int getFinishTime() {
         return _finishTime;
     }
 
-    public void setFinishTime(int finishTime) {
-        _finishTime = finishTime;
-    }
 
+    /**
+     * get node being scheduled
+     * @return _node the node being  scheduled
+     */
     public INode getNode() {
         return _node;
     }
 
-    public void setNode(INode node) {
-        _node = node;
-    }
 
+    /**
+     * get pid the Processor Id
+     * @return _pid the Processor Id
+     */
     public int getPid() {
         return _pid;
     }
 
-    public void setPid(int pid) {
-        _pid = pid;
-    }
 
+    /**
+     * get parent schedule the Parent Schedule
+     * @return _parent the Parent Schedule
+     */
     public Schedule getParent() {
         return _parent;
     }
 
-    public void setParent(Schedule parent) {
-        _parent = parent;
-    }
 
+    /**
+     * get size Size of the partial schedule. # of tasks scheduled.
+     * @return _size Size of the partial schedule. # of tasks scheduled.
+     */
     public int getSize() {
         return _size;
     }
 
-    public void setSize(int size) {
-        _size = size;
-    }
 
+    /**
+     * get _scheduling the partial schedule
+     * @return _scheduling the partial schedule
+     */
     public Hashtable<String, List<Integer>> getScheduling() {
         return _scheduling;
     }
 
-    public void setScheduling(Hashtable<String, List<Integer>> scheduling) {
-        _scheduling = scheduling;
-    }
 
+    /**
+     * lastForEachProcessor the last task schedule, for each processor.
+     * @return _lastForEachProcessor the last task schedule, for each processor.
+     */
     public Hashtable<Integer, String> getLastForEachProcessor() {
         return _lastForEachProcessor;
     }
 
-    public void setLastForEachProcessor(Hashtable<Integer, String> lastForEachProcessor) {
-        _lastForEachProcessor = lastForEachProcessor;
-    }
-
+    /**
+     * get max pid The largest pid currently used to schedule
+     * @return _maxPid The largest pid currently used to schedule
+     */
     public int getMaxPid() {
         return _maxPid;
     }
 
-    public void setMaxPid(int maxPid) {
-        _maxPid = maxPid;
-    }
 
+    /**
+     * get upper bound which Represents the worst case for BNB
+     * @return _upperBound Represents the worst case for BNB
+     */
     public int getUpperBound() {
         return _upperBound;
     }
 
-    public void setUpperBound(int upperBound) {
-        _upperBound = upperBound;
-    }
-
+    /**
+     * get upper bound which Represents the base case for BNB
+     * @return _lowerBound Represents the base case for BNB
+     */
     public int getLowerBound() {
         return _lowerBound;
     }
 
-    public void setLowerBound(int lowerBound) {
-        _lowerBound = lowerBound;
-    }
 }
