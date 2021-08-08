@@ -14,6 +14,7 @@ public class Solution implements OutputSchedule{
 
     public Solution(Schedule schedule, int numP){
         _table = schedule.getPath();
+<<<<<<< HEAD
         for (INode node: _table.keySet()){
             _finshTime = Math.max(getStartTime(node) + node.getValue(), _finshTime);
         }
@@ -25,6 +26,9 @@ public class Solution implements OutputSchedule{
         for (INode node: _table.keySet()){
             _finshTime = Math.max(getStartTime(node) + node.getValue(), _finshTime);
         }
+=======
+        _finshTime = schedule._finishTime;
+>>>>>>> origin/optimize-SearchExpansion
         _totalProcessorNum = numP;
     }
 
