@@ -2,7 +2,6 @@ package raspberry.scheduler.io;
 
 
 import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.algorithm.Solution;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
@@ -28,7 +27,7 @@ public class Writer {
 
 
     /** Writer constructor
-     * @param filepath\ name of output file without .dot extension
+     * @param filepath name of output file without .dot extension
      * @param graph input graph we are getting output for
      * @param outputSchedule output schedule we are getting graph for
      */
@@ -40,7 +39,7 @@ public class Writer {
 
     /**
      * writes the details of the output schedule in the correct format
-     * @throws IOException
+     * @throws IOException indicate failed or interrupted I/O
      */
     public void write() throws IOException {
         createFile();

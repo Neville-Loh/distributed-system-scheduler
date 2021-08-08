@@ -12,9 +12,6 @@ import java.io.IOException;
 public class CLIRunner {
 
     public static void main(String[] inputs) throws IOException {
-//        for (String input: inputs){
-//            System.out.println(input);
-//        }
         try {
             CLIConfig CLIConfig = CLIParser.parser(inputs);
             GraphReader reader = new GraphReader(CLIConfig.getDotFile());
