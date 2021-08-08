@@ -21,15 +21,16 @@ public class CLIParser {
     public static final String NO_INTEGER_NUM_CORES = "Please enter an valid integer for number of cores.";
     public static final String NO_OUTPUT_FILE_INPUT = "Please enter a name for the output file.";
 
-    /* Takes in command inputs and creates CLIConfig object
-    * inputs should be in the form [InputFileName, NumberOfProcessors, Option,
-    * NumberOfCores if -p is chosen/ Name of OUTPUT file if -o is chosen]
-    */
+    /*
+     * Takes in command inputs and creates CLIConfig object
+     * inputs should be in the form [InputFileName, NumberOfProcessors, Option,
+     * NumberOfCores if -p is chosen/ Name of OUTPUT file if -o is chosen]
+     */
     public static CLIConfig parser(String[] inputs) throws ParserException {
         CLIConfig CLIConfig = new CLIConfig();
 
         // Check if the user requested for help.
-        for (String input: inputs) {
+        for (String input : inputs) {
             if (input.equals("-help")) {
                 System.out.println(HELP_MENU);
             }
@@ -44,92 +45,70 @@ public class CLIParser {
         // Number of Processors is processed as a string.
         // Have to add in exception if input is not an integer.
         CLIConfig.setDotFile(inputs[0]);
-        System.out.println(String.format("---input file set ---- : %s",CLIConfig.getDotFile()));
         try {
             CLIConfig.setNumProcessors(Integer.parseInt(inputs[1]));
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             throw new ParserException("Please input a valid number of processors");
         }
-        if(Integer.parseInt(inputs[1]) > 0) {
-            System.out.println(String.format("---number of processors set ---- : %s", CLIConfig.get_numProcessors()));
-        }else{
+        if (Integer.parseInt(inputs[1]) <= 0) {
             throw new ParserException("Number of processors cannot be less than 1");
         }
 
         for (int i = 2; i < inputs.length; i++) {
 
-            // Check for option to select number of parallel cores used
-            // Need to check whether there is an input at all and if it is in integer, do later
-            // Have to add default values.
+            /*
+             * Check for option to select number of parallel cores used
+             * Need to check whether there is an input at all and if it is in integer, do later
+             * Have to add default values.
+             */
             if (Objects.equals(inputs[i], "-p")) {
                 try {
-                    if(Integer.parseInt(inputs[i+1])> 0){
+                    if (Integer.parseInt(inputs[i + 1]) > 0) {
                         CLIConfig.setNumCores(Integer.parseInt(inputs[i + 1]));
-                        System.out.println(String.format("---number of cores set---- : %s", inputs[i + 1]));
                         i++;
-                    } else{
+                    } else {
                         throw new ParserException("Number of cores cannot be less than 1");
                     }
-                }
-                catch (ArrayIndexOutOfBoundsException e){
+                } catch (ArrayIndexOutOfBoundsException e) {
                     throw new ParserException(NO_INPUT_NUM_CORES);
-                }
-                catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     throw new ParserException(NO_INTEGER_NUM_CORES);
                 }
             }
 
-            // Visualisation still needs to be implemented
+            // @todo Visualisation still needs to be implemented
             // else if (inputs[2] == "-v"){
 
             //}
 
-            // Check for option to select name of OUTPUT file (default is INPUT-output.dot)
-            // Check if there is an input.
-            // Have to add default values.
+            /*
+             * Check for option to select name of OUTPUT file (default is INPUT-output.dot)
+             * Check if there is an input.
+             */
             else if (Objects.equals(inputs[i], "-o")) {
                 try {
                     CLIConfig.setOutputFile(inputs[i + 1]);
                     i++;
-                    System.out.println(String.format("---output filename set---- : %s",CLIConfig.getOutputFile()));
-                }
-                catch (ArrayIndexOutOfBoundsException e){
+                } catch (ArrayIndexOutOfBoundsException e) {
                     throw new ParserException(NO_OUTPUT_FILE_INPUT);
                 }
-            }
-            else {
+            } else {
                 throw new ParserException(String.format("Invalid Argument: %s,   -help", inputs[i]));
             }
         }
 
 
         // if user has not chosen to select an output file name, the default will be given.
-        if (CLIConfig.getOutputFile() == null){
+        if (CLIConfig.getOutputFile() == null) {
             CLIConfig.defaultOutput();
         }
 
-    return CLIConfig;
+        return CLIConfig;
     }
 
     // Return the JAR file name.
-    public static String getJARFileName(){
+    public static String getJARFileName() {
         return new File(CLIParser.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getName();
     }
-
-    // I tried to implement the method so that it checked for URI exceptions, but it didn't work.
-//    // Method to get JAR file while checking for URI exceptions
-//    public String getJARFileName() throws ParserException {
-//        try {
-//            // This is static.
-//            String filePath = CLIParser.class.getProtectionDomain().getCodeSource()
-//                .getLocation().toURI().getPath();
-//            return String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
-//        }
-//        catch (URISyntaxException URIError) {
-//            throw new ParserException("There was an error while processing the JAR file name.");
-//        }
-//
-//}
-
 
 }

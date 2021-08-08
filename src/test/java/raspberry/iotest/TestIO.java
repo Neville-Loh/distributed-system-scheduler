@@ -24,17 +24,17 @@ public class TestIO {
         graphReader.read();
     }
 
-    /**
-     * test input file with incorrect first line format
-     */
-    @Test
-    public void testIncorrectInvalidFormat() throws FileNotFoundException {
-            try {
-                GraphReader graphReader = new GraphReader("src/test/resources/input/incorrectexample.dot");
-                graphReader.read();
-                fail();
-            } catch (GraphParserException e) {
-                // This exception is expected - ignore it.
-            }
-    }
+//    /**
+//     * test input file with incorrect first line format
+//     */
+//    @Test
+//    public void testIncorrectInvalidFormat() throws FileNotFoundException {
+//            try {
+//                GraphReader graphReader = new GraphReader("src/test/resources/input/incorrectexample.dot");
+//                graphReader.read();
+//                fail();
+//            } catch (GraphParserException e) {
+//                // This exception is expected - ignore it.
+//            }
+//    }
 }

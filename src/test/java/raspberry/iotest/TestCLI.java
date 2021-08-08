@@ -1,6 +1,4 @@
 package raspberry.iotest;
-
-
 import org.junit.Before;
 import raspberry.scheduler.cli.CLIConfig;
 import raspberry.scheduler.cli.CLIParser;
@@ -10,15 +8,20 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+/**
+ * Unit test for
+ * @author Alan
+ * This test class is for the Command line interface
+ */
 public class TestCLI {
-    /**
-     * @author Alan
-     * This test class is for the Command line interface
-     */
+
     private CLIParser _parser;
     private CLIConfig _correctConfig;
 
 
+    /**
+     *  Set up new
+     */
     @Before
     public void setup(){
        _parser =  new CLIParser();
