@@ -8,7 +8,9 @@ import raspberry.scheduler.graph.*;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 /**
+ * Implementation of A star algorithm.
  *
+ * @author Takahiro
  */
 public class Astar implements Algorithm {
     private IGraph _graph;

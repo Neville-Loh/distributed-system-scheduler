@@ -8,6 +8,7 @@ import raspberry.scheduler.graph.IGraph;
 import java.util.*;
 
 /**
+ * Implementation of Branch and Bound algorithm with DFS.
  *
  * @author Takahiro
  */

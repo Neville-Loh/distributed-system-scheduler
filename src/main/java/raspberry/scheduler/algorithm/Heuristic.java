@@ -10,6 +10,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 /**
+ *  This class contains multiple different heuristic functions.
+ *
  * @author Takahiro
  */
 public class Heuristic {
