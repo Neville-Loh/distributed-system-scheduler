@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import java.io.File;
 
 /**
- *
+ * This class is for initialising the screen controller.
  */
 public class StartScreenController{
     @FXML
@@ -31,6 +31,9 @@ public class StartScreenController{
         System.out.println("i got pressed!");
     }
 
+    /**
+     * Selects the file for the screen controller
+     */
     @FXML
     private void selectFile(){
         FileChooser fileChooser = new FileChooser();
@@ -50,6 +53,10 @@ public class StartScreenController{
 
     }
 
+    /**
+     * Presents the main screen
+     * @param event go to the main screen
+     */
     @FXML
     private void showMainScreen(ActionEvent event){
         ScreenController.goMainScreen(getClass(), event);
