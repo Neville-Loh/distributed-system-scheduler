@@ -12,10 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * which a list of edges is stored for each node.
  */
 public class Graph implements IGraph{
-    private String name;
-    public Hashtable<String, INode> nodes;
-    public Hashtable<String, List<IEdge>> _inDegreeAdjacencyList;
-    public Hashtable<String, List<IEdge>> _outDegreeAdjacencyList;
+    private String _name;
+    private Hashtable<String, INode> _nodes;
+    private Hashtable<String, List<IEdge>> _inDegreeAdjacencyList;
+    private Hashtable<String, List<IEdge>> _outDegreeAdjacencyList;
     private Hashtable<String,Integer> _criticalPathWeightTable;
 
     /**
@@ -23,15 +23,15 @@ public class Graph implements IGraph{
      * @param name name of the graph
      */
     public Graph(String name){
-        this.name = name;
-        nodes = new Hashtable<String, INode>();
+        this._name = name;
+        _nodes = new Hashtable<String, INode>();
         _inDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
         _outDegreeAdjacencyList = new Hashtable<String, List<IEdge>>();
     }
 
     @Override
     public INode getNode(String id) {
-        return nodes.get(id);
+        return _nodes.get(id);
     }
 
     @Override
@@ -39,13 +39,13 @@ public class Graph implements IGraph{
         INode node = new Node(id, value);
         _inDegreeAdjacencyList.put(id, new ArrayList<IEdge>());
         _outDegreeAdjacencyList.put(id, new ArrayList<IEdge>());
-        nodes.put(id,node);
+        _nodes.put(id,node);
     }
 
     @Override
     public void addEdge(String parentNodeID, String childNodeID, int weight) {
-        INode p = nodes.get(parentNodeID);
-        INode c = nodes.get(childNodeID);
+        INode p = _nodes.get(parentNodeID);
+        INode c = _nodes.get(childNodeID);
         IEdge e = new Edge(p, c, weight);
         _outDegreeAdjacencyList.get(parentNodeID).add(e);
         _inDegreeAdjacencyList.get(childNodeID).add(e);
@@ -63,25 +63,25 @@ public class Graph implements IGraph{
 
     @Override
     public Collection<INode> getAllNodes() {
-        return this.nodes.values();
+        return this._nodes.values();
     }
 
     @Override
     public int getNumNodes() {
-        return this.nodes.size();
+        return this._nodes.size();
     }
 
 
     @Override
     public String toString(){
-    	StringBuilder output = new StringBuilder("Graph: " + this.name + "\n");
+    	StringBuilder output = new StringBuilder("Graph: " + this._name + "\n");
     	for (String name: _outDegreeAdjacencyList.keySet()) {
     	    String key = name.toString();
     	    String value = _outDegreeAdjacencyList.get(name).toString();
     	    output.append("Node:")
                     .append(key)
                     .append(" cost=")
-                    .append(nodes.get(key).getValue())
+                    .append(_nodes.get(key).getValue())
                     .append(" ")
                     .append(value)
                     .append("\n");
@@ -95,7 +95,7 @@ public class Graph implements IGraph{
         ArrayList<INode> result = new ArrayList<INode>();
         _inDegreeAdjacencyList.forEach( (nodeID, inEdges) -> {
             if (inEdges.size() == 0){
-                result.add(nodes.get(nodeID));
+                result.add(_nodes.get(nodeID));
             }
         });
         return result;
@@ -133,7 +133,7 @@ public class Graph implements IGraph{
             }
         });
         Hashtable<INode, Integer> result = new Hashtable<INode, Integer>();
-        _criticalPathWeightTable.forEach((k,v) -> result.put(nodes.get(k), v - nodes.get(k).getValue()));
+        _criticalPathWeightTable.forEach((k,v) -> result.put(_nodes.get(k), v - _nodes.get(k).getValue()));
         return result;
     }
 
@@ -145,7 +145,7 @@ public class Graph implements IGraph{
      */
     private int dfsFindCriticalWeight(String node){
         List<IEdge> edges = getOutgoingEdges(node);
-        int computeTime = nodes.get(node).getValue();
+        int computeTime = _nodes.get(node).getValue();
         if (edges.size() == 0 ){
             _criticalPathWeightTable.put(node,computeTime);
             return computeTime;
@@ -179,6 +179,11 @@ public class Graph implements IGraph{
     @Override
     public List<IEdge> getIngoingEdges(INode node) {
         return getIngoingEdges(node.getName());
+    }
+
+    @Override
+    public String getName() {
+        return _name;
     }
 
 }

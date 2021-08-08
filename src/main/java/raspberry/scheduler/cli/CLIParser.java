@@ -47,7 +47,7 @@ public class CLIParser {
             throw new ParserException(WRONG_ARGUMENTS);
         }
 
-        /**
+        /*
          * Get the Input File Name (inputs[0]) and Number of Processors (inputs[1]).
          * Number of Processors is processed as a string.
          */
@@ -63,7 +63,7 @@ public class CLIParser {
 
         for (int i = 2; i < inputs.length; i++) {
 
-            /**
+            /*
              * Check for option to select number of parallel cores used
              * Need to check whether there is an input at all and if it is in integer, do later
              * Have to add default values.
@@ -88,7 +88,7 @@ public class CLIParser {
 
             //}
 
-            /**
+            /*
              * Check for option to select name of OUTPUT file (default is INPUT-output.dot)
              * Check if there is an input.
              */
