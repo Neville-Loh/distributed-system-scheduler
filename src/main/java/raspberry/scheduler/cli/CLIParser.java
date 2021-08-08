@@ -10,6 +10,7 @@ import java.util.Objects;
  * from the command line.
  * @author Alan
  */
+
 public class CLIParser {
     public static final String WRONG_ARGUMENTS = "The arguments entered are not registered. Please try -help for more options.";
     public static final String HELP_MENU = "Help Menu: \n \n" +
@@ -26,7 +27,7 @@ public class CLIParser {
     public static final String NO_OUTPUT_FILE_INPUT = "Please enter a name for the output file.";
 
 
-    /*
+    /**
      * Takes in command inputs and creates CLIConfig object
      * inputs should be in the form [InputFileName, NumberOfProcessors, Option,
      * NumberOfCores if -p is chosen/ Name of OUTPUT file if -o is chosen]
@@ -46,7 +47,7 @@ public class CLIParser {
             throw new ParserException(WRONG_ARGUMENTS);
         }
 
-        /*
+        /**
          * Get the Input File Name (inputs[0]) and Number of Processors (inputs[1]).
          * Number of Processors is processed as a string.
          */
@@ -62,7 +63,7 @@ public class CLIParser {
 
         for (int i = 2; i < inputs.length; i++) {
 
-            /*
+            /**
              * Check for option to select number of parallel cores used
              * Need to check whether there is an input at all and if it is in integer, do later
              * Have to add default values.
@@ -87,7 +88,7 @@ public class CLIParser {
 
             //}
 
-            /*
+            /**
              * Check for option to select name of OUTPUT file (default is INPUT-output.dot)
              * Check if there is an input.
              */

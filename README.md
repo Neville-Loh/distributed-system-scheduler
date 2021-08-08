@@ -32,7 +32,7 @@ The compiled jar will be located in `/target/scheduler-1.0.0-jar-with-dependenci
 ```bash
 Java -jar /target/scheduler-1.0.0-jar-with-dependencies.jar INPUT. dot P [OPTION]
 ```
-###Optional arguments
+### Optional arguments
 ```
 −o OUPUT output  file is named OUTPUT (default is INPUT−output.dot )
 ```
