@@ -1,6 +1,7 @@
 package raspberry.scheduler.algorithm.sma;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 import raspberry.scheduler.algorithm.Schedule;
 import raspberry.scheduler.graph.IGraph;
@@ -34,8 +35,8 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 
 
     public MBSchedule(){
-
     }
+
     /**
      * Class constructor
      * @param parentSchedule
@@ -44,7 +45,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     public MBSchedule(MBSchedule parentSchedule, int remainingComputeTime, ScheduledTask scheduledTask)  {
         // scheduled task value
         _scheduledTask = scheduledTask;
-        _forgotten = null;
+        _forgotten = new Hashtable<ScheduledTask, Integer>();
 
         // linked-list attribute
         parent = parentSchedule;
@@ -72,6 +73,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 
     /**
      * Create sub-schedule using the calling class as parent
+     * @deprecated
      * @param scheduledTask task to be schedule
      * @return sub-schedule
      */
@@ -80,6 +82,12 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         return new MBSchedule(this, remainingComputeTime, scheduledTask);
     }
 
+    /**
+     * Create sub-schedule using the calling class as parent
+     * @param scheduledTask scheduled task with start time
+     * @param dependencyGraph dependencyGraph
+     * @return sub-schedule
+     */
     public MBSchedule createSubSchedule(ScheduledTask scheduledTask, IGraph dependencyGraph){
         int remainingComputeTime = _remainingComputeTime - scheduledTask.getTask().getValue();
         MBSchedule subSchedule = new MBSchedule(this, remainingComputeTime, scheduledTask);
@@ -131,25 +139,31 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
      * @param subSchedule schedule to be forgotten
      */
     public void forget(MBSchedule subSchedule){
-        if (_forgotten == null){
-            _forgotten = new Hashtable<ScheduledTask, Integer>();
-            _minForgottenFScore = subSchedule.getFScore();
-        } else {
-            _minForgottenFScore = Math.min(_minForgottenFScore,subSchedule.getFScore());
-        }
-        _fScore = _minForgottenFScore;
+//        if (_forgotten == null){
+//            _forgotten = new Hashtable<ScheduledTask, Integer>();
+//            _minForgottenFScore = subSchedule.getFScore();
+//        } else {
+//            _minForgottenFScore = Math.min(_minForgottenFScore,subSchedule.getFScore());
+//        }
+
         //subSchedule.setForgottenTableToNull();
 
         // compare if the schedule f score is lower than the forgotten f score in table
         _forgotten.put(subSchedule.getScheduledTask(), subSchedule.getFScore());
+        int result = Integer.MAX_VALUE;
+        for (ScheduledTask st : _forgotten.keySet()){
+            result = Math.min(result, _forgotten.get(st));
+        }
+        _fScore = result;
 
-//        if (_forgotten.containsKey(subSchedule)){
-//            int minFScore = Math.min(_forgotten.get(subSchedule), subSchedule.getFScore());
+//        if (_forgotten.containsKey(subSchedule.getScheduledTask())){
+//            int minFScore = Math.min(_forgotten.get(subSchedule.getScheduledTask()), subSchedule.getFScore());
 //            _forgotten.put(subSchedule, minFScore);
 //        } else {
 //            _forgotten.put(subSchedule, subSchedule.getFScore());
 //        }
 
+        System.out.println("table: !!!!!!!!" + _forgotten);
 
     }
 
@@ -181,6 +195,26 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     public Spliterator<MBSchedule> spliterator() {
         return Iterable.super.spliterator();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+        final MBSchedule other = (MBSchedule) obj;
+        if (this.parent != null && other.parent != null){
+            if (this.parent.equals(other.parent)){
+                return false;
+            }
+        } else if (this.parent == null && other.parent != null) {
+            return false;
+        }
+        return (this.getScheduledTask().equals(other.getScheduledTask()));
+    }
+
 
 
     /*
@@ -287,7 +321,8 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     }
 
     public void setForgottenTableToNull(){
-        _forgotten = null;
+        _minForgottenFScore = Integer.MAX_VALUE;
+        _forgotten.clear();
     }
 
     public void setHScore(int hScore) {
@@ -306,6 +341,8 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     public void setFScore(int fScore) {
         _fScore = fScore;
     }
+
+
 
 }
 

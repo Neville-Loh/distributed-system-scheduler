@@ -67,6 +67,7 @@ public class MemoryBoundAStar implements Algorithm {
          * The initial placement for the task is processor 0, since there are no difference
          * between processor.
          */
+        MBSchedule start = new MBSchedule();
         for (INode task: _graph.getNodesWithNoInDegree()){
             int remainingComputeTimeAfterTask = totalComputeTime - task.getValue();
             ScheduledTask scheduledTask = new ScheduledTask(0,task,0);
@@ -98,7 +99,7 @@ public class MemoryBoundAStar implements Algorithm {
 
 
 
-            if (cSchedule.getForgottenTable() != null){
+            if (cSchedule.getForgottenTable() != null && cSchedule.getForgottenTable().size() > 0){
                 /*
                  * Remember Routine
                  * Remember about the low f score schedule
@@ -107,7 +108,9 @@ public class MemoryBoundAStar implements Algorithm {
                 for (ScheduledTask scheduledTask: forgottenSchedule.keySet()){
                     MBSchedule subSchedule = cSchedule.createSubSchedule(scheduledTask, _graph);
                     subSchedule.setFScore(forgottenSchedule.get(scheduledTask));
-                    _pq.add(subSchedule);
+                    if(!_pq.contains(subSchedule)){
+                        _pq.add(subSchedule);
+                    }
                 }
                 cSchedule.setForgottenTableToNull();
 
@@ -141,7 +144,7 @@ public class MemoryBoundAStar implements Algorithm {
                 if (VERBOSE) System.out.println("----------------------");
                 MBSchedule badSchedule = _pq.pollMax();
 //                if (VERBOSE) System.out.println(_pq);
-                if (VERBOSE) System.out.println("bad schedulde = " +badSchedule);
+                if (VERBOSE) System.out.println("bad schedule = " +badSchedule);
                 if (VERBOSE) System.out.println("Starting point = " + startingPoint);
                 if (badSchedule.parent != null){
                     MBSchedule badScheduleParent = badSchedule.parent;

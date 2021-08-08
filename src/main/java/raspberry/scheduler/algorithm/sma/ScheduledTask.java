@@ -47,4 +47,24 @@ public class ScheduledTask {
     public String toString(){
         return _task + "" + _processorID;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+        final ScheduledTask other = (ScheduledTask) obj;
+        return (this.getTask().getName()+ this.getProcessorID()).equals(
+                other.getTask().getName() + other.getProcessorID()
+        );
+    }
+
+    @Override
+    public int hashCode() {
+        return (_task.getName()+_processorID).hashCode();
+    }
 }

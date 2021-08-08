@@ -40,11 +40,12 @@ public class Main {
         r.read();
         g = r.getGraph();
 
+        g = makeSimpleGraph();
         g = makeGraph();
         g.getCriticalPathWeightTable();
 
         Astar a = new Astar(g,4);
-        MemoryBoundAStar mba = new MemoryBoundAStar(g,2, 20);
+        MemoryBoundAStar mba = new MemoryBoundAStar(g,2, 8);
         OutputSchedule output = mba.findPath();
 
 
@@ -78,21 +79,23 @@ public class Main {
         graph.addEdge("e", "g",2);
         graph.addEdge("f", "g",2);
 
+        return graph;
+    }
 
-//        graph.addNode("i", 5);
-//        graph.addNode("j", 6);
-//        graph.addNode("k", 4);
-//
-//        graph.addNode("i2", 1);
-//        graph.addNode("j3", 1);
-//        graph.addNode("k4", 1);
-//        graph.addEdge("i", "f",3);
-//        graph.addEdge("d", "j",6);
-//        graph.addEdge("d", "k",1);
-//        graph.addEdge("i2", "i",1);
-//        graph.addEdge("j3", "j",6);
-//        graph.addEdge("k4", "j3",1);
-//        graph.addEdge("k4", "j",1);
+    private static IGraph makeSimpleGraph() {
+        IGraph graph = new Graph("test graph");
+        graph.addNode("a", 2);
+        graph.addNode("b", 2);
+        graph.addNode("c", 2);
+        graph.addNode("d", 2);
+
+
+
+        graph.addEdge("a", "b",2);
+        graph.addEdge("a", "c",2);
+
+        graph.addEdge("b", "d",2);
+        graph.addEdge("c", "d",2);
 
 
         return graph;
