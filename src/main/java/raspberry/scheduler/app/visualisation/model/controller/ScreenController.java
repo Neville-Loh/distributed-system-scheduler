@@ -1,4 +1,4 @@
-package raspberry.scheduler.app.controller;
+package raspberry.scheduler.app.visualisation.model.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
