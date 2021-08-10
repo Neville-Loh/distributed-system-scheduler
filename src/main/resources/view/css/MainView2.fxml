@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import eu.hansolo.tilesfx.Tile?>
+<?import javafx.scene.chart.BubbleChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" styleClass="Pane" stylesheets="@Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox prefHeight="706.0" prefWidth="1000.0">
+         <children>
+            <VBox prefHeight="650.0" prefWidth="295.0">
+               <children>
+                  <VBox prefHeight="208.0" prefWidth="275.0">
+                     <children>
+                        <VBox prefHeight="51.0" prefWidth="275.0">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="67.0" prefWidth="275.0" text="Runtime Statistics" textAlignment="CENTER" textFill="WHITE">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <HBox prefHeight="82.0" prefWidth="275.0">
+                           <children>
+                              <VBox prefHeight="26.0" prefWidth="275.0">
+                                 <children>
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Input file:" textFill="WHITE" />
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Output file:" textFill="WHITE" />
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Algorithm:" textFill="WHITE" />
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Active cores:" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                              <VBox prefHeight="26.0" prefWidth="275.0">
+                                 <children>
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="input.dot" textAlignment="RIGHT" textFill="WHITE" />
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Output.dot" textAlignment="RIGHT" textFill="WHITE" />
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="A*" textAlignment="RIGHT" textFill="WHITE" />
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="73.0" prefWidth="275.0">
+                           <children>
+                              <VBox prefHeight="26.0" prefWidth="275.0">
+                                 <children>
+                                    <Label prefHeight="23.0" prefWidth="138.0" text="Number of procesors:" textFill="WHITE" />
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Iterations:" textFill="WHITE" />
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Time elapsed:" textFill="WHITE" />
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Status:" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                              <VBox prefHeight="26.0" prefWidth="275.0">
+                                 <children>
+                                    <Label alignment="CENTER_RIGHT" prefHeight="23.0" prefWidth="138.0" text="1" textFill="WHITE" />
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textFill="WHITE" />
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="0" textFill="WHITE" />
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Running" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="164.0" prefWidth="274.0">
+                     <children>
+                        <Tile backgroundImageKeepAspect="false" chartType="AREA" fillWithGradient="true" flatUI="false" flipText="hi" leftText="hi" prefHeight="165.0" prefWidth="255.0" thresholdVisible="false" title="Memory" titleAlignment="CENTER" tooltipText="" unit="MB">
+                           <thresholdColor>
+                              <Color red="0.15740740299224854" green="0.624382734298706" blue="0.8947368264198303" />
+                           </thresholdColor>
+                           <backgroundColor>
+                              <Color red="0.1921568661928177" green="0.2235294133424759" blue="0.23529411852359772" />
+                           </backgroundColor>
+                        </Tile>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="172.0" prefWidth="277.0">
+                     <children>
+                        <Tile backgroundImageKeepAspect="false" chartType="AREA" fillWithGradient="true" flatUI="false" flipText="hi" leftText="hi" prefHeight="145.0" prefWidth="173.0" skinType="SMOOTHED_CHART" thresholdVisible="false" title="CPU Usage" titleAlignment="CENTER" tooltipText="" unit="MB">
+                           <thresholdColor>
+                              <Color red="0.15740740299224854" green="0.624382734298706" blue="0.8947368264198303" />
+                           </thresholdColor>
+                           <backgroundColor>
+                              <Color red="0.1921568661928177" green="0.2235294133424759" blue="0.23529411852359772" />
+                           </backgroundColor>
+                           <barBackgroundColor>
+                              <Color red="0.1921568661928177" green="0.2235294133424759" blue="0.23529411852359772" />
+                           </barBackgroundColor>
+                           <autoItemDarkTextColor>
+                              <Color red="0.1921568661928177" green="0.2235294133424759" blue="0.23529411852359772" />
+                           </autoItemDarkTextColor>
+                           <lowerRightRegionForegroundColor>
+                              <Color red="0.1921568661928177" green="0.2235294133424759" blue="0.23529411852359772" />
+                           </lowerRightRegionForegroundColor>
+                           <notifyRegionForegroundColor>
+                              <Color red="0.1921568661928177" green="0.2235294133424759" blue="0.23529411852359772" />
+                           </notifyRegionForegroundColor>
+                        </Tile>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <VBox prefHeight="650.0" prefWidth="678.0" styleClass="Pane" stylesheets="@Main.css">
+               <children>
+                  <BubbleChart prefHeight="548.0" prefWidth="677.0">
+                     <xAxis>
+                        <NumberAxis side="BOTTOM" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis side="LEFT" />
+                     </yAxis>
+                  </BubbleChart>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</VBox>

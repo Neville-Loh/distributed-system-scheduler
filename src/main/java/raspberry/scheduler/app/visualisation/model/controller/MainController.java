@@ -3,6 +3,7 @@ package raspberry.scheduler.app.visualisation.model.controller;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
@@ -16,19 +17,9 @@ public class MainController {
 
 
     @FXML
-    private TextFlow inputFile;
-
-    @FXML
-    private Text timeElapsed;
-
-    @FXML
-    private TextFlow outputFile;
-
-    @FXML
-    private Text numProcessors;
+    private Label _inputFile, _outputFile, _numProcessors, _numCores, _timeElapsed, _iterations;
 
     private CLIConfig _config;
-    private int _numProcessors;
     private String _inputFileName;
     private String _outputFileName;
     private Timeline _timer;
@@ -40,23 +31,24 @@ public class MainController {
     private int _numSchedules;
 
 
+
     private void setInputFileName(){
-        inputFile.setText(_inputFileName);
+        _inputFile.setText(_inputFileName);
     }
 
     private void setNumProcessors(){
-        numProcessors.setText(numProcessors.toString());
+        _numProcessors.setText(_numProcessors.toString());
     }
 
     private void setOutputFile(){
-        outputFile.setText(_outputFileName);
+        _outputFile.setText(_outputFileName);
     }
     public void setCLIconfig(CLIConfig config){
         _config = config;
     }
 
     public void startTimer(){
-        _starTime = System.currentTimeMillis();
+        _startTime = System.currentTimeMillis();
       /*  _timer= new Timeline(new KeyFrame(Duration.millis(0),));
 
         _timer.play();*/
@@ -67,7 +59,7 @@ public class MainController {
         _currentTime = System.currentTimeMillis();
 
 
-        timeElapsed.setText((_currentTime - _startTime).toString());
+        _timeElapsed.setText(String.valueOf((_currentTime - _startTime)));
     }
 
     private void stopTimer() {
