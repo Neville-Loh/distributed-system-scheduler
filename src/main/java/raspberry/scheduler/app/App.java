@@ -13,7 +13,7 @@ import raspberry.scheduler.cli.CLIConfig;
  */
 public class App extends Application{
 
-    private Stage primaryStage;
+    private Stage _primaryStage;
     private static CLIConfig _config;
 
         public static void main(CLIConfig config) {
@@ -28,6 +28,7 @@ public class App extends Application{
             );
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
             primaryStage.show();
 
         }

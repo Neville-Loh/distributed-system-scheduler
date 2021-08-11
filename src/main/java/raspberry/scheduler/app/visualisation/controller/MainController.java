@@ -1,7 +1,6 @@
 package raspberry.scheduler.app.visualisation.controller;
 
-//import eu.hansolo.tilesfx.Tile;
-import javafx.animation.Timeline;
+import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -14,6 +13,8 @@ import raspberry.scheduler.cli.CLIConfig;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static javafx.scene.paint.Color.rgb;
+
 public class MainController implements Initializable {
 /**
  * Not sure if we want to have a sepearte timer/update/polling class or just do it all in one class so i'll just start and refactor later
@@ -22,8 +23,9 @@ public class MainController implements Initializable {
 
     @FXML
     private Label _inputFile, _outputFile, _numProcessors, _numCores, _timeElapsed, _iterations,_status;
-    //@FXML
-    //private Tile _memTile;
+    @FXML
+    private Tile _memTile;
+
     private CLIConfig _config;
     private String _inputFileName;
     private String _outputFileName;
@@ -35,8 +37,9 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         _config = App.GetCLIConfig();
         setIdleStats();
-        _updater = new Updater(_timeElapsed, _iterations,_status);
-//, _memTile
+        setupMemTile();
+        _updater = new Updater(_timeElapsed, _iterations,_status, _memTile);
+
     }
 
     private void setIdleStats(){
@@ -48,8 +51,13 @@ public class MainController implements Initializable {
     }
 
     private void setupMemTile(){
-        //_memTile.setMaxValue(((double)Runtime.getRuntime().maxMemory()/(double)(1024 * 1024)));
+        _memTile.setMaxValue(((double)Runtime.getRuntime().maxMemory()/(double)(1024 * 1024)));
+        _memTile.setBarColor(rgb(255,255,255));
+        _memTile.setThresholdColor(rgb(255,255,255));
+        _memTile.setTickLabelDecimals(0);
+
     }
+
 
 
 
