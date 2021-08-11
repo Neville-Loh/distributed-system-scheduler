@@ -7,7 +7,6 @@ import java.util.Hashtable;
 
 import raspberry.scheduler.algorithm.Algorithm;
 import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.algorithm.Schedule;
 import raspberry.scheduler.algorithm.Solution;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.graph.*;
@@ -67,7 +66,7 @@ public class MemoryBoundAStar implements Algorithm {
          * The initial placement for the task is processor 0, since there are no difference
          * between processor.
          */
-        MBSchedule start = new MBSchedule();
+        //MBSchedule start = new MBSchedule();
         for (INode task: _graph.getNodesWithNoInDegree()){
             int remainingComputeTimeAfterTask = totalComputeTime - task.getValue();
             ScheduledTask scheduledTask = new ScheduledTask(0,task,0);
@@ -139,11 +138,19 @@ public class MemoryBoundAStar implements Algorithm {
              * Forget Routine
              * Forget about the low f score schedule
              */
+            int count = 0;
             ArrayList<MBSchedule> startingPoint = new ArrayList<MBSchedule>();
             while (_pq.size() > (MAX_NUMBER_NODE - startingPoint.size())){
+                count++;
+                System.out.println("count :" +count);
+                if (count > 1000){
+                    return null;
+                }
                 if (VERBOSE) System.out.println("----------------------");
+                if (VERBOSE) System.out.println(_pq);
                 MBSchedule badSchedule = _pq.pollMax();
-//                if (VERBOSE) System.out.println(_pq);
+
+
                 if (VERBOSE) System.out.println("bad schedule = " +badSchedule);
                 if (VERBOSE) System.out.println("Starting point = " + startingPoint);
                 if (badSchedule.parent != null){
@@ -151,7 +158,11 @@ public class MemoryBoundAStar implements Algorithm {
                     badScheduleParent.forget(badSchedule);
                     // if parent is not in the queue
                     if (VERBOSE) System.out.println("Forget -----" + badScheduleParent+ " Forgetting " + badSchedule);
-                    if (!_pq.contains(badScheduleParent) && !startingPoint.contains(badScheduleParent)) {
+                    if (_pq.contains(badScheduleParent)){
+                        _pq.remove(badScheduleParent);
+                        _pq.add(badScheduleParent);
+
+                    } else if (!startingPoint.contains(badScheduleParent)) {
                         if (VERBOSE) System.out.println("Adding " + badScheduleParent + " back to queue");
                         _pq.add(badScheduleParent);
                     }
@@ -179,7 +190,8 @@ public class MemoryBoundAStar implements Algorithm {
      */
     public int h(MBSchedule schedule){
         ScheduledTask scheduledTask = schedule.getScheduledTask();
-        return scheduledTask.getFinishTime() + _criticalPathWeightTable.get(scheduledTask.getTask());
+        //return scheduledTask.getFinishTime() + _criticalPathWeightTable.get(scheduledTask.getTask());
+        return 0;
     }
 
 

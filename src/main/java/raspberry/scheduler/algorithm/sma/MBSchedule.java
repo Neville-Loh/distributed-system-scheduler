@@ -196,24 +196,24 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         return Iterable.super.spliterator();
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj.getClass() != this.getClass()) {
-            return false;
-        }
-        final MBSchedule other = (MBSchedule) obj;
-        if (this.parent != null && other.parent != null){
-            if (this.parent.equals(other.parent)){
-                return false;
-            }
-        } else if (this.parent == null && other.parent != null) {
-            return false;
-        }
-        return (this.getScheduledTask().equals(other.getScheduledTask()));
-    }
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (obj == null) {
+//            return false;
+//        }
+//        if (obj.getClass() != this.getClass()) {
+//            return false;
+//        }
+//        final MBSchedule other = (MBSchedule) obj;
+//        if (this.parent != null && other.parent != null){
+//            if (this.parent.equals(other.parent)){
+//                return false;
+//            }
+//        } else if (this.parent == null && other.parent != null) {
+//            return false;
+//        }
+//        return (this.getScheduledTask().equals(other.getScheduledTask()));
+//    }
 
 
 
