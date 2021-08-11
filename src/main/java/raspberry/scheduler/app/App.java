@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import raspberry.scheduler.cli.CLIConfig;
 
 
 /**
@@ -13,19 +14,26 @@ import javafx.stage.Stage;
 public class App extends Application{
 
     private Stage primaryStage;
+    private static CLIConfig _config;
 
-        public static void main(String[] args) {
+        public static void main(CLIConfig config) {
             System.out.println("Hello world");
-            launch(args);
+            _config = config;
+            launch();
         }
 
         @Override
         public void start(Stage primaryStage) throws Exception {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/StartScreenView.fxml")
+            Parent root = FXMLLoader.load(getClass().getResource("/view/MainView2.fxml")
             );
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.show();
 
         }
+
+        public static CLIConfig GetCLIConfig(){
+            return _config;
+        }
+
     }

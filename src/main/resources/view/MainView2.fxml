@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" styleClass="Pane" stylesheets="@Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" styleClass="Pane" stylesheets="@css/Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="raspberry.scheduler.app.visualisation.controller.MainController">
    <children>
       <HBox prefHeight="706.0" prefWidth="1000.0">
          <children>
@@ -38,10 +38,10 @@
                               </VBox>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
-                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="input.dot" textAlignment="RIGHT" textFill="WHITE" />
-                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Output.dot" textAlignment="RIGHT" textFill="WHITE" />
+                                    <Label fx:id="_inputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="input.dot" textAlignment="RIGHT" textFill="WHITE" />
+                                    <Label fx:id="_outputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Output.dot" textAlignment="RIGHT" textFill="WHITE" />
                                     <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="A*" textAlignment="RIGHT" textFill="WHITE" />
-                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="WHITE" />
+                                    <Label fx:id="_numCores" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="WHITE" />
                                  </children>
                               </VBox>
                            </children>
@@ -106,7 +106,7 @@
                   </VBox>
                </children>
             </VBox>
-            <VBox prefHeight="650.0" prefWidth="678.0" styleClass="Pane" stylesheets="@Main.css">
+            <VBox prefHeight="650.0" prefWidth="678.0" styleClass="Pane" stylesheets="@css/Main.css">
                <children>
                   <BubbleChart prefHeight="548.0" prefWidth="677.0">
                      <xAxis>

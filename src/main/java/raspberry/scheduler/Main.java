@@ -8,6 +8,7 @@ import raspberry.scheduler.cli.exception.ParserException;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.Writer;
+import raspberry.scheduler.app.*;
 
 import java.io.IOException;
 
@@ -17,6 +18,11 @@ public class Main {
         try {
             CLIConfig CLIConfig = CLIParser.parser(inputs);
             GraphReader reader = new GraphReader(CLIConfig.getDotFile());
+
+            // Start visualisation if appropriate argument is given.
+            if (CLIConfig.getVisualise()){
+                App.main(CLIConfig);
+            }
 
             IGraph graph = reader.read();
             Astar astar = new Astar(graph, CLIConfig.get_numProcessors());

@@ -47,6 +47,12 @@
             <artifactId>digraph-parser</artifactId>
             <version>1.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/eu.hansolo/tilesfx -->
+        <dependency>
+            <groupId>eu.hansolo</groupId>
+            <artifactId>tilesfx</artifactId>
+            <version>1.6.5</version>
+        </dependency>
     </dependencies>
 
 

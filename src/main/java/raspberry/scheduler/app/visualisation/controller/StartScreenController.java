@@ -1,4 +1,4 @@
-package raspberry.scheduler.app.visualisation.model.controller;
+package raspberry.scheduler.app.visualisation.controller;
 
 
 import javafx.event.ActionEvent;
@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import raspberry.scheduler.app.visualisation.controller.ScreenController;
 
 import java.io.File;
 
