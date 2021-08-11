@@ -2,7 +2,7 @@ package raspberry.scheduler.algorithm.sma;
 
 import java.util.*;
 import java.util.function.Consumer;
-import sun.misc.SharedSecrets;
+//import sun.misc.SharedSecrets;
 
 /**
  * An unbounded priority {@linkplain Queue queue} based on a priority heap.
@@ -330,7 +330,8 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
     }
 
     private int indexOf(Object o) {
-        if (indexTable.contains(o)) {
+
+        if (indexTable.containsKey(o)) {
             return indexTable.get(o);
         }
 
@@ -779,7 +780,8 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
         // Read in (and discard) array length
         s.readInt();
 
-        SharedSecrets.getJavaOISAccess().checkArray(s, Object[].class, size);
+        System.out.println("\nREAD_OBJECT method is TwoWayPQ is called !! EMERGENCY");
+//        SharedSecrets.getJavaOISAccess().checkArray(s, Object[].class, size);
         queue = new Object[size];
 
         // Read in all elements.
