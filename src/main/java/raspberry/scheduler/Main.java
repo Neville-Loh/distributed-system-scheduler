@@ -37,7 +37,6 @@ public class Main {
     private static void startVisualisation(CLIConfig config){
         new Thread(()-> {
             App.main(config);
-
         }).start();
     }
 }

@@ -68,7 +68,7 @@ public class MainController implements Initializable {
         _config = App.GetCLIConfig();
         setIdleStats();
         setupMemTile();
-//        setUpGanttChart();
+       // setUpGanttChart();
         setUpGanttChartOnSolution();
         _updater = new Updater(_timeElapsed, _iterations, _status, _memTile);
 
@@ -167,15 +167,18 @@ public class MainController implements Initializable {
                 int startTime = _schedule.getStartTime(node);
                 int compTime = node.getValue();
                 String nodeName = node.getName();
+                System.out.println(nodeName);
                 series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "status-green", nodeName)));
 
+
             }
+            _ganttChart.getData().add(series);
 
 //            series.getData().add(new XYChart.Data(0, processor, new GanttChart.Attributes(1, "status-green", "2")));
 //            series.getData().add(new XYChart.Data(1, processor, new GanttChart.Attributes(1, "status-green", "2")));
 //            series.getData().add(new XYChart.Data(2, processor, new GanttChart.Attributes(1, "status-green", "2")));
 //            series.getData().add(new XYChart.Data(3, processor, new GanttChart.Attributes(1, "status-green", "2")));
-            _ganttChart.getData().add(series);
+//            _ganttChart.getData().add(series);
 
 
         }
@@ -206,7 +209,7 @@ public class MainController implements Initializable {
     }
 
     private void setUpTestSolution() throws FileNotFoundException {
-            GraphReader reader = new GraphReader("C:\\Users\\ym\\Desktop\\softeng306\\test\\project-1-raspberry-spirits-15\\src\\test\\resources\\input\\example.dot");
+            GraphReader reader = new GraphReader("src/test/resources/input/example.dot");
             IGraph graph = reader.read();
             Astar astar = new Astar(graph, 2);
             _schedule = astar.findPath();
