@@ -71,5 +71,17 @@ public class Updater {
         _memTile.setValue((totalMem - freeMem)/(1024 * 1024));
     }
 
+    private void updateIterations(){
+
+    }
+
+    private void updateCPUChart(){
+
+    }
+
+    private void updateGanttChart(){
+
+    }
+
 
 }

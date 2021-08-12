@@ -13,11 +13,10 @@ import raspberry.scheduler.cli.CLIConfig;
  */
 public class App extends Application{
 
-    private Stage _primaryStage;
     private static CLIConfig _config;
 
         public static void main(CLIConfig config) {
-            System.out.println("Hello world");
+            System.out.println("Launched with visualisation");
             _config = config;
             launch();
         }
