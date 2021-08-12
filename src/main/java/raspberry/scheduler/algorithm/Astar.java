@@ -81,6 +81,8 @@ public class Astar implements Algorithm {
             _observable.increment();
             System.out.println(_observable.getIterations());
             cSchedule = _pq.poll();
+            Solution cScheduleSolution = new Solution(cSchedule, _numP);
+            _observable.setSolution(cScheduleSolution);
             ArrayList<Schedule> listVisitedForSize = _visited.get(cSchedule.getHash());
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
                 duplicate++;
@@ -127,6 +129,7 @@ public class Astar implements Algorithm {
             }
         }
         _observable.setIsFinish(true);
+        _observable.setSolution(new Solution(cSchedule,_numP));
         return new Solution(cSchedule, _numP);
     }
 

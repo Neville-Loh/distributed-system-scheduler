@@ -6,6 +6,7 @@ public class AlgoObservable extends Observable {
 
     private int _iterations;
     private boolean _isFinish;
+    private Solution _solution;
 
     private static AlgoObservable single_instance = null;
 
@@ -42,6 +43,13 @@ public class AlgoObservable extends Observable {
 
     public void setIsFinish(boolean isFinish) {
         _isFinish = isFinish;
+    }
+
+    public Solution getSolution() {
+        return _solution;
+    }
+    public void setSolution(Solution solution) {
+        _solution = solution;
     }
 
     public static AlgoObservable getInstance()
