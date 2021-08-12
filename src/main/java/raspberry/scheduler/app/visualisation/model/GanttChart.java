@@ -136,7 +136,9 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
 
                         Label num = new Label(getTaskNum(item.getExtraValue()));
                        // num.minWidthProperty().bind(ellipse.widthProperty());
-                        num.setPadding(new Insets(ellipse.getHeight()/2,0,0,ellipse.getWidth()/2));
+                        num.setPadding(new Insets(ellipse.getHeight(),0,0,ellipse.getWidth()));
+                        num.setStyle("-fx-font-family: 'System', Arial; -fx-font-weight: BOLD; -fx-text-fill: white;");
+
                         region.getChildren().add(num);
 
                         block.setLayoutX(x);

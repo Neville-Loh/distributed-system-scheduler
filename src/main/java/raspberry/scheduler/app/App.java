@@ -1,10 +1,13 @@
 
 package raspberry.scheduler.app;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import raspberry.scheduler.cli.CLIConfig;
 
 
@@ -29,6 +32,13 @@ public class App extends Application{
             primaryStage.setScene(scene);
 //            primaryStage.setResizable(false);
             primaryStage.show();
+            primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent e) {
+                    Platform.exit();
+                    System.exit(1);
+                }
+            });
 
         }
 

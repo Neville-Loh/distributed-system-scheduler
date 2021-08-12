@@ -7,6 +7,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Label;
+import javafx.scene.effect.MotionBlur;
 import javafx.scene.layout.VBox;
 import raspberry.scheduler.algorithm.Astar;
 import raspberry.scheduler.algorithm.OutputSchedule;
@@ -106,13 +107,17 @@ public class MainController implements Initializable {
         // yAxis.setTickLabelFill(Color.CHOCOLATE);
         yAxis.setTickLabelGap(10);
         yAxis.setCategories(FXCollections.<String>observableArrayList(processors));
-        _ganttChart = new GanttChart<Number, String>(xAxis, yAxis);
 
+        _ganttChart = new GanttChart<Number, String>(xAxis, yAxis);
         _ganttChart.setTitle("Please work for the love of god");
         _ganttChart.setLegendVisible(false);
         _ganttChart.setBlockHeight(50);
-
+        _ganttChart.setAnimated(false);
         _ganttBox.getChildren().add(_ganttChart);
+        MotionBlur blur = new MotionBlur();
+        blur.setAngle(45);
+        blur.setRadius(10.5);
+        _ganttBox.setEffect(blur);
         _ganttChart.getStylesheets().add(getClass().getResource("/view/css/gantt.css").toExternalForm());
 
     }
