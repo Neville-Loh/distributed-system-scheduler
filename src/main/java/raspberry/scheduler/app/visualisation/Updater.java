@@ -6,6 +6,7 @@ import javafx.animation.Timeline;
 import javafx.scene.control.Label;
 //import eu.hansolo.tilesfx.Tile;
 import javafx.util.Duration;
+import raspberry.scheduler.algorithm.AlgoObservable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,7 @@ public class Updater {
     private double _currentTime;
     private double _startTime;
     private DateFormat _timeFormat = new SimpleDateFormat("mm:ss:SSS");
+    private AlgoObservable _observable;
 
     public Updater(Label timeElapsed, Label iterations, Label status, Tile memTile) {
         _timeElapsed = timeElapsed;
@@ -25,6 +27,7 @@ public class Updater {
         _status = status;
         _memTile = memTile;
 
+        _observable = AlgoObservable.getInstance();
         startTimer();
         startPolling();
     }
@@ -59,6 +62,7 @@ public class Updater {
     private void startPolling(){
         _polling = new Timeline(new KeyFrame(Duration.millis(500), event -> {
             updateMemTile();
+            updateIterations();
         }));
         _polling.setCycleCount(_timer.INDEFINITE);
         _polling.play();
@@ -72,7 +76,8 @@ public class Updater {
     }
 
     private void updateIterations(){
-
+        String iteration = String.valueOf(_observable.getIterations());
+        _iterations.setText(iteration);
     }
 
     private void updateCPUChart(){

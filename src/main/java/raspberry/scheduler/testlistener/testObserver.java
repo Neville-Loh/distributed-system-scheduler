@@ -32,7 +32,6 @@ public class testObserver implements Observer {
         Platform.runLater(() -> {
             try {
                 setLabelText(arg.toString());
-                System.out.println("button is clicked");
             } catch(Exception e) {
                 e.printStackTrace();
             }

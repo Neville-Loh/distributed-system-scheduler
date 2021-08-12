@@ -3,6 +3,7 @@ package raspberry.scheduler.algorithm;
 import java.util.*;
 import java.util.List;
 
+import javafx.beans.Observable;
 import raspberry.scheduler.graph.*;
 
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -21,6 +22,8 @@ public class Astar implements Algorithm {
     Hashtable<String, Integer> _heuristic = new Hashtable<String, Integer>();
     Hashtable<Integer, ArrayList<Schedule>> _visited;
 
+    private AlgoObservable _observable;
+
     /**
      * Constructor for A*
      *
@@ -33,6 +36,8 @@ public class Astar implements Algorithm {
         _visited = new Hashtable<Integer, ArrayList<Schedule>>();
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
+
+        _observable = AlgoObservable.getInstance();
     }
 
     /**
@@ -69,7 +74,12 @@ public class Astar implements Algorithm {
         Schedule cSchedule;
         int duplicate = 0; // Duplicate counter, Used for debugging purposes.
 
+        _observable.setIterations(0);
+        _observable.setIsFinish(false);
+        System.out.println(_observable.getIterations());
         while (true) {
+            _observable.increment();
+            System.out.println(_observable.getIterations());
             cSchedule = _pq.poll();
             ArrayList<Schedule> listVisitedForSize = _visited.get(cSchedule.getHash());
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
@@ -116,7 +126,7 @@ public class Astar implements Algorithm {
                 }
             }
         }
-
+        _observable.setIsFinish(true);
         return new Solution(cSchedule, _numP);
     }
 
