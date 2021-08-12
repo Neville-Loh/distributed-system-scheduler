@@ -79,7 +79,7 @@ public class Astar implements Algorithm {
         System.out.println(_observable.getIterations());
         while (true) {
             _observable.increment();
-            System.out.println(_observable.getIterations());
+            //System.out.println(_observable.getIterations());
             cSchedule = _pq.poll();
             Solution cScheduleSolution = new Solution(cSchedule, _numP);
             _observable.setSolution(cScheduleSolution);
