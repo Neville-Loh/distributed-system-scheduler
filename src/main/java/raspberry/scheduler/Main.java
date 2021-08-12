@@ -1,4 +1,3 @@
-
 package raspberry.scheduler;
 
 import raspberry.scheduler.algorithm.*;
@@ -21,7 +20,7 @@ public class Main {
 
             // Start visualisation if appropriate argument is given.
             if (CLIConfig.getVisualise()){
-                App.main(CLIConfig);
+                startVisualisation(CLIConfig);
             }
 
             IGraph graph = reader.read();
@@ -31,7 +30,14 @@ public class Main {
             writer.write();
         } catch (IOException | ParserException e) {
             System.out.println(e.getMessage());
+            System.exit(1);
         }
     }
-}
 
+    private static void startVisualisation(CLIConfig config){
+        new Thread(()-> {
+            App.main(config);
+
+        }).start();
+    }
+}
