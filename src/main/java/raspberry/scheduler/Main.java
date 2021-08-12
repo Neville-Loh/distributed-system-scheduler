@@ -3,6 +3,7 @@ package raspberry.scheduler;
 import raspberry.scheduler.algorithm.Astar;
 import raspberry.scheduler.algorithm.sma.MemoryBoundAStar;
 import raspberry.scheduler.algorithm.OutputSchedule;
+import raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2;
 import raspberry.scheduler.graph.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.Graph;
 import raspberry.scheduler.graph.IGraph;
@@ -10,6 +11,8 @@ import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.InvalidFormatException;
 
 import java.io.FileNotFoundException;
+import java.util.PriorityQueue;
+import java.util.TooManyListenersException;
 
 
 public class Main {
@@ -19,7 +22,38 @@ public class Main {
     public static void main(String[] args) throws EdgeDoesNotExistException, InvalidFormatException, FileNotFoundException {
 
         // This is unit test. (I will make proper Junit test later)
-        test();
+        //test();
+
+        TwoWayPriorityQueue2<Integer> stuff = new TwoWayPriorityQueue2<Integer>();
+        stuff.add(7);
+        stuff.add(4);
+        stuff.add(52);
+        stuff.add(3);
+        stuff.add(24);
+        stuff.add(30);
+        System.out.println(stuff.remove(3));
+        System.out.println(stuff.remove(4));
+        System.out.println(stuff.remove(24));
+        System.out.println(stuff);
+        System.out.println(stuff.poll());
+        System.out.println(stuff.poll());
+        System.out.println(stuff.poll());
+
+
+        PriorityQueue<Integer> stuff2 = new PriorityQueue<Integer>();
+        stuff2.add(7);
+        stuff2.add(4);
+        stuff2.add(52);
+        stuff2.add(3);
+        stuff2.add(24);
+        stuff2.add(30);
+        System.out.println(stuff2.remove(3));
+        System.out.println(stuff2.remove(4));
+        System.out.println(stuff2.remove(24));
+        System.out.println(stuff2);
+        System.out.println(stuff2.poll());
+        System.out.println(stuff2.poll());
+        System.out.println(stuff2.poll());
     }
 
     public static void test() throws EdgeDoesNotExistException, InvalidFormatException, FileNotFoundException {
