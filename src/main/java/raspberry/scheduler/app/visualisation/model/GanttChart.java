@@ -135,9 +135,18 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
                         region.setCacheShape(false);
 
                         Label num = new Label(getTaskNum(item.getExtraValue()));
-                       // num.minWidthProperty().bind(ellipse.widthProperty());
+
+                       // Label num = new Label("1");
+//                        num.setMinHeight(5);
+//                        num.setMinWidth(5);
+                        System.out.println(String.valueOf(getTaskNum(item.getExtraValue())));
+                        num.setWrapText(true);
+                        System.out.println(String.valueOf(num.getWidth()));
+                        System.out.println(String.valueOf(num.getHeight()));
+
+                        // num.minWidthProperty().bind(ellipse.widthProperty());
                         num.setPadding(new Insets(ellipse.getHeight(),0,0,ellipse.getWidth()));
-                        num.setStyle("-fx-font-family: 'System', Arial; -fx-font-weight: BOLD; -fx-text-fill: white;");
+                        num.setStyle("-fx-font-family: 'System', Arial; -fx-font-weight: BOLD; -fx-text-fill: white; -fx-font-size: 26");
 
                         region.getChildren().add(num);
 
