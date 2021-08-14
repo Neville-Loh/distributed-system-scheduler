@@ -75,7 +75,12 @@ public class Schedule implements Comparable<Schedule> {
      */
     public void addHeuristic(int h) {
         _h = h;
-        _total = _finishTime + h;
+        _total = _finishTime + _h;
+    }
+
+    public void addWeightedHeuristic(int h) {
+        _h = h * h;
+        _total = _finishTime + _h;
     }
 
     /**
@@ -90,6 +95,11 @@ public class Schedule implements Comparable<Schedule> {
     public int compareTo(Schedule schedule) {
         return _total > schedule.getTotal() ? 1 : _total < schedule.getTotal() ? -1 : 0;
     }
+
+//    @Override
+//    public int compareTo(Schedule schedule) {
+//        return _h > schedule.getH() ? 1 : _h < schedule.getH() ? -1 : 0;
+//    }
 
     /**
      * Check if two Schedule instance is the same. (this is for detecting duplicate scheduling)

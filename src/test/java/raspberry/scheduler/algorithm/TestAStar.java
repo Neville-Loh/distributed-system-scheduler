@@ -166,6 +166,34 @@ public class TestAStar {
         assertEquals(227, output.getFinishTime());
     }
 
+    @Test
+    public void testNodes16_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+        // read input graph and find path
+        OutputSchedule output = readAndFindPath("16_466.dot", 2);
+        assertEquals(624, output.getFinishTime());
+    }
+
+    @Test
+    public void testNodes16_5Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+        // read input graph and find path
+        OutputSchedule output = readAndFindPath("16_466.dot", 5);
+        assertEquals(466, output.getFinishTime());
+    }
+
+    @Test
+    public void testNodesBIG_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+        // read input graph and find path
+        OutputSchedule output = readAndFindPath("big.dot", 2);
+        assertEquals(227, output.getFinishTime());
+    }
+
+    @Test
+    public void testNodesBIG_4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+        // read input graph and find path
+        OutputSchedule output = readAndFindPath("big.dot", 5);
+        assertEquals(227, output.getFinishTime());
+    }
+
 
     /**
      * Helper method to read the file and run a star
@@ -187,7 +215,14 @@ public class TestAStar {
 
         // run and time a* algorithm
         long startTime = System.nanoTime();
-        Astar astar = new Astar(graph,numProcessors);
+        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
+        OutputSchedule outputBound = wA.findPath();
+        wA = null;
+        int upperbound = outputBound.getFinishTime();
+        outputBound = null;
+        System.out.printf("UPPERBOUND : %d", upperbound);
+        Astar astar = new Astar(graph,numProcessors,upperbound);
+
         OutputSchedule output = astar.findPath();
         System.out.printf("------------------------\n" +
                         "File: %s, Number of Processor: %d \nRUNNING TIME : %.2f seconds\n",

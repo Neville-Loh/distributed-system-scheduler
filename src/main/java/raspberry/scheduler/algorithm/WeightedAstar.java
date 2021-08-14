@@ -12,29 +12,27 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  *
  * @author Takahiro
  */
-public class Astar implements Algorithm {
+public class WeightedAstar implements Algorithm {
     private IGraph _graph;
     int _numP;
     int _numNode;
     int _maxCriticalPath;
     PriorityQueue<Schedule> _pq;
     Hashtable<String, Integer> _heuristic = new Hashtable<String, Integer>();
-    Hashtable<Integer, ArrayList<Schedule>> _visited;
+//    Hashtable<Integer, ArrayList<Schedule>> _visited;
 
-    int _upperBound;
     /**
      * Constructor for A*
      *
      * @param graphToSolve  : graph to solve (graph represents the task and dependencies)
      * @param numProcessors : number of processor we can used to scheudle tasks.
      */
-    public Astar(IGraph graphToSolve, int numProcessors, int upperBound) {
+    public WeightedAstar(IGraph graphToSolve, int numProcessors) {
         _graph = graphToSolve;
         _pq = new PriorityQueue<Schedule>();
-        _visited = new Hashtable<Integer, ArrayList<Schedule>>();
+//        _visited = new Hashtable<Integer, ArrayList<Schedule>>();
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
-        _upperBound = upperBound;
     }
 
     /**
@@ -58,7 +56,7 @@ public class Astar implements Algorithm {
         for (INode i : rootTable.keySet()) {
             if (rootTable.get(i) == 0) {
                 Schedule newSchedule = new Schedule(0, null, i, 1);
-                newSchedule.addHeuristic(
+                newSchedule.addWeightedHeuristic(
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
                                 h1(getChildTable(rootTable, i), newSchedule)
@@ -74,17 +72,17 @@ public class Astar implements Algorithm {
         while (true) {
 //            System.out.printf("PQ SIZE: %d\n", _pq.size());
             cSchedule = _pq.poll();
-            ArrayList<Schedule> listVisitedForSize = _visited.get(cSchedule.getHash());
-            if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
-                duplicate++;
-                continue;
-            } else {
-                if (listVisitedForSize == null) {
-                    listVisitedForSize = new ArrayList<Schedule>();
-                    _visited.put(cSchedule.getHash(), listVisitedForSize);
-                }
-                listVisitedForSize.add(cSchedule);
-            }
+//            ArrayList<Schedule> listVisitedForSize = _visited.get(cSchedule.getHash());
+//            if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
+//                duplicate++;
+//                continue;
+//            } else {
+//                if (listVisitedForSize == null) {
+//                    listVisitedForSize = new ArrayList<Schedule>();
+//                    _visited.put(cSchedule.getHash(), listVisitedForSize);
+//                }
+//                listVisitedForSize.add(cSchedule);
+//            }
 
             // Return if all task is scheduled
             if (cSchedule.getSize() == _numNode) {
@@ -108,26 +106,25 @@ public class Astar implements Algorithm {
                         int start = calculateCost(cSchedule, j, node);
                         Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
                         Schedule newSchedule = new Schedule(start, cSchedule, node, j);
-                        newSchedule.addHeuristic(
+                        newSchedule.addWeightedHeuristic(
                                 Collections.max(Arrays.asList(
                                         h(newSchedule),
                                         h1(newTable, newSchedule)
                                 )));
                         master.put(newSchedule, newTable);
-                        if (newSchedule.getTotal() <= _upperBound){
-                            _pq.add(newSchedule);
-                        }
+                        _pq.add(newSchedule);
                     }
                 }
             }
-//            if (_pq.size() > 100000){
-//                PriorityQueue<Schedule> newPQ = new PriorityQueue<Schedule>();
-//                for (int i = 0 ; i< 100; i++){
-//                    newPQ.add( _pq.poll() );
-//                }
-//                System.out.println("TRIMMED");
-//                _pq = newPQ;
-//            }
+
+            if (_pq.size() > 100000){
+                PriorityQueue<Schedule> newPQ = new PriorityQueue<Schedule>();
+                for (int i = 0 ; i< 100; i++){
+                    newPQ.add( _pq.poll() );
+                }
+                System.out.println("TRIMMED");
+                _pq = newPQ;
+            }
         }
 
         return new Solution(cSchedule, _numP);

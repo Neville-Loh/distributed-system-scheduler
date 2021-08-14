@@ -24,7 +24,7 @@ public class TestOutput {
         IGraph graph = file1.read();
 
         //run algo and get output schedule
-        Astar astar = new Astar(graph,2);
+        Astar astar = new Astar(graph,2,2);
         OutputSchedule schedule = astar.findPath();
 
         //write to output file

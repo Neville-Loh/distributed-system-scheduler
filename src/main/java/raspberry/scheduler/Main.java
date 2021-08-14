@@ -19,7 +19,7 @@ public class Main {
             GraphReader reader = new GraphReader(CLIConfig.getDotFile());
 
             IGraph graph = reader.read();
-            Astar astar = new Astar(graph, CLIConfig.get_numProcessors());
+            Astar astar = new Astar(graph, CLIConfig.get_numProcessors(),5);
             OutputSchedule outputSchedule = astar.findPath();
             Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
             writer.write();
