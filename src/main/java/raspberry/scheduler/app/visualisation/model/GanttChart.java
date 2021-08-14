@@ -22,8 +22,8 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
      * plot background and plot area that includes vertical and horizontal grid
      * lines and fills, are added.
      *
-     * @param axis  X Axis for this XY chart
-     * @param axis2 Y Axis for this XY chart
+   //  * @param axis  X Axis for this XY chart
+    // * @param axis2 Y Axis for this XY chart
      *              Gantt chart adapted from https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
      */
 

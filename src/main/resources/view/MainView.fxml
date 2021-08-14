@@ -8,28 +8,28 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" styleClass="Pane" stylesheets="@css/Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="raspberry.scheduler.app.visualisation.controller.MainController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="raspberry.scheduler.app.visualisation.controller.MainController">
    <children>
-      <HBox prefHeight="706.0" prefWidth="1000.0">
+      <HBox prefHeight="819.0" prefWidth="1200.0">
          <children>
-            <VBox prefHeight="650.0" prefWidth="295.0">
+            <VBox prefHeight="650.0" prefWidth="300.0" styleClass="Pane" stylesheets="@css/Main.css">
                <children>
-                  <VBox prefHeight="273.0" prefWidth="295.0">
+                  <VBox prefHeight="432.0" prefWidth="300.0">
                      <children>
-                        <VBox prefHeight="51.0" prefWidth="275.0">
+                        <VBox prefHeight="114.0" prefWidth="300.0">
                            <children>
-                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="67.0" prefWidth="275.0" text="Runtime Statistics" textAlignment="CENTER" textFill="WHITE">
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="101.0" prefWidth="275.0" text="Runtime Statistics" textAlignment="CENTER" textFill="#6c757d">
                                  <font>
                                     <Font size="33.0" />
                                  </font>
                               </Label>
                            </children>
                         </VBox>
-                        <HBox prefHeight="109.0" prefWidth="295.0">
+                        <HBox prefHeight="194.0" prefWidth="300.0">
                            <children>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Input file:" textFill="WHITE">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Input file:" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
@@ -39,15 +39,15 @@
                                        <VBox.margin>
                                           <Insets />
                                        </VBox.margin></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Output file:" textFill="WHITE">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Output file:" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Algorithm:" textFill="WHITE">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Algorithm:" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Active cores:" textFill="WHITE">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Active cores:" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
@@ -58,20 +58,20 @@
                               </VBox>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
-                                    <Label fx:id="_inputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="input.dot" textAlignment="RIGHT" textFill="WHITE">
+                                    <Label fx:id="_inputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="input.dot" textAlignment="RIGHT" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="_outputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Output.dot" textAlignment="RIGHT" textFill="WHITE">
+                                    <Label fx:id="_outputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Output.dot" textAlignment="RIGHT" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="A*" textAlignment="RIGHT" textFill="WHITE">
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="A*" textAlignment="RIGHT" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label fx:id="_numCores" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="WHITE">
+                                    <Label fx:id="_numCores" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
@@ -83,19 +83,19 @@
                            <children>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
-                                    <Label prefHeight="23.0" prefWidth="138.0" text="Processors:" textFill="WHITE">
+                                    <Label prefHeight="23.0" prefWidth="138.0" text="Processors:" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Iterations:" textFill="WHITE">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Iterations:" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Time elapsed:" textFill="WHITE">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Time elapsed:" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Status:" textFill="WHITE">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Status:" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
@@ -106,22 +106,31 @@
                               </VBox>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
-                                    <Label fx:id="_numProcessors" alignment="CENTER_RIGHT" prefHeight="23.0" prefWidth="138.0" text="1" textFill="WHITE">
+                                    <Label fx:id="_numProcessors" alignment="CENTER_RIGHT" prefHeight="23.0" prefWidth="138.0" text="1" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label fx:id="_iterations" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textFill="WHITE">
+                                    <Label fx:id="_iterations" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label fx:id="_timeElapsed" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="0" textFill="WHITE">
+                                    <Label fx:id="_timeElapsed" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="0" textFill="#6c757d">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label fx:id="_status" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Running" textFill="WHITE">
-                                       <font>
-                                          <Font size="16.0" />
-                                       </font></Label>
+                                    <VBox fx:id="_statusBox" prefHeight="200.0" prefWidth="100.0">
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <children>
+                                          <HBox prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox prefHeight="200.0" prefWidth="100.0" />
+                                                <VBox fx:id="_statusBox" prefHeight="25.0" prefWidth="54.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
                                  </children>
                               </VBox>
                            </children>
@@ -132,7 +141,7 @@
                      <children>
                         <Tile fx:id="_memTile" backgroundImageKeepAspect="false" decimals="0" thresholdVisible="false" unit="MB">
                            <backgroundColor>
-                              <Color red="0.1921568661928177" green="0.2235294133424759" blue="0.23529411852359772" />
+                              <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
                            </backgroundColor>
                         </Tile>
                      </children></VBox>
@@ -140,15 +149,15 @@
                      <children>
                         <Tile fx:id="_CPUChart" backgroundImageKeepAspect="false" decimals="0" thresholdVisible="false" unit="\%">
                            <backgroundColor>
-                              <Color red="0.1921568661928177" green="0.2235294133424759" blue="0.23529411852359772" />
+                              <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
                            </backgroundColor>
                         </Tile>
                      </children></VBox>
                </children>
             </VBox>
-            <VBox prefHeight="700.0" prefWidth="800.0" styleClass="Pane" stylesheets="@css/Main.css">
+            <VBox prefHeight="800.0" prefWidth="900.0" styleClass="Pane" stylesheets="@css/Main.css">
                <children>
-                  <VBox fx:id="_ganttBox" prefHeight="380.0" prefWidth="800.0" />
+                  <VBox fx:id="_ganttBox" prefHeight="500.0" prefWidth="900.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" />
                </children>
             </VBox>
          </children>

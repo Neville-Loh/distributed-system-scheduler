@@ -4,11 +4,13 @@ import eu.hansolo.tilesfx.Tile;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.effect.MotionBlur;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -36,12 +38,13 @@ public class MainController implements Initializable {
 
 
     @FXML
-    private Label _inputFile, _outputFile, _numProcessors, _numCores, _timeElapsed, _iterations, _status;
+    private Label _inputFile, _outputFile, _numProcessors, _numCores, _timeElapsed, _iterations;
     @FXML
     private Tile _memTile, _CPUChart;
     @FXML
-    private VBox _ganttBox;
+    private VBox _ganttBox,_statusBox;
 
+    private ProgressIndicator _statusIndicator;
     private CLIConfig _config;
     private String _inputFileName;
     private String _outputFileName;
@@ -63,8 +66,15 @@ public class MainController implements Initializable {
         setupCPUChart();
        // setUpGanttChart();
         setUpGanttChart();
-        _updater = new Updater(_timeElapsed, _iterations, _status, _memTile, _CPUChart, _ganttChart);
+        setUpStatus();
+        _updater = new Updater(_timeElapsed, _iterations, _memTile, _CPUChart, _ganttChart, _statusBox);
 
+    }
+
+    private void setUpStatus() {
+
+        _statusIndicator=new ProgressIndicator();
+        _statusBox.getChildren().add(_statusIndicator);
     }
 
     private void setIdleStats() {
@@ -119,10 +129,11 @@ public class MainController implements Initializable {
         _ganttChart.setBlockHeight(50);
        _ganttChart.setAnimated(false);
        double chartHeight = _ganttChart.getMaxHeight();
-       _ganttChart.setPrefHeight(380);
-       _ganttChart.setPrefWidth(800);
-       System.out.println("" + chartHeight);
-       _ganttChart.setBlockHeight(200/_numP);
+       _ganttChart.setPrefHeight(500);
+       _ganttChart.setPrefWidth(900);
+        _ganttChart.minHeight(500);
+        _ganttChart.minWidth(900);
+       _ganttChart.setBlockHeight(320/_numP);
 
         _ganttBox.getChildren().add(_ganttChart);
 

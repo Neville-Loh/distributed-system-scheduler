@@ -10,6 +10,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 //import eu.hansolo.tilesfx.Tile;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import raspberry.scheduler.algorithm.AlgoObservable;
 import raspberry.scheduler.algorithm.OutputSchedule;
@@ -27,7 +29,8 @@ import java.util.List;
 import static javafx.scene.paint.Color.rgb;
 
 public class Updater {
-    private Label _timeElapsed, _iterations, _status;
+    private Label _timeElapsed, _iterations;
+    private VBox _statusBox;
     private Tile _memTile;
     private Tile _CPUChart;
     private Timeline _timer, _polling;
@@ -39,10 +42,10 @@ public class Updater {
     private MainController mainController;
     private GanttChart _ganttChart;
 
-    public Updater(Label timeElapsed, Label iterations, Label status, Tile memTile, Tile CPUChart, GanttChart ganttChart) {
+    public Updater(Label timeElapsed, Label iterations, Tile memTile, Tile CPUChart, GanttChart ganttChart, VBox statusBox) {
         _timeElapsed = timeElapsed;
         _iterations = iterations;
-        _status = status;
+        _statusBox = statusBox;
         _memTile = memTile;
         _CPUChart = CPUChart;
         _ganttChart = ganttChart;
@@ -71,8 +74,9 @@ public class Updater {
 
     public void stopTimer() {
         _isRunning = false;
-        _polling.stop();
+        // _polling.stop();
         _timer.stop();
+        _statusBox.getChildren().clear();
     }
 
     /**
@@ -92,7 +96,7 @@ public class Updater {
             }
         }));
         _polling.setCycleCount(_timer.INDEFINITE);
-        if (_observable.getIsFinish()==true) {
+        if (_observable.getIsFinish() == true) {
             _polling.stop();
         }
         _polling.play();
@@ -124,33 +128,35 @@ public class Updater {
     private void updateGanttChart() {
 //        mainController.setUpGanttChartOnSolution(_observable.getSolution());
 
-        Platform.runLater(() -> {
-            OutputSchedule solution = _observable.getSolution();
-            int numP = _observable.getSolution().getTotalProcessorNum();
-            List<String> processors = new ArrayList<String>();
-            for (int i=1; i<=numP; i++) {
-                processors.add(String.valueOf(i));
-            }
-            _ganttChart.getData().clear();
-            for (String processor: processors) {
-                XYChart.Series series = new XYChart.Series();
-//            seriesList.add(series);
-                List<INode> nodesList = solution.getNodes(Integer.parseInt(processor));
+        if (_isRunning) {
 
-                for (INode node: nodesList) {
-                    int startTime = solution.getStartTime(node);
-                    int compTime = node.getValue();
-                    String nodeName = node.getName();
-                    //      System.out.println(nodeName);
-                    series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "status-green", nodeName)));
-
-
+            Platform.runLater(() -> {
+                OutputSchedule solution = _observable.getSolution();
+                int numP = _observable.getSolution().getTotalProcessorNum();
+                List<String> processors = new ArrayList<String>();
+                for (int i = 1; i <= numP; i++) {
+                    processors.add(String.valueOf(i));
                 }
-                _ganttChart.getData().add(series);
-            }
-        });
+                _ganttChart.getData().clear();
+                for (String processor : processors) {
+                    XYChart.Series series = new XYChart.Series();
+//            seriesList.add(series);
+                    List<INode> nodesList = solution.getNodes(Integer.parseInt(processor));
+
+                    for (INode node : nodesList) {
+                        int startTime = solution.getStartTime(node);
+                        int compTime = node.getValue();
+                        String nodeName = node.getName();
+                        //      System.out.println(nodeName);
+                        series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "status-green", nodeName)));
 
 
+                    }
+                    _ganttChart.getData().add(series);
+                }
+            });
+
+        }
     }
 
 
