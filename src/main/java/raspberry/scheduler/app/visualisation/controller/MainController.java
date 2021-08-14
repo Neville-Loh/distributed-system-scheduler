@@ -20,6 +20,7 @@ import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.app.App;
 import raspberry.scheduler.app.visualisation.Updater;
 import raspberry.scheduler.app.visualisation.model.GanttChart;
+import raspberry.scheduler.app.visualisation.util.ProcessorColors;
 import raspberry.scheduler.cli.CLIConfig;
 
 import java.io.FileNotFoundException;
@@ -42,18 +43,19 @@ public class MainController implements Initializable {
     @FXML
     private Tile _memTile, _CPUChart;
     @FXML
-    private VBox _ganttBox,_statusBox;
+    private VBox _ganttBox, _statusBox;
 
     private ProgressIndicator _statusIndicator;
     private CLIConfig _config;
     private String _inputFileName;
     private String _outputFileName;
+    private ProcessorColors _assignedColors;
     private GanttChart _ganttChart;
     private int _numSchedules;
     private Updater _updater;
-        /*
-         for testing purpose delete after
-        */
+    /*
+     for testing purpose delete after
+    */
     private OutputSchedule _schedule;
     private int _numP;
 
@@ -64,16 +66,16 @@ public class MainController implements Initializable {
         setIdleStats();
         setupMemTile();
         setupCPUChart();
-       // setUpGanttChart();
         setUpGanttChart();
         setUpStatus();
-        _updater = new Updater(_timeElapsed, _iterations, _memTile, _CPUChart, _ganttChart, _statusBox);
+        _updater = new Updater(_timeElapsed, _iterations, _memTile, _CPUChart, _ganttChart, _statusBox, _assignedColors);
 
     }
 
     private void setUpStatus() {
 
-        _statusIndicator=new ProgressIndicator();
+        _statusIndicator = new ProgressIndicator();
+        _statusIndicator.setStyle("-fx-accent : black");
         _statusBox.getChildren().add(_statusIndicator);
     }
 
@@ -89,9 +91,11 @@ public class MainController implements Initializable {
 
         Platform.runLater(() -> {
             _memTile.setMaxValue(((double) Runtime.getRuntime().maxMemory() / (double) (1024 * 1024)));
-            _memTile.setBarColor(rgb(255, 255, 255));
-            _memTile.setThresholdColor(rgb(255, 255, 255));
+            _memTile.setBarColor(rgb(255, 136, 0));
+            _memTile.setThresholdColor(rgb(255, 136, 0));
             _memTile.setTickLabelDecimals(0);
+            _memTile.setNeedleColor(rgb(0, 0, 0));
+            _memTile.setTitle("Memory usage");
         });
 
 
@@ -99,18 +103,24 @@ public class MainController implements Initializable {
 
     private void setupCPUChart() {
 
-        _memTile.setMaxValue(100);
-        _memTile.setBarColor(rgb(255, 255, 255));
-        _memTile.setThresholdColor(rgb(255, 255, 255));
-        _memTile.setTickLabelDecimals(0);
+        Platform.runLater(() -> {
+            _CPUChart.setMaxValue(((double) Runtime.getRuntime().maxMemory() / (double) (1024 * 1024)));
+            _CPUChart.setBarColor(rgb(56, 163, 165));
+            _CPUChart.setThresholdColor(rgb(56, 163, 165));
+            _CPUChart.setTickLabelDecimals(0);
+            _CPUChart.setNeedleColor(rgb(0, 0, 0));
+            _CPUChart.setTitle("CPU Usage");
+            // _CPUChart.setStyle("-fx-fill:transparent");
+        });
     }
 
 
     private void setUpGanttChart() {
 //        String[] processors = new String[]{"1", "2", "3", "4"};
         _numP = _config.get_numProcessors();
+        _assignedColors = new ProcessorColors(_numP);
         List<String> processors = new ArrayList<String>();
-        for (int i=1; i<=_numP; i++) {
+        for (int i = 1; i <= _numP; i++) {
             processors.add(String.valueOf(i));
         }
 
@@ -127,23 +137,17 @@ public class MainController implements Initializable {
         _ganttChart.setTitle("Please work for the love of god");
         _ganttChart.setLegendVisible(false);
         _ganttChart.setBlockHeight(50);
-       _ganttChart.setAnimated(false);
-       double chartHeight = _ganttChart.getMaxHeight();
-       _ganttChart.setPrefHeight(500);
-       _ganttChart.setPrefWidth(900);
+        _ganttChart.setAnimated(false);
+        double chartHeight = _ganttChart.getMaxHeight();
+        _ganttChart.setPrefHeight(500);
+        _ganttChart.setPrefWidth(900);
         _ganttChart.minHeight(500);
         _ganttChart.minWidth(900);
-       _ganttChart.setBlockHeight(320/_numP);
-
+        _ganttChart.setBlockHeight(320 / _numP);
         _ganttBox.getChildren().add(_ganttChart);
-
-        MotionBlur blur = new MotionBlur();
-        blur.setAngle(45);
-        blur.setRadius(10.5);
-       // _ganttBox.setEffect(blur);
         _ganttChart.getStylesheets().add(getClass().getResource("/view/css/Gantt.css").toExternalForm());
-        Color color = new Color(0.49,0.57,0.60,1);
-      //  _ganttChart.setBackground(new Background(new BackgroundFill(color,null,null)));
+        Color color = new Color(0.49, 0.57, 0.60, 1);
+        //  _ganttChart.setBackground(new Background(new BackgroundFill(color,null,null)));
         _ganttChart.setStyle("-fx-fill:#31393C");
 
     }

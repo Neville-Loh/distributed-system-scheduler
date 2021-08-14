@@ -17,6 +17,7 @@ import raspberry.scheduler.algorithm.AlgoObservable;
 import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.app.visualisation.controller.MainController;
 import raspberry.scheduler.app.visualisation.model.GanttChart;
+import raspberry.scheduler.app.visualisation.util.ProcessorColors;
 import raspberry.scheduler.graph.INode;
 
 import java.lang.management.ManagementFactory;
@@ -41,16 +42,17 @@ public class Updater {
     private AlgoObservable _observable;
     private MainController mainController;
     private GanttChart _ganttChart;
+    private ProcessorColors _assignedColors;
 
-    public Updater(Label timeElapsed, Label iterations, Tile memTile, Tile CPUChart, GanttChart ganttChart, VBox statusBox) {
+    public Updater(Label timeElapsed, Label iterations, Tile memTile, Tile CPUChart, GanttChart ganttChart, VBox statusBox, ProcessorColors assignedColors) {
         _timeElapsed = timeElapsed;
         _iterations = iterations;
         _statusBox = statusBox;
         _memTile = memTile;
         _CPUChart = CPUChart;
         _ganttChart = ganttChart;
+        _assignedColors = assignedColors;
         _observable = AlgoObservable.getInstance();
-//        mainController = new MainController();
         startTimer();
         startPolling();
     }
@@ -126,7 +128,6 @@ public class Updater {
     }
 
     private void updateGanttChart() {
-//        mainController.setUpGanttChartOnSolution(_observable.getSolution());
 
         if (_isRunning) {
 
@@ -140,15 +141,13 @@ public class Updater {
                 _ganttChart.getData().clear();
                 for (String processor : processors) {
                     XYChart.Series series = new XYChart.Series();
-//            seriesList.add(series);
                     List<INode> nodesList = solution.getNodes(Integer.parseInt(processor));
-
                     for (INode node : nodesList) {
                         int startTime = solution.getStartTime(node);
                         int compTime = node.getValue();
                         String nodeName = node.getName();
-                        //      System.out.println(nodeName);
-                        series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "status-green", nodeName)));
+                        String color = _assignedColors.getProcessorColor(Integer.parseInt(processor) - 1);
+                        series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "-fx-background-color:" + color + ";", nodeName)));
 
 
                     }

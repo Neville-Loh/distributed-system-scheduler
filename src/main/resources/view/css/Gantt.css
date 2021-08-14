@@ -1,5 +1,5 @@
-.status-green {
-    -fx-background-color:rgba(0,128,0,0.7);
+.white-border {
+    /*-fx-background-color:#6930C3;*/
     -fx-border-color: white;
 
 }

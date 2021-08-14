@@ -30,7 +30,8 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
     public static class Attributes {
 
         public long _length;//Length of task given
-        public String _styleClass; //Style for plot
+        public String _color; //Style for plot
+        public String _styleClass; //style class used for rectangle borders
         public String _taskNum; //task number for task
 
 
@@ -40,10 +41,11 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
          * @param taskNum    - the task number for the given task
          */
 
-        public Attributes(long lengthMs, String styleClass, String taskNum) {
+        public Attributes(long lengthMs, String color, String taskNum) {
             super();
             _length = lengthMs;
-            _styleClass = styleClass;
+            _styleClass = "white-border";
+            _color = color;
             _taskNum = taskNum;
         }
 
@@ -66,6 +68,12 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
         public void setStyleClass(String styleClass) {
             _styleClass = styleClass;
         }
+
+        public String getColor(){
+            return _color;
+        }
+
+
 
     }
 
@@ -93,6 +101,10 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
 
     private static String getTaskNum(Object obj) {
         return ((Attributes) obj).getTaskNum();
+    }
+
+    private static String getColor(Object obj){
+        return ((Attributes) obj).getColor();
     }
 
     @Override
@@ -206,6 +218,7 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
         }
 
         container.getStyleClass().add(getStyleClass(item.getExtraValue()));
+        container.setStyle(getColor(item.getExtraValue()));
 
         return container;
     }
