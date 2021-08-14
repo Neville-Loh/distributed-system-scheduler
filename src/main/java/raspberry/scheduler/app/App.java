@@ -38,10 +38,12 @@ public class App extends Application{
 
         @Override
         public void start(Stage primaryStage) throws Exception {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml")
-            );
-            Scene scene = new Scene(root);
-            primaryStage.setScene(scene);
+            Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
+            Platform.runLater(() -> {
+                Scene scene = new Scene(root);
+                primaryStage.setScene(scene);
+            });
+
 //            primaryStage.setResizable(false);
             primaryStage.show();
             primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {

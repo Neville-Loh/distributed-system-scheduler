@@ -3,6 +3,7 @@ package raspberry.scheduler.app.visualisation;
 import eu.hansolo.tilesfx.Tile;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -22,6 +23,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javafx.scene.paint.Color.rgb;
 
 public class Updater {
     private Label _timeElapsed, _iterations, _status;
@@ -78,6 +81,7 @@ public class Updater {
 
 
     private void startPolling() {
+
         _polling = new Timeline(new KeyFrame(Duration.millis(200), event -> {
             updateMemTile();
             updateIterations();
@@ -88,14 +92,20 @@ public class Updater {
             }
         }));
         _polling.setCycleCount(_timer.INDEFINITE);
+        if (_observable.getIsFinish()==true) {
+            _polling.stop();
+        }
         _polling.play();
     }
 
     private void updateMemTile() {
+        Platform.runLater(() -> {
+            double totalMem = Runtime.getRuntime().totalMemory();
+            double freeMem = Runtime.getRuntime().freeMemory();
+            _memTile.setValue((totalMem - freeMem) / (1024 * 1024));
+        });
 
-        double totalMem = Runtime.getRuntime().totalMemory();
-        double freeMem = Runtime.getRuntime().freeMemory();
-        _memTile.setValue((totalMem - freeMem) / (1024 * 1024));
+
     }
 
     private void updateIterations() {
@@ -113,29 +123,34 @@ public class Updater {
 
     private void updateGanttChart() {
 //        mainController.setUpGanttChartOnSolution(_observable.getSolution());
-        OutputSchedule solution = _observable.getSolution();
-        int numP = _observable.getSolution().getTotalProcessorNum();
-        List<String> processors = new ArrayList<String>();
-        for (int i=1; i<=numP; i++) {
-            processors.add(String.valueOf(i));
-        }
-        _ganttChart.getData().clear();
-        for (String processor: processors) {
-            XYChart.Series series = new XYChart.Series();
-//            seriesList.add(series);
-            List<INode> nodesList = solution.getNodes(Integer.parseInt(processor));
 
-            for (INode node: nodesList) {
-                int startTime = solution.getStartTime(node);
-                int compTime = node.getValue();
-                String nodeName = node.getName();
-          //      System.out.println(nodeName);
-                series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "status-green", nodeName)));
-
-
+        Platform.runLater(() -> {
+            OutputSchedule solution = _observable.getSolution();
+            int numP = _observable.getSolution().getTotalProcessorNum();
+            List<String> processors = new ArrayList<String>();
+            for (int i=1; i<=numP; i++) {
+                processors.add(String.valueOf(i));
             }
-            _ganttChart.getData().add(series);
-        }
+            _ganttChart.getData().clear();
+            for (String processor: processors) {
+                XYChart.Series series = new XYChart.Series();
+//            seriesList.add(series);
+                List<INode> nodesList = solution.getNodes(Integer.parseInt(processor));
+
+                for (INode node: nodesList) {
+                    int startTime = solution.getStartTime(node);
+                    int compTime = node.getValue();
+                    String nodeName = node.getName();
+                    //      System.out.println(nodeName);
+                    series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "status-green", nodeName)));
+
+
+                }
+                _ganttChart.getData().add(series);
+            }
+        });
+
+
     }
 
 

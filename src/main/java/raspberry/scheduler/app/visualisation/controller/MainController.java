@@ -1,8 +1,10 @@
 package raspberry.scheduler.app.visualisation.controller;
 
 import eu.hansolo.tilesfx.Tile;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.collections.FXCollections;
@@ -52,10 +54,6 @@ public class MainController implements Initializable {
     private OutputSchedule _schedule;
     private int _numP;
 
-    public MainController() throws FileNotFoundException {
-        setUpTestSolution();
-    }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -77,10 +75,14 @@ public class MainController implements Initializable {
     }
 
     private void setupMemTile() {
-        _memTile.setMaxValue(((double) Runtime.getRuntime().maxMemory() / (double) (1024 * 1024)));
-        _memTile.setBarColor(rgb(255, 255, 255));
-        _memTile.setThresholdColor(rgb(255, 255, 255));
-        _memTile.setTickLabelDecimals(0);
+
+        Platform.runLater(() -> {
+            _memTile.setMaxValue(((double) Runtime.getRuntime().maxMemory() / (double) (1024 * 1024)));
+            _memTile.setBarColor(rgb(255, 255, 255));
+            _memTile.setThresholdColor(rgb(255, 255, 255));
+            _memTile.setTickLabelDecimals(0);
+        });
+
 
     }
 
@@ -111,7 +113,8 @@ public class MainController implements Initializable {
        _ganttChart.setPrefHeight(380);
        _ganttChart.setPrefWidth(800);
        System.out.println("" + chartHeight);
-       _ganttChart.setBlockHeight(250/_numP);
+       _ganttChart.setBlockHeight(200/_numP);
+
         _ganttBox.getChildren().add(_ganttChart);
 
         MotionBlur blur = new MotionBlur();
@@ -123,14 +126,6 @@ public class MainController implements Initializable {
       //  _ganttChart.setBackground(new Background(new BackgroundFill(color,null,null)));
         _ganttChart.setStyle("-fx-fill:#31393C");
 
-    }
-
-    private void setUpTestSolution() throws FileNotFoundException {
-//            GraphReader reader = new GraphReader("src/test/resources/input/example.dot");
-//            IGraph graph = reader.read();
-//            Astar astar = new Astar(graph, 2);
-//            _schedule = astar.findPath();
-//            _numP = _schedule.getTotalProcessorNum();
     }
 
 }

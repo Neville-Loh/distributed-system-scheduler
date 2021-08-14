@@ -76,7 +76,7 @@ public class Astar implements Algorithm {
 
         _observable.setIterations(0);
         _observable.setIsFinish(false);
-        System.out.println(_observable.getIterations());
+      //  System.out.println(_observable.getIterations());
         while (true) {
             _observable.increment();
             //System.out.println(_observable.getIterations());
