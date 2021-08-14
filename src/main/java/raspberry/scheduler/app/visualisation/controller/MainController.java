@@ -7,8 +7,11 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Label;
+import javafx.scene.effect.MotionBlur;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
-import raspberry.scheduler.algorithm.Astar;
+import javafx.scene.paint.Color;
 import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.app.App;
 import raspberry.scheduler.app.visualisation.Updater;
@@ -17,12 +20,6 @@ import raspberry.scheduler.cli.CLIConfig;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
-
-import javafx.scene.chart.XYChart;
-import raspberry.scheduler.graph.IGraph;
-import raspberry.scheduler.graph.INode;
-import raspberry.scheduler.io.GraphReader;
 
 import java.net.URL;
 import java.util.List;
@@ -49,8 +46,6 @@ public class MainController implements Initializable {
     private GanttChart _ganttChart;
     private int _numSchedules;
     private Updater _updater;
-    private GanttChart _gantChart;
-
         /*
          for testing purpose delete after
         */
@@ -111,9 +106,22 @@ public class MainController implements Initializable {
         _ganttChart.setTitle("Please work for the love of god");
         _ganttChart.setLegendVisible(false);
         _ganttChart.setBlockHeight(50);
-
+       _ganttChart.setAnimated(false);
+       double chartHeight = _ganttChart.getMaxHeight();
+       _ganttChart.setPrefHeight(380);
+       _ganttChart.setPrefWidth(800);
+       System.out.println("" + chartHeight);
+       _ganttChart.setBlockHeight(250/_numP);
         _ganttBox.getChildren().add(_ganttChart);
-        _ganttChart.getStylesheets().add(getClass().getResource("/view/css/gantt.css").toExternalForm());
+
+        MotionBlur blur = new MotionBlur();
+        blur.setAngle(45);
+        blur.setRadius(10.5);
+       // _ganttBox.setEffect(blur);
+        _ganttChart.getStylesheets().add(getClass().getResource("/view/css/Gantt.css").toExternalForm());
+        Color color = new Color(0.49,0.57,0.60,1);
+      //  _ganttChart.setBackground(new Background(new BackgroundFill(color,null,null)));
+        _ganttChart.setStyle("-fx-fill:#31393C");
 
     }
 

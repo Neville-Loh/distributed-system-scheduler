@@ -8,7 +8,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" styleClass="Pane" stylesheets="@css/Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="raspberry.scheduler.app.visualisation.controller.MainController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" styleClass="Pane" stylesheets="@css/Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="raspberry.scheduler.app.visualisation.controller.MainController">
    <children>
       <HBox prefHeight="706.0" prefWidth="1000.0">
          <children>
@@ -146,7 +146,11 @@
                      </children></VBox>
                </children>
             </VBox>
-            <VBox fx:id="_ganttBox" prefHeight="700.0" prefWidth="706.0" styleClass="Pane" stylesheets="@css/Main.css" />
+            <VBox prefHeight="700.0" prefWidth="800.0" styleClass="Pane" stylesheets="@css/Main.css">
+               <children>
+                  <VBox fx:id="_ganttBox" prefHeight="380.0" prefWidth="800.0" />
+               </children>
+            </VBox>
          </children>
       </HBox>
    </children>

@@ -74,7 +74,7 @@ public class Updater {
 
 
     private void startPolling() {
-        _polling = new Timeline(new KeyFrame(Duration.millis(100), event -> {
+        _polling = new Timeline(new KeyFrame(Duration.millis(200), event -> {
             updateMemTile();
             updateIterations();
             updateGanttChart();
@@ -85,8 +85,6 @@ public class Updater {
         _polling.setCycleCount(_timer.INDEFINITE);
         _polling.play();
     }
-
-    ;
 
     private void updateMemTile() {
 
@@ -122,7 +120,7 @@ public class Updater {
                 int startTime = solution.getStartTime(node);
                 int compTime = node.getValue();
                 String nodeName = node.getName();
-                System.out.println(nodeName);
+          //      System.out.println(nodeName);
                 series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "status-green", nodeName)));
 
 
