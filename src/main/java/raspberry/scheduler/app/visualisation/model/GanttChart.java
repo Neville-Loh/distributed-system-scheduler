@@ -139,10 +139,10 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
                        // Label num = new Label("1");
 //                        num.setMinHeight(5);
 //                        num.setMinWidth(5);
-                        System.out.println(String.valueOf(getTaskNum(item.getExtraValue())));
+             //           System.out.println(String.valueOf(getTaskNum(item.getExtraValue())));
                         num.setWrapText(true);
-                        System.out.println(String.valueOf(num.getWidth()));
-                        System.out.println(String.valueOf(num.getHeight()));
+                  //      System.out.println(String.valueOf(num.getWidth()));
+                  //      System.out.println(String.valueOf(num.getHeight()));
 
                         // num.minWidthProperty().bind(ellipse.widthProperty());
                         num.setPadding(new Insets(ellipse.getHeight(),0,0,ellipse.getWidth()));

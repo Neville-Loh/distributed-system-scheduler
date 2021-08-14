@@ -3,13 +3,12 @@
 <?import eu.hansolo.tilesfx.Tile?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.effect.MotionBlur?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" styleClass="Pane" stylesheets="@css/Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="raspberry.scheduler.app.visualisation.controller.MainController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" styleClass="Pane" stylesheets="@css/Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="raspberry.scheduler.app.visualisation.controller.MainController">
    <children>
       <HBox prefHeight="706.0" prefWidth="1000.0">
          <children>
@@ -23,9 +22,6 @@
                                  <font>
                                     <Font size="33.0" />
                                  </font>
-                                 <effect>
-                                    <MotionBlur />
-                                 </effect>
                               </Label>
                            </children>
                         </VBox>
@@ -42,31 +38,19 @@
                                        </opaqueInsets>
                                        <VBox.margin>
                                           <Insets />
-                                       </VBox.margin>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </VBox.margin></Label>
                                     <Label prefHeight="0.0" prefWidth="138.0" text="Output file:" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                     <Label prefHeight="0.0" prefWidth="138.0" text="Algorithm:" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                     <Label prefHeight="0.0" prefWidth="138.0" text="Active cores:" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                  </children>
                                  <HBox.margin>
                                     <Insets left="5.0" />
@@ -78,31 +62,19 @@
                                        <font>
                                           <Font size="16.0" />
                                        </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect>
                                     </Label>
                                     <Label fx:id="_outputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Output.dot" textAlignment="RIGHT" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                     <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="A*" textAlignment="RIGHT" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                     <Label fx:id="_numCores" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                  </children>
                               </VBox>
                            </children>
@@ -114,31 +86,19 @@
                                     <Label prefHeight="23.0" prefWidth="138.0" text="Processors:" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                     <Label prefHeight="0.0" prefWidth="138.0" text="Iterations:" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                     <Label prefHeight="0.0" prefWidth="138.0" text="Time elapsed:" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                     <Label prefHeight="0.0" prefWidth="138.0" text="Status:" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                  </children>
                                  <HBox.margin>
                                     <Insets left="5.0" />
@@ -149,31 +109,19 @@
                                     <Label fx:id="_numProcessors" alignment="CENTER_RIGHT" prefHeight="23.0" prefWidth="138.0" text="1" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                     <Label fx:id="_iterations" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                     <Label fx:id="_timeElapsed" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="0" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                     <Label fx:id="_status" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Running" textFill="WHITE">
                                        <font>
                                           <Font size="16.0" />
-                                       </font>
-                                       <effect>
-                                          <MotionBlur />
-                                       </effect></Label>
+                                       </font></Label>
                                  </children>
                               </VBox>
                            </children>
@@ -186,9 +134,6 @@
                            <backgroundColor>
                               <Color red="0.1921568661928177" green="0.2235294133424759" blue="0.23529411852359772" />
                            </backgroundColor>
-                           <effect>
-                              <MotionBlur radius="40.75" />
-                           </effect>
                         </Tile>
                      </children></VBox>
                   <VBox prefHeight="172.0" prefWidth="277.0">
@@ -201,7 +146,11 @@
                      </children></VBox>
                </children>
             </VBox>
-            <VBox fx:id="_ganttBox" prefHeight="700.0" prefWidth="706.0" styleClass="Pane" stylesheets="@css/Main.css" />
+            <VBox prefHeight="700.0" prefWidth="800.0" styleClass="Pane" stylesheets="@css/Main.css">
+               <children>
+                  <VBox fx:id="_ganttBox" prefHeight="380.0" prefWidth="800.0" />
+               </children>
+            </VBox>
          </children>
       </HBox>
    </children>

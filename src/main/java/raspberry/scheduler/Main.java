@@ -20,23 +20,24 @@ public class Main {
 
             // Start visualisation if appropriate argument is given.
             if (CLIConfig.getVisualise()){
-                startVisualisation(CLIConfig);
-            }
+                startVisualisation(CLIConfig, reader);
+            }else {
 
-            IGraph graph = reader.read();
-            Astar astar = new Astar(graph, CLIConfig.get_numProcessors());
-            OutputSchedule outputSchedule = astar.findPath();
-            Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
-            writer.write();
+                IGraph graph = reader.read();
+                Astar astar = new Astar(graph, CLIConfig.get_numProcessors());
+                OutputSchedule outputSchedule = astar.findPath();
+                Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
+                writer.write();
+            }
         } catch (IOException | ParserException e) {
             System.out.println(e.getMessage());
             System.exit(1);
         }
     }
 
-    private static void startVisualisation(CLIConfig config){
-        new Thread(()-> {
-            App.main(config);
-        }).start();
+    private static void startVisualisation(CLIConfig config, GraphReader reader){
+//        new Thread(()-> {
+            App.main(config,reader);
+//        }).start();
     }
 }
