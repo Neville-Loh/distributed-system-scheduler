@@ -1,5 +1,7 @@
 .status-green {
     -fx-background-color:rgba(0,128,0,0.7);
+    -fx-border-color: white;
+
 }
 
 .chart-background{
@@ -17,6 +19,10 @@
 .chart-title {
     -fx-text-fill: #4682b4;
     -fx-font-size: 1.6em;
+}
+.border-border{
+    -fx-border-color: white;
+    -fx-border-width: 1;
 }
 
 .axis-label {
