@@ -60,6 +60,7 @@ public class MainController implements Initializable {
         _config = App.GetCLIConfig();
         setIdleStats();
         setupMemTile();
+        setupCPUChart();
        // setUpGanttChart();
         setUpGanttChart();
         _updater = new Updater(_timeElapsed, _iterations, _status, _memTile, _CPUChart, _ganttChart);
@@ -84,6 +85,14 @@ public class MainController implements Initializable {
         });
 
 
+    }
+
+    private void setupCPUChart() {
+
+        _memTile.setMaxValue(100);
+        _memTile.setBarColor(rgb(255, 255, 255));
+        _memTile.setThresholdColor(rgb(255, 255, 255));
+        _memTile.setTickLabelDecimals(0);
     }
 
 
