@@ -1,5 +1,6 @@
 package raspberry.scheduler.graph;
 
+import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
@@ -120,5 +121,11 @@ public interface IGraph{
      * @return table contains Key: INode, Value: number of in degree
      */
     public Hashtable<INode, Integer> getInDegreeCountOfAllNodes();
+
+    /**
+     * Return the name of the graph
+     * @return name the name of the graph
+     */
+    public String getName();
 }
 

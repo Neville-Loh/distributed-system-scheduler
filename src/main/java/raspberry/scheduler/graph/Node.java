@@ -1,34 +1,49 @@
 package raspberry.scheduler.graph;
 
-import java.util.List;
-import java.util.Hashtable;
-
+/**
+ * This class represents the nodes of the input graph, which represent tasks.
+ * The Node object created stores the node's name and its weight (execution time).
+ */
 public class Node implements INode{
 
-    private String name;
-    private int weight;
-    public char _id;
+    private String _name;
+    private int _weight;
+
+    /**
+     * Default constructor for Node object
+     * @param name name of the node
+     * @param executionTime how long the task takes
+     */
 
     public Node(String name, int executionTime){
-        this.name = name;
-        this.weight = executionTime;
+        _name = name;
+        _weight = executionTime;
     }
 
+    /**
+     * Gets the weight/value of the task: how long it takes to complete
+     * @return weight
+     */
     @Override
     public int getValue() {
-        return weight;
+        return _weight;
     }
 
-    public void setValue(int val){
-        this.weight = val;
-    }
-
+    /**
+     * Gets name of node in the form of a string
+     * @return name string
+     */
     @Override
     public String toString(){
-        return this.name;
+        return _name;
     }
 
+    /**
+     * Gets name of node
+     * @return name
+     */
+    @Override
     public String getName(){
-        return this.name;
+        return _name;
     }
 }
