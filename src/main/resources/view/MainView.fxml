@@ -12,11 +12,11 @@
    <children>
       <HBox prefHeight="819.0" prefWidth="1200.0">
          <children>
-            <VBox prefHeight="650.0" prefWidth="300.0" styleClass="Pane" stylesheets="@css/Main.css">
+            <VBox prefHeight="650.0" prefWidth="300.0" rotate="180.0" styleClass="Pane" stylesheets="@css/Main.css">
                <children>
                   <VBox prefHeight="429.0" prefWidth="300.0">
                      <children>
-                        <VBox prefHeight="114.0" prefWidth="300.0" style="-fx-background-color: #edf2fb; -fx-background-radius: 15;">
+                        <VBox prefHeight="114.0" prefWidth="300.0" style="-fx-background-radius: 15;">
                            <children>
                               <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="126.0" prefWidth="344.0" text="Runtime Statistics" textAlignment="CENTER" textFill="#6c757d">
                                  <font>
@@ -26,7 +26,7 @@
                            </children>
                         </VBox>
                         <VBox prefHeight="25.0" prefWidth="300.0" />
-                        <HBox prefHeight="124.0" prefWidth="300.0" style="-fx-background-color: #edf2fb; -fx-background-radius: 15;">
+                        <HBox prefHeight="124.0" prefWidth="300.0" style="-fx-background-radius: 15;">
                            <children>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
@@ -84,7 +84,7 @@
                            </padding>
                         </HBox>
                         <VBox prefHeight="25.0" prefWidth="300.0" />
-                        <HBox prefHeight="120.0" prefWidth="300.0" style="-fx-background-color: #edf2fb; -fx-background-radius: 15;">
+                        <HBox prefHeight="120.0" prefWidth="300.0" style="-fx-background-radius: 15;">
                            <children>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
@@ -149,7 +149,7 @@
                      <children>
                         <Tile fx:id="_memTile" backgroundImageKeepAspect="false" decimals="0" style="-fx-background-radius: 15;" thresholdVisible="false" unit="MB">
                            <backgroundColor>
-                              <Color red="0.929411768913269" green="0.9490196108818054" blue="0.9843137264251709" />
+                              <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
                            </backgroundColor>
                            <valueColor>
                               <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
@@ -166,7 +166,7 @@
                      <children>
                         <Tile fx:id="_CPUChart" backgroundImageKeepAspect="false" decimals="0" style="-fx-background-radius: 15;" thresholdVisible="false" unit="\%">
                            <backgroundColor>
-                              <Color red="0.929411768913269" green="0.9490196108818054" blue="0.9843137264251709" />
+                              <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
                            </backgroundColor>
                            <valueColor>
                               <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
@@ -183,7 +183,7 @@
             </VBox>
             <VBox prefHeight="800.0" prefWidth="900.0" styleClass="Pane" stylesheets="@css/Main.css">
                <children>
-                  <VBox fx:id="_ganttBox" prefHeight="500.0" prefWidth="900.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" />
+                  <VBox fx:id="_ganttBox" prefHeight="500.0" prefWidth="900.0" rotate="180.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" />
                </children>
             </VBox>
          </children>

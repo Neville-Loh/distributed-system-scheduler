@@ -56,7 +56,7 @@ public class Updater {
         _CPUChart = CPUChart;
         _ganttChart = ganttChart;
         _observable = AlgoObservable.getInstance();
-//        mainController = new MainController();
+        _assignedColors = assignedColors;
         startTimer();
         startPolling();
     }
