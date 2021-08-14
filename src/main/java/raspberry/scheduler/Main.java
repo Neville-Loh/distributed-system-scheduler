@@ -19,9 +19,10 @@ public class Main {
             GraphReader reader = new GraphReader(CLIConfig.getDotFile());
 
             // Start visualisation if appropriate argument is given.
-            if (CLIConfig.getVisualise()){
+            if (CLIConfig.getVisualise()) {
                 startVisualisation(CLIConfig, reader);
-            }else {
+            } else {
+
 
                 IGraph graph = reader.read();
                 Astar astar = new Astar(graph, CLIConfig.get_numProcessors());
@@ -35,9 +36,9 @@ public class Main {
         }
     }
 
-    private static void startVisualisation(CLIConfig config, GraphReader reader){
+    private static void startVisualisation(CLIConfig config, GraphReader reader) {
 //        new Thread(()-> {
-            App.main(config,reader);
+        App.main(config, reader);
 //        }).start();
     }
 }

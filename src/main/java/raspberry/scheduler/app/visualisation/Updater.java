@@ -67,6 +67,7 @@ public class Updater {
 
     public void stopTimer() {
         _isRunning = false;
+        _polling.stop();
         _timer.stop();
     }
 
@@ -81,6 +82,9 @@ public class Updater {
             updateMemTile();
             updateIterations();
             updateGanttChart();
+            if (_observable.getIsFinish()) {
+                stopTimer();
+            }
         }));
         _polling.setCycleCount(_timer.INDEFINITE);
         if (_observable.getIsFinish()==true) {
