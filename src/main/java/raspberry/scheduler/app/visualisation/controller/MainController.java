@@ -36,7 +36,7 @@ public class MainController implements Initializable {
     @FXML
     private Label _inputFile, _outputFile, _numProcessors, _numCores, _timeElapsed, _iterations, _status;
     @FXML
-    private Tile _memTile;
+    private Tile _memTile, _CPUChart;
     @FXML
     private VBox _ganttBox;
 
@@ -64,7 +64,7 @@ public class MainController implements Initializable {
         setupMemTile();
        // setUpGanttChart();
         setUpGanttChart();
-        _updater = new Updater(_timeElapsed, _iterations, _status, _memTile, _ganttChart);
+        _updater = new Updater(_timeElapsed, _iterations, _status, _memTile, _CPUChart, _ganttChart);
 
     }
 

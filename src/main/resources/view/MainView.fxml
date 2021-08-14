@@ -138,7 +138,7 @@
                      </children></VBox>
                   <VBox prefHeight="172.0" prefWidth="277.0">
                      <children>
-                        <Tile backgroundImageKeepAspect="false" skinType="SMOOTHED_CHART">
+                        <Tile fx:id="_CPUChart" backgroundImageKeepAspect="false" skinType="SMOOTHED_CHART">
                            <backgroundColor>
                               <Color red="0.1921568661928177" green="0.2235294133424759" blue="0.23529411852359772" />
                            </backgroundColor>

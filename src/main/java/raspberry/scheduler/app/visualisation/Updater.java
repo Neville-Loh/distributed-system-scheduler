@@ -16,6 +16,8 @@ import raspberry.scheduler.app.visualisation.controller.MainController;
 import raspberry.scheduler.app.visualisation.model.GanttChart;
 import raspberry.scheduler.graph.INode;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import java.util.List;
 public class Updater {
     private Label _timeElapsed, _iterations, _status;
     private Tile _memTile;
+    private Tile _CPUChart;
     private Timeline _timer, _polling;
     private boolean _isRunning = true;
     private double _currentTime;
@@ -33,11 +36,12 @@ public class Updater {
     private MainController mainController;
     private GanttChart _ganttChart;
 
-    public Updater(Label timeElapsed, Label iterations, Label status, Tile memTile, GanttChart ganttChart) {
+    public Updater(Label timeElapsed, Label iterations, Label status, Tile memTile, Tile CPUChart, GanttChart ganttChart) {
         _timeElapsed = timeElapsed;
         _iterations = iterations;
         _status = status;
         _memTile = memTile;
+        _CPUChart = CPUChart;
         _ganttChart = ganttChart;
         _observable = AlgoObservable.getInstance();
 //        mainController = new MainController();
@@ -77,6 +81,7 @@ public class Updater {
         _polling = new Timeline(new KeyFrame(Duration.millis(500), event -> {
             updateMemTile();
             updateIterations();
+            updateCPUChart();
             updateGanttChart();
         }));
         _polling.setCycleCount(_timer.INDEFINITE);
@@ -100,6 +105,10 @@ public class Updater {
 
     private void updateCPUChart() {
 
+        OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory
+                .getOperatingSystemMXBean();
+        double CPUUsage = ((com.sun.management.OperatingSystemMXBean) bean).getProcessCpuLoad();
+        _CPUChart.setValue(CPUUsage * 100);
     }
 
     private void updateGanttChart() {
