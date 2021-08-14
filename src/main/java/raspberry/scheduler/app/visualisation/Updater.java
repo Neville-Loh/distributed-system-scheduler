@@ -11,6 +11,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 //import eu.hansolo.tilesfx.Tile;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import raspberry.scheduler.algorithm.AlgoObservable;
@@ -44,6 +46,8 @@ public class Updater {
     private GanttChart _ganttChart;
     private ProcessorColors _assignedColors;
 
+    private static final Image doneTick = new Image("/icons/doneTick.png");
+
     public Updater(Label timeElapsed, Label iterations, Tile memTile, Tile CPUChart, GanttChart ganttChart, VBox statusBox, ProcessorColors assignedColors) {
         _timeElapsed = timeElapsed;
         _iterations = iterations;
@@ -51,8 +55,8 @@ public class Updater {
         _memTile = memTile;
         _CPUChart = CPUChart;
         _ganttChart = ganttChart;
-        _assignedColors = assignedColors;
         _observable = AlgoObservable.getInstance();
+//        mainController = new MainController();
         startTimer();
         startPolling();
     }
@@ -74,11 +78,17 @@ public class Updater {
         }
     }
 
+
     public void stopTimer() {
         _isRunning = false;
         // _polling.stop();
         _timer.stop();
+
+        //clear progress indicator and add done image
         _statusBox.getChildren().clear();
+        ImageView imv = new ImageView();
+        imv.setImage(doneTick);
+        _statusBox.getChildren().add(imv);
     }
 
     /**
