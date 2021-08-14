@@ -71,6 +71,7 @@ public class Updater {
 
     public void stopTimer() {
         _isRunning = false;
+        _polling.stop();
         _timer.stop();
     }
 
@@ -86,6 +87,9 @@ public class Updater {
             updateIterations();
             updateCPUChart();
             updateGanttChart();
+            if (_observable.getIsFinish()) {
+                stopTimer();
+            }
         }));
         _polling.setCycleCount(_timer.INDEFINITE);
         if (_observable.getIsFinish()==true) {
