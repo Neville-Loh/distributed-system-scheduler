@@ -74,9 +74,8 @@ public class Solution implements OutputSchedule {
     @Override
     public List<INode> getNodes(int pid) {
         List<INode> nodesList = new ArrayList<INode>();
-        Enumeration<INode> nodes = _table.keys();
-        while(nodes.hasMoreElements()) {
-            INode node = nodes.nextElement();
+
+        for (INode node : _table.keySet()) {
             if (_table.get(node)[2] == pid) {
                 nodesList.add(node);
             }

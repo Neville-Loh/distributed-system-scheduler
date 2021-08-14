@@ -64,6 +64,7 @@ public class Updater {
 
     public void stopTimer() {
         _isRunning = false;
+        _polling.stop();
         _timer.stop();
     }
 
@@ -73,15 +74,15 @@ public class Updater {
 
 
     private void startPolling() {
-        _polling = new Timeline(new KeyFrame(Duration.millis(500), event -> {
+        _polling = new Timeline(new KeyFrame(Duration.millis(100), event -> {
             updateMemTile();
             updateIterations();
             updateGanttChart();
+            if (_observable.getIsFinish()) {
+                stopTimer();
+            }
         }));
         _polling.setCycleCount(_timer.INDEFINITE);
-        if (_observable.getIsFinish()==true) {
-            _polling.stop();
-        }
         _polling.play();
     }
 

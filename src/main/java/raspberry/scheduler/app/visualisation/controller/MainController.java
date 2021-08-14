@@ -107,7 +107,7 @@ public class MainController implements Initializable {
         yAxis.setTickLabelGap(10);
         yAxis.setCategories(FXCollections.<String>observableArrayList(processors));
         _ganttChart = new GanttChart<Number, String>(xAxis, yAxis);
-
+        _ganttChart.setAnimated(false);
         _ganttChart.setTitle("Please work for the love of god");
         _ganttChart.setLegendVisible(false);
         _ganttChart.setBlockHeight(50);
