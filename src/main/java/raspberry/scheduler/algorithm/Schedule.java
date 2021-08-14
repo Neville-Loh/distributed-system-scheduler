@@ -284,7 +284,9 @@ public class Schedule implements Comparable<Schedule> {
      * @return _lowerBound Represents the base case for BNB
      */
     public int getLowerBound() {
-        return _lowerBound;
+        return _total;
     }
+
+
 
 }

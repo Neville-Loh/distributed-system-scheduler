@@ -22,6 +22,8 @@ public class BNB implements Algorithm {
     Hashtable<String, Integer> _heuristicTable;
     Stack<Schedule> _scheduleStack;
 
+    private AlgoObservable _observable;
+
     /**
      * BNB algorithm constructor.
      *
@@ -32,6 +34,8 @@ public class BNB implements Algorithm {
         _graph = graphToSolve;
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
+
+        _observable = AlgoObservable.getInstance();
     }
 
     /**
@@ -74,11 +78,19 @@ public class BNB implements Algorithm {
 
         Schedule cSchedule;
         Hashtable<INode, Integer> cTable;
+        _observable.setIterations(0);
+        _observable.setIsFinish(false);
+        System.out.println(_observable.getIterations());
         while (true) {
 //            System.out.printf("\n Stack SIZE :  %d", _scheduleStack.size());
             cSchedule = _scheduleStack.pop();
             cTable = master.get(cSchedule);
             master.remove(cSchedule);
+
+            _observable.increment();
+            System.out.println(_observable.getIterations());
+            Solution cScheduleSolution = new Solution(cSchedule, _numP);
+            _observable.setSolution(cScheduleSolution);
 
             int cBound = getUpperBound();
             if (cBound < _bound) {
@@ -115,10 +127,12 @@ public class BNB implements Algorithm {
             }
             if (_scheduleStack.isEmpty()) {
                 System.out.println("-- BOUND_DFS FINISHED --");
+                _observable.setIsFinish(true);
                 break;
             }
         }
         printPath(shortestPath);
+        _observable.setSolution(new Solution(shortestPath,_numP));
         return new Solution(shortestPath, _numP);
     }
 
