@@ -23,9 +23,6 @@ public class ProcessorColors {
 
     private void setProcessorColors() {
         for (int i = 0; i < _numProcessors; i++) {
-            System.out.println(_numProcessors);
-            System.out.println(i);
-            System.out.println(_colors.get(0));
             _processorColor.add(_colors.get(i % PROCESSOR_COLORS));
         }
 

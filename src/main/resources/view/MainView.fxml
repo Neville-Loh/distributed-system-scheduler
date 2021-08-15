@@ -12,7 +12,7 @@
    <children>
       <HBox prefHeight="819.0" prefWidth="1200.0">
          <children>
-            <VBox prefHeight="650.0" prefWidth="300.0" rotate="180.0" styleClass="Pane" stylesheets="@css/Main.css">
+            <VBox prefHeight="650.0" prefWidth="300.0" styleClass="Pane" stylesheets="@css/Main.css">
                <children>
                   <VBox prefHeight="429.0" prefWidth="300.0">
                      <children>
@@ -183,7 +183,7 @@
             </VBox>
             <VBox prefHeight="800.0" prefWidth="900.0" styleClass="Pane" stylesheets="@css/Main.css">
                <children>
-                  <VBox fx:id="_ganttBox" prefHeight="500.0" prefWidth="900.0" rotate="180.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" />
+                  <VBox fx:id="_ganttBox" prefHeight="500.0" prefWidth="900.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" />
                </children>
             </VBox>
          </children>

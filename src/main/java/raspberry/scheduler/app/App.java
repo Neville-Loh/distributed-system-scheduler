@@ -1,5 +1,6 @@
 
 package raspberry.scheduler.app;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -22,58 +23,58 @@ import java.io.IOException;
 /**
  * FrontEnd
  */
-public class App extends Application{
+public class App extends Application {
 
     private static CLIConfig _config;
     private static GraphReader _reader;
 
-        public static void main(CLIConfig config, GraphReader reader) {
-            System.out.println("Launched with visualisation");
-            _config = config;
-            _reader = reader;
-            launch();
+    public static void main(CLIConfig config, GraphReader reader) {
+        System.out.println("Launched with visualisation");
+        _config = config;
+        _reader = reader;
+        launch();
 
-
-        }
-
-        @Override
-        public void start(Stage primaryStage) throws Exception {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
-            Platform.runLater(() -> {
-                Scene scene = new Scene(root);
-                primaryStage.setScene(scene);
-            });
-
-//            primaryStage.setResizable(false);
-            primaryStage.show();
-            primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent e) {
-                    Platform.exit();
-                    System.exit(1);
-                }
-            });
-
-            new Thread(()-> {
-                try {
-                    startAlgo();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }).start();
-
-        }
-
-        public static CLIConfig GetCLIConfig(){
-            return _config;
-        }
-
-        private void startAlgo() throws IOException {
-            IGraph graph = _reader.read();
-            Astar astar = new Astar(graph, _config.get_numProcessors());
-            OutputSchedule outputSchedule = astar.findPath();
-            Writer writer = new Writer(_config.getOutputFile(), graph, outputSchedule);
-            writer.write();
-        }
 
     }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
+        Platform.runLater(() -> {
+            Scene scene = new Scene(root);
+            primaryStage.setScene(scene);
+        });
+
+        primaryStage.setResizable(false);
+        primaryStage.show();
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent e) {
+                Platform.exit();
+                System.exit(1);
+            }
+        });
+
+        new Thread(() -> {
+            try {
+                startAlgo();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+    }
+
+    public static CLIConfig GetCLIConfig() {
+        return _config;
+    }
+
+    private void startAlgo() throws IOException {
+        IGraph graph = _reader.read();
+        Astar astar = new Astar(graph, _config.get_numProcessors());
+        OutputSchedule outputSchedule = astar.findPath();
+        Writer writer = new Writer(_config.getOutputFile(), graph, outputSchedule);
+        writer.write();
+    }
+
+}

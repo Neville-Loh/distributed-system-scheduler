@@ -47,16 +47,9 @@ public class MainController implements Initializable {
 
     private ProgressIndicator _statusIndicator;
     private CLIConfig _config;
-    private String _inputFileName;
-    private String _outputFileName;
     private ProcessorColors _assignedColors;
     private GanttChart _ganttChart;
-    private int _numSchedules;
     private Updater _updater;
-    /*
-     for testing purpose delete after
-    */
-    private OutputSchedule _schedule;
     private int _numP;
 
     @Override
@@ -110,13 +103,11 @@ public class MainController implements Initializable {
             _CPUChart.setTickLabelDecimals(0);
             _CPUChart.setNeedleColor(rgb(0, 0, 0));
             _CPUChart.setTitle("CPU Usage");
-            // _CPUChart.setStyle("-fx-fill:transparent");
         });
     }
 
 
     private void setUpGanttChart() {
-//        String[] processors = new String[]{"1", "2", "3", "4"};
         _numP = _config.get_numProcessors();
         _assignedColors = new ProcessorColors(_numP);
         List<String> processors = new ArrayList<String>();
@@ -126,15 +117,13 @@ public class MainController implements Initializable {
 
         NumberAxis xAxis = new NumberAxis();
         CategoryAxis yAxis = new CategoryAxis();
-        xAxis.setLabel("");
-        //xAxis.setTickLabelFill(Color.CHOCOLATE);
-        yAxis.setLabel("");
-        // yAxis.setTickLabelFill(Color.CHOCOLATE);
+        xAxis.setLabel("Time");
+        yAxis.setLabel("Processors");
         yAxis.setTickLabelGap(10);
         yAxis.setCategories(FXCollections.<String>observableArrayList(processors));
         _ganttChart = new GanttChart<Number, String>(xAxis, yAxis);
         _ganttChart.setAnimated(false);
-        _ganttChart.setTitle("Please work for the love of god");
+        _ganttChart.setTitle("Current Schedule");
         _ganttChart.setLegendVisible(false);
         _ganttChart.setBlockHeight(50);
         _ganttChart.setAnimated(false);
@@ -147,7 +136,6 @@ public class MainController implements Initializable {
         _ganttBox.getChildren().add(_ganttChart);
         _ganttChart.getStylesheets().add(getClass().getResource("/view/css/Gantt.css").toExternalForm());
         Color color = new Color(0.49, 0.57, 0.60, 1);
-        //  _ganttChart.setBackground(new Background(new BackgroundFill(color,null,null)));
         _ganttChart.setStyle("-fx-fill:#31393C");
 
     }

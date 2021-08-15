@@ -1,4 +1,6 @@
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.app.visualisation.controller;
+
+import raspberry.scheduler.algorithm.Solution;
 
 import java.util.Observable;
 
@@ -20,9 +22,6 @@ public class AlgoObservable extends Observable {
         setChanged();
         notifyObservers(_iterations);
         _iterations++;
-        if (_isFinish) {
-            System.out.println("-------------FINISHED-------------");
-        }
     }
 
     public void add(int number){
