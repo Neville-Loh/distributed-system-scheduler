@@ -25,7 +25,7 @@ public class Schedule implements Comparable<Schedule> {
     private Hashtable<String, List<Integer>> _scheduling; // partial schedule. //TODO : Implement this idea with less memory intensive manner.
     private Hashtable<Integer, String> _lastForEachProcessor; //the last task schedule, for each processor.
     private int _maxPid; //The largest pid currently used to schedule
-
+    Hashtable<INode, Integer> _inDegreeTable;
 
     private int _upperBound;    // For BNB. Represents the worst case. <- Bad schedling.
     private int _lowerBound;   // For BNB. Represents the base case. <- perfect schedling.
@@ -39,7 +39,7 @@ public class Schedule implements Comparable<Schedule> {
      * @param node           : the task this partial schedule is scheduling.
      * @param processorId    : id of a processor a node is being scheduled
      */
-    public Schedule(int startTime, Schedule parentSchedule, INode node, int processorId) {
+    public Schedule(int startTime, Schedule parentSchedule, INode node, int processorId, Hashtable<INode, Integer> inDegreeTable) {
         _node = node;
         _pid = processorId;
         _startTime = startTime;
@@ -47,7 +47,7 @@ public class Schedule implements Comparable<Schedule> {
         _h = 0;
         _total = _finishTime + _h;
         _parent = parentSchedule;
-
+        _inDegreeTable = inDegreeTable;
         if (parentSchedule == null) {
             _size = 1;
             _scheduling = new Hashtable<String, List<Integer>>();
@@ -108,8 +108,8 @@ public class Schedule implements Comparable<Schedule> {
      * @return Boolean : True : if its the same.
      * False: if its different.
      */
-    @Override
-    public boolean equals(Object otherSchedule) {
+//    @Override
+    public boolean equals2(Object otherSchedule) {
         if (otherSchedule == this) {
             return true;
         } else if (!(otherSchedule instanceof Schedule)) {
@@ -120,8 +120,50 @@ public class Schedule implements Comparable<Schedule> {
                 return false;
             } else if (schedule.getMaxPid() != schedule.getMaxPid()) {
                 return false;
+            } else {
+                // Group by pid. Compare match
+                Hashtable<String, List<Integer>> _scheduling2 = schedule.getScheduling();
+
+                Hashtable<Integer, Hashtable<String, Integer>> hash4scheduling = new Hashtable<Integer, Hashtable<String, Integer>>();
+                Hashtable<Integer, Hashtable<String, Integer>> hash4scheduling2 = new Hashtable<Integer, Hashtable<String, Integer>>();
+
+                for (String s : _scheduling.keySet()) {
+                    Hashtable<String, Integer> tmp = hash4scheduling.get(_scheduling.get(s).get(0)); //get(0) gets pid
+                    if (tmp == null) {
+                        tmp = new Hashtable<String, Integer>();
+                    }
+                    tmp.put(s, _scheduling.get(s).get(1));
+                    hash4scheduling.put( _scheduling.get(s).get(0), tmp );
+                }
+                for (String s : _scheduling2.keySet()) {
+                    Hashtable<String, Integer> tmp = hash4scheduling2.get(_scheduling2.get(s).get(0)); //get(0) gets pid
+                    if (tmp == null) {
+                        tmp = new Hashtable<String, Integer>();
+                    }
+                    tmp.put(s, _scheduling2.get(s).get(1));
+                    hash4scheduling2.put( _scheduling2.get(s).get(0), tmp );
+                }
+                for (Hashtable<String, Integer> i : hash4scheduling.values()) {
+                    Boolean foundMatch = false;
+                    for (Hashtable<String, Integer> j : hash4scheduling2.values()) {
+                        if (i.equals(j)) {
+                            foundMatch = true;
+                            break;
+                        }
+                    }
+                    if (!foundMatch) {
+                        return false;
+                    }
+                }
             }
-            return _scheduling.equals(schedule.getScheduling());
+//            }
+
+//            if ( !_scheduling.equals(schedule.getScheduling()) ){ //Processor swap
+//                System.out.println("");
+//                System.out.println(this);
+//                System.out.println(schedule);
+//            }
+            return true;
         }
     }
 
@@ -157,13 +199,13 @@ public class Schedule implements Comparable<Schedule> {
      * @return int : representing the hash value of "scheduling" hashtable.
      */
     public int getHash() {
-        final int prime = 31;
+        final int prime = 17;
         int value = 0;
         for (String i : _scheduling.keySet()) {
-            value = prime * value + (_scheduling.get(i).hashCode());
+            value = prime * value + (_scheduling.get(i).get(1));
             value = prime * value + (i.hashCode());
-            value = prime * value + (_size);
         }
+        value = prime * value + (_size);
         return value;
     }
 
@@ -295,6 +337,16 @@ public class Schedule implements Comparable<Schedule> {
      */
     public int getLowerBound() {
         return _lowerBound;
+    }
+
+
+    @Override
+    public String toString(){
+        String r = "";
+        for ( String i: _scheduling.keySet() ) {
+            r +=  "{"+  i + "-" + _scheduling.get(i).get(0) + "-" + _scheduling.get(i).get(1) + "}";
+        }
+        return r;
     }
 
 }

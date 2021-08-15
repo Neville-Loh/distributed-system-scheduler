@@ -56,14 +56,14 @@ public class BNB implements Algorithm {
         _scheduleStack = new Stack<Schedule>();
 
         Hashtable<INode, Integer> rootTable = getRootTable();
-        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
+//        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
         _heuristicTable = new Heuristic().getHeuristicTable(_graph);
         _maxCriticalPath = Collections.max(_heuristicTable.values());
 
         for (INode i : rootTable.keySet()) {
             if (rootTable.get(i) == 0) {
-                Schedule newSchedule = new Schedule(0, null, i, 0);
-                master.put(newSchedule, getChildTable(rootTable, i));
+                Schedule newSchedule = new Schedule(0, null, i, 0, getChildTable(rootTable, i));
+//                master.put(newSchedule, getChildTable(rootTable, i));
                 _scheduleStack.push(newSchedule);
                 int cBound = getUpperBound();
                 if (cBound < _bound) {
@@ -77,8 +77,9 @@ public class BNB implements Algorithm {
         while (true) {
 //            System.out.printf("\n Stack SIZE :  %d", _scheduleStack.size());
             cSchedule = _scheduleStack.pop();
-            cTable = master.get(cSchedule);
-            master.remove(cSchedule);
+//            cTable = master.get(cSchedule);
+//            master.remove(cSchedule);
+            cTable = cSchedule._inDegreeTable;
 
             int cBound = getUpperBound();
             if (cBound < _bound) {
@@ -104,9 +105,9 @@ public class BNB implements Algorithm {
                             // this node "i" has outDegree of 0, so add childs to the stack.
                             for (int j = 0; j < _numP; j++) {
                                 int start = calculateCost(cSchedule, j, i);
-                                Schedule newSchedule = new Schedule(start, cSchedule, i, j);
                                 Hashtable<INode, Integer> newTable = getChildTable(cTable, i);
-                                master.put(newSchedule, newTable);
+                                Schedule newSchedule = new Schedule(start, cSchedule, i, j, newTable);
+//                                master.put(newSchedule, newTable);
                                 _scheduleStack.push(newSchedule);
                             }
                         }

@@ -50,18 +50,18 @@ public class WeightedAstar implements Algorithm {
          */
         getH();
 
-        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
+//        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
         Hashtable<INode, Integer> rootTable = this.getRootTable();
 
         for (INode i : rootTable.keySet()) {
             if (rootTable.get(i) == 0) {
-                Schedule newSchedule = new Schedule(0, null, i, 1);
+                Schedule newSchedule = new Schedule(0, null, i, 1, getChildTable(rootTable, i));
                 newSchedule.addWeightedHeuristic(
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
                                 h1(getChildTable(rootTable, i), newSchedule)
                         )));
-                master.put(newSchedule, getChildTable(rootTable, i));
+//                master.put(newSchedule, getChildTable(rootTable, i));
                 _pq.add(newSchedule);
             }
         }
@@ -88,8 +88,9 @@ public class WeightedAstar implements Algorithm {
             if (cSchedule.getSize() == _numNode) {
                 break;
             }
-            Hashtable<INode, Integer> cTable = master.get(cSchedule);
-            master.remove(cSchedule);
+//            Hashtable<INode, Integer> cTable = master.get(cSchedule);
+//            master.remove(cSchedule);
+            Hashtable<INode, Integer> cTable = cSchedule._inDegreeTable;
 
             // Find the next empty processor. (
             int currentMaxPid = cSchedule.getMaxPid();
@@ -105,13 +106,13 @@ public class WeightedAstar implements Algorithm {
                     for (int j = 1; j <= pidBound; j++) {
                         int start = calculateCost(cSchedule, j, node);
                         Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
-                        Schedule newSchedule = new Schedule(start, cSchedule, node, j);
+                        Schedule newSchedule = new Schedule(start, cSchedule, node, j, newTable);
                         newSchedule.addWeightedHeuristic(
                                 Collections.max(Arrays.asList(
                                         h(newSchedule),
                                         h1(newTable, newSchedule)
                                 )));
-                        master.put(newSchedule, newTable);
+//                        master.put(newSchedule, newTable);
                         _pq.add(newSchedule);
                     }
                 }

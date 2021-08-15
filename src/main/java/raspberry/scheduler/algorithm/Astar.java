@@ -21,6 +21,7 @@ public class Astar implements Algorithm {
     Hashtable<String, Integer> _heuristic = new Hashtable<String, Integer>();
     Hashtable<Integer, ArrayList<Schedule>> _visited;
 
+    ArrayList<String> _equivalence = new ArrayList<String>();
     int _upperBound;
     /**
      * Constructor for A*
@@ -52,18 +53,18 @@ public class Astar implements Algorithm {
          */
         getH();
 
-        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
+//        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
         Hashtable<INode, Integer> rootTable = this.getRootTable();
 
         for (INode i : rootTable.keySet()) {
             if (rootTable.get(i) == 0) {
-                Schedule newSchedule = new Schedule(0, null, i, 1);
+                Schedule newSchedule = new Schedule(0, null, i, 1, getChildTable(rootTable, i));
                 newSchedule.addHeuristic(
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
                                 h1(getChildTable(rootTable, i), newSchedule)
                         )));
-                master.put(newSchedule, getChildTable(rootTable, i));
+//                master.put(newSchedule, getChildTable(rootTable, i));
                 _pq.add(newSchedule);
             }
         }
@@ -74,6 +75,7 @@ public class Astar implements Algorithm {
         while (true) {
 //            System.out.printf("PQ SIZE: %d\n", _pq.size());
             cSchedule = _pq.poll();
+
             ArrayList<Schedule> listVisitedForSize = _visited.get(cSchedule.getHash());
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
                 duplicate++;
@@ -90,9 +92,9 @@ public class Astar implements Algorithm {
             if (cSchedule.getSize() == _numNode) {
                 break;
             }
-            Hashtable<INode, Integer> cTable = master.get(cSchedule);
-            master.remove(cSchedule);
-
+//            Hashtable<INode, Integer> cTable = master.get(cSchedule);
+//            master.remove(cSchedule);
+            Hashtable<INode, Integer> cTable = cSchedule._inDegreeTable;
             // Find the next empty processor. (
             int currentMaxPid = cSchedule.getMaxPid();
             int pidBound;
@@ -107,15 +109,19 @@ public class Astar implements Algorithm {
                     for (int j = 1; j <= pidBound; j++) {
                         int start = calculateCost(cSchedule, j, node);
                         Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
-                        Schedule newSchedule = new Schedule(start, cSchedule, node, j);
+                        Schedule newSchedule = new Schedule(start, cSchedule, node, j, newTable);
                         newSchedule.addHeuristic(
                                 Collections.max(Arrays.asList(
                                         h(newSchedule),
                                         h1(newTable, newSchedule)
                                 )));
-                        master.put(newSchedule, newTable);
                         if (newSchedule.getTotal() <= _upperBound){
-                            _pq.add(newSchedule);
+                            ArrayList<Schedule> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
+                            if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
+                                duplicate++;
+                            }else{
+                                _pq.add(newSchedule);
+                            }
                         }
                     }
                 }
@@ -129,7 +135,7 @@ public class Astar implements Algorithm {
 //                _pq = newPQ;
 //            }
         }
-
+        System.out.printf("\nDUPLCIATE : %d\n", duplicate);
         return new Solution(cSchedule, _numP);
     }
 
@@ -341,11 +347,15 @@ public class Astar implements Algorithm {
      */
     public Boolean isIrrelevantDuplicate(ArrayList<Schedule> scheduleList, Schedule cSchedule) {
         for (Schedule s : scheduleList) {
-            if (s.equals(cSchedule) && s.getTotal() > cSchedule.getTotal()) {
-                System.out.printf("%d -> %d\n", s.getTotal(), cSchedule.getTotal());
-                return false;
+            if ( s.equals2(cSchedule) ){
+                if ( s.getTotal() > cSchedule.getTotal()) {
+//                    System.out.printf("%d -> %d\n", s.getTotal(), cSchedule.getTotal());
+                    return false;
+                }else{
+                    return true;
+                }
             }
         }
-        return true;
+        return false;
     }
 }
