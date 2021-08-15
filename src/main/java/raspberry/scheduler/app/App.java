@@ -53,11 +53,7 @@ public class App extends Application {
             });
 
             new Thread(() -> {
-                try {
                     startAlgo();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }).start();
     }
 
@@ -65,12 +61,17 @@ public class App extends Application {
         return _config;
     }
 
-    private void startAlgo() throws IOException {
-        IGraph graph = _reader.read();
-        Astar astar = new Astar(graph, _config.get_numProcessors());
-        OutputSchedule outputSchedule = astar.findPath();
-        Writer writer = new Writer(_config.getOutputFile(), graph, outputSchedule);
-        writer.write();
+    private void startAlgo() {
+        try {
+            IGraph graph = _reader.read();
+            Astar astar = new Astar(graph, _config.get_numProcessors());
+            OutputSchedule outputSchedule = astar.findPath();
+            Writer writer = new Writer(_config.getOutputFile(), graph, outputSchedule);
+            writer.write();
+        } catch(IOException e){
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
     }
 
 }
