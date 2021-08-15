@@ -27,7 +27,11 @@ import java.util.List;
 
 import static javafx.scene.paint.Color.rgb;
 
+/**
+ * This class polls and updates the live time statistics for the frontend components.
+ */
 public class Updater {
+    // Initialisation of variables
     private Label _timeElapsed, _iterations;
     private VBox _statusBox;
     private Tile _memTile;
@@ -44,6 +48,16 @@ public class Updater {
 
     private static final Image doneTick = new Image("/icons/doneTick.png");
 
+    /**
+     * Default constructor for class
+     * @param timeElapsed time passed since visualisation is launched (may change later)
+     * @param iterations number of iterations the algorithm has passed through
+     * @param memTile The memory usage tile
+     * @param CPUChart CPU chart tile
+     * @param ganttChart Gantt chart
+     * @param statusBox Status symbol (spinning circle during execution/ tick for completion)
+     * @param assignedColors Assigned colors for the processors in the Gantt chart
+     */
     public Updater(Label timeElapsed, Label iterations, Tile memTile, Tile CPUChart, GanttChart ganttChart, VBox statusBox, ProcessorColors assignedColors) {
         _timeElapsed = timeElapsed;
         _iterations = iterations;
@@ -53,11 +67,14 @@ public class Updater {
         _ganttChart = ganttChart;
         _observable = AlgoObservable.getInstance();
         _assignedColors = assignedColors;
+        // Begin polling and record time
         startTimer();
         startPolling();
     }
 
-
+    /**
+     * Initialises the timer and begin the sequence for the algorithm and frontend.
+     */
     private void startTimer() {
         _startTime = System.currentTimeMillis();
         _timer = new Timeline(new KeyFrame(Duration.millis(100), event -> {
@@ -67,6 +84,9 @@ public class Updater {
         _timer.play();
     }
 
+    /**
+     * Updates the timer based on time elapsed.
+     */
     private void updateTimer() {
         if (_isRunning) {
             _currentTime = System.currentTimeMillis();
@@ -74,7 +94,9 @@ public class Updater {
         }
     }
 
-
+    /**
+     * Halts the timer when the algorithm has been completed.
+     */
     public void stopTimer() {
         _isRunning = false;
         // _polling.stop();
@@ -91,7 +113,9 @@ public class Updater {
      * May change to timer class later - not sure if timeline is going to have massive impact on performance vs using a background thread
      */
 
-
+    /**
+     * Initialises the polling process, where all live time statistics are collected.
+     */
     private void startPolling() {
 
         _polling = new Timeline(new KeyFrame(Duration.millis(200), event -> {
@@ -110,21 +134,27 @@ public class Updater {
         _polling.play();
     }
 
+    /**
+     * Updates the memory usage tile.
+     */
     private void updateMemTile() {
-        Platform.runLater(() -> {
             double totalMem = Runtime.getRuntime().totalMemory();
             double freeMem = Runtime.getRuntime().freeMemory();
             _memTile.setValue((totalMem - freeMem) / (1024 * 1024));
-        });
-
 
     }
 
+    /**
+     * Updates the number of iterations the algorithm has passed through.
+     */
     private void updateIterations() {
         String iteration = String.valueOf(_observable.getIterations());
         _iterations.setText(iteration);
     }
 
+    /**
+     * Updates the CPU usage chart.
+     */
     private void updateCPUChart() {
 
         OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory
@@ -133,11 +163,13 @@ public class Updater {
         _CPUChart.setValue(CPUUsage * 100);
     }
 
+    /**
+     * Updates the Gantt chart.
+     */
     private void updateGanttChart() {
 
         if (_isRunning) {
 
-            Platform.runLater(() -> {
                 OutputSchedule solution = _observable.getSolution();
                 int numP = _observable.getSolution().getTotalProcessorNum();
                 List<String> processors = new ArrayList<String>();
@@ -159,8 +191,6 @@ public class Updater {
                     }
                     _ganttChart.getData().add(series);
                 }
-            });
-
         }
     }
 

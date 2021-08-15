@@ -32,12 +32,13 @@ import java.util.ResourceBundle;
 
 import static javafx.scene.paint.Color.rgb;
 
+/**
+ * The MainController class handles the initialisation of the frontend component of the program.
+ * It builds the live components as well as the Gantt chart.
+ */
 public class MainController implements Initializable {
-    /**
-     * Not sure if we want to have a sepearte timer/update/polling class or just do it all in one class so i'll just start and refactor later
-     */
 
-
+    // Initialisation of fields
     @FXML
     private Label _inputFile, _outputFile, _numProcessors, _numCores, _timeElapsed, _iterations;
     @FXML
@@ -52,19 +53,31 @@ public class MainController implements Initializable {
     private Updater _updater;
     private int _numP;
 
+    /**
+     * Initialises all the different features of frontend, including live components and the
+     * Gantt chart.
+     * @param location The location used to resolve relative paths for the root object,
+     *                 or null if unknown.
+     * @param resources The resources used to localise the root object, or null if not localised.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        // setting up all the differetn components
         _config = App.GetCLIConfig();
         setIdleStats();
         setupMemTile();
         setupCPUChart();
         setUpGanttChart();
         setUpStatus();
+        // creating an updater for the live time components
         _updater = new Updater(_timeElapsed, _iterations, _memTile, _CPUChart, _ganttChart, _statusBox, _assignedColors);
 
     }
 
+    /**
+     * Initialises the progress indicator for the algorithm, which is represented
+     * by a spinning circle during execution and a tick upon completion.
+     */
     private void setUpStatus() {
 
         _statusIndicator = new ProgressIndicator();
@@ -72,6 +85,10 @@ public class MainController implements Initializable {
         _statusBox.getChildren().add(_statusIndicator);
     }
 
+    /**
+     * Initialises the section showing the number of processors running and number of
+     * cores used.
+     */
     private void setIdleStats() {
         _inputFile.setText(_config.getDotFile());
         _outputFile.setText(_config.getOutputFile());
@@ -80,33 +97,38 @@ public class MainController implements Initializable {
 
     }
 
+    /**
+     * Initialises the memory tile, represented by a gauge meter showing the memory usage in
+     * megabytes.
+     */
     private void setupMemTile() {
 
-        Platform.runLater(() -> {
             _memTile.setMaxValue(((double) Runtime.getRuntime().maxMemory() / (double) (1024 * 1024)));
             _memTile.setBarColor(rgb(255, 136, 0));
             _memTile.setThresholdColor(rgb(255, 136, 0));
             _memTile.setTickLabelDecimals(0);
             _memTile.setNeedleColor(rgb(0, 0, 0));
             _memTile.setTitle("Memory usage");
-        });
-
 
     }
 
+    /**
+     * Initialises the CPU tile, represented by a gauge meter showing the CPU Usage as a
+     * percentage.
+     */
     private void setupCPUChart() {
 
-        Platform.runLater(() -> {
-            _CPUChart.setMaxValue(((double) Runtime.getRuntime().maxMemory() / (double) (1024 * 1024)));
+            _CPUChart.setMaxValue(100);
             _CPUChart.setBarColor(rgb(56, 163, 165));
             _CPUChart.setThresholdColor(rgb(56, 163, 165));
             _CPUChart.setTickLabelDecimals(0);
             _CPUChart.setNeedleColor(rgb(0, 0, 0));
             _CPUChart.setTitle("CPU Usage");
-        });
     }
 
-
+    /**
+     * Initialises the Gantt chart, which shows the current best output schedule.
+     */
     private void setUpGanttChart() {
         _numP = _config.get_numProcessors();
         _assignedColors = new ProcessorColors(_numP);

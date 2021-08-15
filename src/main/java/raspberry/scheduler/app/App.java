@@ -21,7 +21,7 @@ import java.io.IOException;
 
 
 /**
- * FrontEnd
+ * This class launches the front end visualisation.
  */
 public class App extends Application {
 
@@ -34,35 +34,31 @@ public class App extends Application {
         _reader = reader;
         launch();
 
-
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
-        Platform.runLater(() -> {
+    public void start(Stage primaryStage) throws IOException {
+            Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
-        });
 
-        primaryStage.setResizable(false);
-        primaryStage.show();
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent e) {
-                Platform.exit();
-                System.exit(1);
-            }
-        });
+            primaryStage.setResizable(false);
+            primaryStage.show();
+            primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent e) {
+                    Platform.exit();
+                    System.exit(1);
+                }
+            });
 
-        new Thread(() -> {
-            try {
-                startAlgo();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-
+            new Thread(() -> {
+                try {
+                    startAlgo();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
     }
 
     public static CLIConfig GetCLIConfig() {

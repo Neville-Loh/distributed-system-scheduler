@@ -21,12 +21,18 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
      * Constructs a XYChart given the two axes. The initial content for the chart
      * plot background and plot area that includes vertical and horizontal grid
      * lines and fills, are added.
+     * X = X Axis for this XY chart
+     * Y = Y Axis for this XY chart
      *
-   //  * @param axis  X Axis for this XY chart
-    // * @param axis2 Y Axis for this XY chart
-     *              Gantt chart adapted from https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
+     * Gantt chart adapted from https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
+     * Source code credit to user 'Roland' from StackOverflow. This code is licensed under the  Attribution-ShareAlike
+     * 4.0 International license. It is free to be used and adapted for any purposes.
      */
 
+    /**
+     * This class handles the attributes of a single assigned task, such as its
+     * length, colour on the Gantt chart, style class and task number assignment.
+     */
     public static class Attributes {
 
         public long _length;//Length of task given
@@ -34,13 +40,12 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
         public String _styleClass; //style class used for rectangle borders
         public String _taskNum; //task number for task
 
-
         /**
-         * @param lengthMs   - lenth (time) for task
-         * @param styleClass - style class for scheduled task
+         * Default constructor for Attributes
+         * @param lengthMs   - length (time) for task
+         * @param color - color for scheduled task
          * @param taskNum    - the task number for the given task
          */
-
         public Attributes(long lengthMs, String color, String taskNum) {
             super();
             _length = lengthMs;
@@ -49,40 +54,71 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
             _taskNum = taskNum;
         }
 
+        /**
+         * Returns the task number of the task specified
+         * @return task number
+         */
         public String getTaskNum() {
             return _taskNum;
         }
 
+        /**
+         * Returns the duration of the task
+         * @return task duration
+         */
         public long getLength() {
             return _length;
         }
 
+        /**
+         * Sets the duration of the task
+         * @param length task duration
+         */
         public void setLength(long length) {
             _length = length;
         }
 
+        /**
+         * Returns the style class for the scheduled task
+         * @return style class
+         */
         public String getStyleClass() {
             return _styleClass;
         }
 
+        /**
+         * Assigns a style class for the scheduled task
+         * @param styleClass style class for the scheduled task
+         */
         public void setStyleClass(String styleClass) {
             _styleClass = styleClass;
         }
 
+        /**
+         * Returns the color of the specified task
+         * @return task color
+         */
         public String getColor(){
             return _color;
         }
-
-
-
     }
 
+    //Set the height of the processor task column to default (10)
     private double blockHeight = 10;
 
+    /**
+     * Constructor for Gantt Chart
+     */
     public GanttChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
 
+    /**
+     * Constructor for Gantt Chart
+     * @param xAxis x axis
+     * @param yAxis y axis
+     * @param data input data
+     */
     public GanttChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis);
         if (!(xAxis instanceof ValueAxis && yAxis instanceof CategoryAxis)) {
@@ -91,22 +127,37 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
         setData(data);
     }
 
+    /**
+     * Returns style class for specified task.
+     */
     private static String getStyleClass(Object obj) {
         return ((Attributes) obj).getStyleClass();
     }
 
+    /**
+     * Returns the length of the specified task.
+     */
     private static double getLength(Object obj) {
         return ((Attributes) obj).getLength();
     }
 
+    /**
+     * Returns the task number of the specified task.
+     */
     private static String getTaskNum(Object obj) {
         return ((Attributes) obj).getTaskNum();
     }
 
+    /**
+     * Returns the color of the specified task.
+     */
     private static String getColor(Object obj){
         return ((Attributes) obj).getColor();
     }
 
+    /**
+     * Handles the positioning and plotting of the data points on the Gantt chart.
+     */
     @Override
     protected void layoutPlotChildren() {
 
@@ -163,20 +214,39 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
         }
     }
 
+    /**
+     * Returns the block height
+     * @return block height
+     */
     public double getBlockHeight() {
         return blockHeight;
     }
 
+    /**
+     * Assign a different block height of the processor row from default (10)
+     * @param blockHeight block height of processor row in Gantt chart.
+     */
     public void setBlockHeight(double blockHeight) {
         this.blockHeight = blockHeight;
     }
 
+    /**
+     * Adds tasks when they are passed through the algorithm.
+     * @param series series
+     * @param itemIndex task index
+     * @param item task
+     */
     @Override
     protected void dataItemAdded(Series<X, Y> series, int itemIndex, Data<X, Y> item) {
         Node block = createContainer(series, getData().indexOf(series), item, itemIndex);
         getPlotChildren().add(block);
     }
 
+    /**
+     * Removes tasks when a different schedule is found.
+     * @param item task
+     * @param series series
+     */
     @Override
     protected void dataItemRemoved(final Data<X, Y> item, final Series<X, Y> series) {
         final Node block = item.getNode();
@@ -184,10 +254,19 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
         removeDataItemFromDisplay(series, item);
     }
 
+    /**
+     * Indicates when an item has changed (been removed or added to the Gantt chart).
+     * @param item task
+     */
     @Override
     protected void dataItemChanged(Data<X, Y> item) {
     }
 
+    /**
+     * Indicates when a series of data has been added.
+     * @param series series
+     * @param seriesIndex series index
+     */
     @Override
     protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
         for (int j = 0; j < series.getData().size(); j++) {
@@ -197,6 +276,10 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
         }
     }
 
+    /**
+     * Indicates when a series of data has been removed.
+     * @param series series
+     */
     @Override
     protected void seriesRemoved(final Series<X, Y> series) {
         for (XYChart.Data<X, Y> d : series.getData()) {
@@ -207,7 +290,14 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
 
     }
 
-
+    /**
+     * Initialises the data frame for the Gantt chart
+     * @param series series
+     * @param seriesIndex series index
+     * @param item task
+     * @param itemIndex task index
+     * @return container
+     */
     private Node createContainer(Series<X, Y> series, int seriesIndex, final Data<X, Y> item, int itemIndex) {
 
         Node container = item.getNode();
@@ -223,6 +313,9 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
         return container;
     }
 
+    /**
+     * Changes the axis range when the number of rows/processors changes.
+     */
     @Override
     protected void updateAxisRange() {
         final Axis<X> xa = getXAxis();
