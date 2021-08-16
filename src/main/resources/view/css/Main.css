@@ -3,10 +3,15 @@
     -fx-background-color: #31393C;
 }
 .Pane{
-    -fx-background-color: #31393C;
+    -fx-background-color: #dee2e6;
+}
+
+.Pane-Vbox{
+    -fx-background-color: #e5e5e5;
 }
 .text{
     -fx-text-fill: #ffffff;
+    font-family: 'Mukta', sans-serif;
 }
 /* Button styling */
 .button{

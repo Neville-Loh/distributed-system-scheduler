@@ -2,6 +2,8 @@ package raspberry.scheduler.algorithm;
 
 import raspberry.scheduler.graph.INode;
 
+import java.util.List;
+
 /**
  * Interface that represent a scheduling algorithm output
  * @author Neivlle
@@ -38,4 +40,10 @@ public interface OutputSchedule {
      */
     int getNumTasks();
 
+    /**
+     * get list of nodes on a given pid
+     * @param pid
+     * @return
+     */
+    List<INode> getNodes(int pid);
 }

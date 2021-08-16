@@ -1,4 +1,3 @@
-
 package raspberry.scheduler;
 
 import raspberry.scheduler.algorithm.*;
@@ -8,6 +7,7 @@ import raspberry.scheduler.cli.exception.ParserException;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.Writer;
+import raspberry.scheduler.app.*;
 
 import java.io.IOException;
 
@@ -18,14 +18,27 @@ public class Main {
             CLIConfig CLIConfig = CLIParser.parser(inputs);
             GraphReader reader = new GraphReader(CLIConfig.getDotFile());
 
-            IGraph graph = reader.read();
-            Astar astar = new Astar(graph, CLIConfig.get_numProcessors());
-            OutputSchedule outputSchedule = astar.findPath();
-            Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
-            writer.write();
+            // Start visualisation if appropriate argument is given.
+            if (CLIConfig.getVisualise()) {
+                startVisualisation(CLIConfig, reader);
+            } else {
+
+
+                IGraph graph = reader.read();
+                Astar astar = new Astar(graph, CLIConfig.get_numProcessors());
+                OutputSchedule outputSchedule = astar.findPath();
+                Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
+                writer.write();
+            }
         } catch (IOException | ParserException e) {
             System.out.println(e.getMessage());
+            System.exit(1);
         }
     }
-}
 
+    private static void startVisualisation(CLIConfig config, GraphReader reader) {
+//        new Thread(()-> {
+        App.main(config, reader);
+//        }).start();
+    }
+}

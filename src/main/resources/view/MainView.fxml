@@ -1,123 +1,192 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import eu.hansolo.tilesfx.Tile?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.AreaChart?>
-<?import javafx.scene.chart.BubbleChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.PieChart?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.text.TextFlow?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@css/Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <HBox prefHeight="425.0" prefWidth="600.0" stylesheets="@css/Main.css">
-            <children>
-                <VBox prefHeight="400.0" prefWidth="172.0" stylesheets="@css/Main.css">
-                    <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="Pane" stylesheets="@css/Main.css">
-                            <children>
-                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Stats:">
-                                    <font>
-                                        <Font size="24.0" />
-                                    </font>
-                                </Text>
-                                <TextFlow prefHeight="31.0" prefWidth="172.0">
-                                    <children>
-                                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="File chosen: " />
-                                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="placeholder" />
-                                    </children>
-                                </TextFlow>
-                                <TextFlow prefHeight="31.0" prefWidth="172.0">
-                                    <children>
-                                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Time elapsed: " />
-                                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00:00" />
-                                    </children>
-                                </TextFlow>
-                                <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="165.0" text="Done">
-                                    <VBox.margin>
-                                        <Insets left="4.0" />
-                                    </VBox.margin>
-                                </Button>
-                            </children>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="raspberry.scheduler.app.visualisation.controller.MainController">
+   <children>
+      <HBox prefHeight="819.0" prefWidth="1200.0">
+         <children>
+            <VBox prefHeight="650.0" prefWidth="300.0" styleClass="Pane" stylesheets="@css/Main.css">
+               <children>
+                  <VBox prefHeight="429.0" prefWidth="300.0">
+                     <children>
+                        <VBox prefHeight="114.0" prefWidth="300.0" style="-fx-background-radius: 15;">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="126.0" prefWidth="344.0" text="Runtime Statistics" textAlignment="CENTER" textFill="#6c757d">
+                                 <font>
+                                    <Font size="33.0" />
+                                 </font>
+                              </Label>
+                           </children>
                         </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="Pane">
-                            <children>
-                                <TextFlow prefHeight="200.0" prefWidth="200.0" styleClass="text">
-                                    <children>
-                                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="placeholders" />
-                                    </children></TextFlow>
-                            </children>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="Pane">
-                            <children>
-                                <TextFlow prefHeight="32.0" prefWidth="172.0">
-                                    <children>
-                                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Allocations checked" wrappingWidth="116.13671875" />
-                                    </children>
-                                </TextFlow>
-                                <AreaChart styleClass="Pane">
-                                    <xAxis>
-                                        <CategoryAxis side="BOTTOM" />
-                                    </xAxis>
-                                    <yAxis>
-                                        <NumberAxis minorTickVisible="false" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" />
-                                    </yAxis>
-                                </AreaChart>
-                            </children>
-                        </VBox>
-                    </children>
-                </VBox>
-                <VBox prefHeight="400.0" prefWidth="428.0">
-                    <children>
-                        <VBox prefHeight="400.0" prefWidth="428.0" styleClass="Pane" stylesheets="@css/Main.css">
-                            <children>
-                                <BubbleChart>
-                                    <xAxis>
-                                        <NumberAxis side="BOTTOM" />
-                                    </xAxis>
-                                    <yAxis>
-                                        <NumberAxis side="LEFT" />
-                                    </yAxis>
-                                </BubbleChart>
-                            </children>
-                        </VBox>
-                        <VBox prefHeight="290.0" prefWidth="428.0" stylesheets="@css/Main.css">
-                            <children>
-                                <HBox prefHeight="425.0" prefWidth="600.0">
-                                    <children>
-                                        <VBox prefHeight="145.0" prefWidth="273.0" styleClass="Pane" />
-                                        <VBox prefHeight="150.0" prefWidth="284.0" styleClass="Pane">
-                                            <children>
-                                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Completed Schedules" wrappingWidth="116.13671875" />
-                                                <TextFlow prefHeight="200.0" prefWidth="200.0" styleClass="Pane">
-                                                    <children>
-                                                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="120.865234375">
-                                                            <font>
-                                                                <Font size="96.0" />
-                                                            </font>
-                                                        </Text>
-                                                    </children>
-                                                </TextFlow>
-                                            </children>
-                                        </VBox>
-                                        <VBox prefHeight="167.0" prefWidth="193.0" styleClass="Pane">
-                                            <children>
-                                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Memory used" wrappingWidth="82.13671875" />
-                                                <PieChart prefHeight="150.0" prefWidth="287.0" styleClass="Pane" stylesheets="@css/Main.css" />
-                                            </children>
-                                        </VBox>
-                                    </children>
-                                </HBox>
-                            </children>
-                        </VBox>
-                    </children>
-                </VBox>
-            </children>
-        </HBox>
-    </children>
+                        <VBox prefHeight="25.0" prefWidth="300.0" />
+                        <HBox prefHeight="124.0" prefWidth="300.0" style="-fx-background-radius: 15;">
+                           <children>
+                              <VBox prefHeight="26.0" prefWidth="275.0">
+                                 <children>
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Input file:" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin></Label>
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Output file:" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Algorithm:" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Active cores:" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </VBox>
+                              <VBox prefHeight="26.0" prefWidth="275.0">
+                                 <children>
+                                    <Label fx:id="_inputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="input.dot" textAlignment="RIGHT" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="_outputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Output.dot" textAlignment="RIGHT" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="A*" textAlignment="RIGHT" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                    <Label fx:id="_numCores" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets top="15.0" />
+                           </padding>
+                        </HBox>
+                        <VBox prefHeight="25.0" prefWidth="300.0" />
+                        <HBox prefHeight="120.0" prefWidth="300.0" style="-fx-background-radius: 15;">
+                           <children>
+                              <VBox prefHeight="26.0" prefWidth="275.0">
+                                 <children>
+                                    <Label prefHeight="23.0" prefWidth="138.0" text="Processors:" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Iterations:" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Time elapsed:" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Status:" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </VBox>
+                              <VBox prefHeight="26.0" prefWidth="275.0">
+                                 <children>
+                                    <Label fx:id="_numProcessors" alignment="CENTER_RIGHT" prefHeight="23.0" prefWidth="138.0" text="1" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                    <Label fx:id="_iterations" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                    <Label fx:id="_timeElapsed" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="0" textFill="#6c757d">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font></Label>
+                                    <VBox prefHeight="200.0" prefWidth="100.0">
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <children>
+                                          <HBox prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox prefHeight="200.0" prefWidth="100.0" />
+                                                <VBox fx:id="_statusBox" prefHeight="25.0" prefWidth="54.0" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets top="5.0" />
+                           </padding>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="164.0" prefWidth="274.0">
+                     <children>
+                        <Tile fx:id="_memTile" backgroundImageKeepAspect="false" decimals="0" style="-fx-background-radius: 15;" thresholdVisible="false" unit="MB">
+                           <backgroundColor>
+                              <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
+                           </backgroundColor>
+                           <valueColor>
+                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                           </valueColor>
+                           <unitColor>
+                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                           </unitColor>
+                           <titleColor>
+                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                           </titleColor>
+                        </Tile>
+                     </children></VBox>
+                  <VBox prefHeight="172.0" prefWidth="277.0">
+                     <children>
+                        <Tile fx:id="_CPUChart" backgroundImageKeepAspect="false" decimals="0" style="-fx-background-radius: 15;" thresholdVisible="false" unit="\%">
+                           <backgroundColor>
+                              <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
+                           </backgroundColor>
+                           <valueColor>
+                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                           </valueColor>
+                           <unitColor>
+                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                           </unitColor>
+                           <titleColor>
+                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                           </titleColor>
+                        </Tile>
+                     </children></VBox>
+               </children>
+            </VBox>
+            <VBox prefHeight="800.0" prefWidth="900.0" styleClass="Pane" stylesheets="@css/Main.css">
+               <children>
+                  <VBox fx:id="_ganttBox" prefHeight="500.0" prefWidth="900.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
 </VBox>
