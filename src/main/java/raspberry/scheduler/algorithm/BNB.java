@@ -1,6 +1,6 @@
 package raspberry.scheduler.algorithm;
 
-import raspberry.scheduler.app.visualisation.controller.AlgoObservable;
+import raspberry.scheduler.app.visualisation.model.AlgoObservable;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.INode;

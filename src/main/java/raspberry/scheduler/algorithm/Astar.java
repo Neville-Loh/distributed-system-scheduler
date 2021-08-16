@@ -3,7 +3,7 @@ package raspberry.scheduler.algorithm;
 import java.util.*;
 import java.util.List;
 
-import raspberry.scheduler.app.visualisation.controller.AlgoObservable;
+import raspberry.scheduler.app.visualisation.model.AlgoObservable;
 import raspberry.scheduler.graph.*;
 
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;

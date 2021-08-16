@@ -4,31 +4,29 @@ import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class GanttChart<X, Y> extends XYChart<X, Y> {
-    /**
-     * Constructs a XYChart given the two axes. The initial content for the chart
-     * plot background and plot area that includes vertical and horizontal grid
-     * lines and fills, are added.
-     * X = X Axis for this XY chart
-     * Y = Y Axis for this XY chart
-     *
-     * Gantt chart adapted from https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
-     * Source code credit to user 'Roland' from StackOverflow. This code is licensed under the  Attribution-ShareAlike
-     * 4.0 International license. It is free to be used and adapted for any purposes.
-     */
 
+/**
+ * Constructs a XYChart given the two axes. The initial content for the chart
+ * plot background and plot area that includes vertical and horizontal grid
+ * lines and fills, are added.
+ * X = X Axis for this XY chart
+ * Y = Y Axis for this XY chart
+ *
+ * Gantt chart adapted from https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
+ * Source code credit to user 'Roland' from StackOverflow. This code is licensed under the  Attribution-ShareAlike
+ * 4.0 International license. It is free to be used and adapted for any purposes.
+ */
+public class GanttChart<X, Y> extends XYChart<X, Y> {
     /**
      * This class handles the attributes of a single assigned task, such as its
      * length, colour on the Gantt chart, style class and task number assignment.

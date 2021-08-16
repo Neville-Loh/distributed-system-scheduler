@@ -1,29 +1,21 @@
 package raspberry.scheduler.app.visualisation.controller;
 
 import eu.hansolo.tilesfx.Tile;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.effect.MotionBlur;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.app.App;
-import raspberry.scheduler.app.visualisation.Updater;
+import raspberry.scheduler.app.visualisation.util.Updater;
 import raspberry.scheduler.app.visualisation.model.GanttChart;
 import raspberry.scheduler.app.visualisation.util.ProcessorColors;
 import raspberry.scheduler.cli.CLIConfig;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import java.net.URL;

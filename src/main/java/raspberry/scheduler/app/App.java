@@ -15,8 +15,6 @@ import raspberry.scheduler.cli.CLIConfig;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.Writer;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -61,6 +59,9 @@ public class App extends Application {
         return _config;
     }
 
+    /**
+     * Read the graph and start the algorithm
+     */
     private void startAlgo() {
         try {
             IGraph graph = _reader.read();

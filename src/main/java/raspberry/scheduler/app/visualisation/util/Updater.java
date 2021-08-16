@@ -1,21 +1,18 @@
-package raspberry.scheduler.app.visualisation;
+package raspberry.scheduler.app.visualisation.util;
 
 import eu.hansolo.tilesfx.Tile;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-//import eu.hansolo.tilesfx.Tile;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import raspberry.scheduler.app.visualisation.controller.AlgoObservable;
+import raspberry.scheduler.app.visualisation.model.AlgoObservable;
 import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.app.visualisation.controller.MainController;
 import raspberry.scheduler.app.visualisation.model.GanttChart;
-import raspberry.scheduler.app.visualisation.util.ProcessorColors;
 import raspberry.scheduler.graph.INode;
 
 import java.lang.management.ManagementFactory;
@@ -24,8 +21,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import static javafx.scene.paint.Color.rgb;
 
 /**
  * This class polls and updates the live time statistics for the frontend components.
@@ -45,7 +40,6 @@ public class Updater {
     private MainController mainController;
     private GanttChart _ganttChart;
     private ProcessorColors _assignedColors;
-
     private static final Image doneTick = new Image("/icons/doneTick.png");
 
     /**
@@ -110,11 +104,9 @@ public class Updater {
     }
 
     /**
-     * May change to timer class later - not sure if timeline is going to have massive impact on performance vs using a background thread
-     */
-
-    /**
      * Initialises the polling process, where all live time statistics are collected.
+     * //todo May change to timer class later - not sure if timeline is going to
+     *  have massive impact on performance vs using a background thread (prob not (said neville))
      */
     private void startPolling() {
 
@@ -169,7 +161,6 @@ public class Updater {
     private void updateGanttChart() {
 
         if (_isRunning) {
-
                 OutputSchedule solution = _observable.getSolution();
                 int numP = _observable.getSolution().getTotalProcessorNum();
                 List<String> processors = new ArrayList<String>();
