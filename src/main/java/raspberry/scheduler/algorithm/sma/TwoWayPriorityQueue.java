@@ -2,7 +2,6 @@ package raspberry.scheduler.algorithm.sma;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.PriorityQueue;
 
 /**
  * Implementation of a two way priority queue which make use of the
@@ -11,15 +10,15 @@ import java.util.PriorityQueue;
  * @author Neville
  */
 public class TwoWayPriorityQueue{
-    private PriorityQueue<MBSchedule> _ascendingFScore;
-    private PriorityQueue<MBSchedule> _descendingFScore;
+    private PriorityQueueAlpha<MBSchedule> _ascendingFScore;
+    private PriorityQueueAlpha<MBSchedule> _descendingFScore;
 
     /**
      * Class constructor
      */
     public TwoWayPriorityQueue(){
-        _ascendingFScore = new PriorityQueue<MBSchedule>();
-        _descendingFScore = new PriorityQueue<MBSchedule>(Collections.reverseOrder());
+        _ascendingFScore = new PriorityQueueAlpha<MBSchedule>();
+        _descendingFScore = new PriorityQueueAlpha<MBSchedule>(Collections.reverseOrder());
     }
 
     /**
@@ -98,7 +97,7 @@ public class TwoWayPriorityQueue{
      * Return the ascending priority queue
      * @return priorityQueue
      */
-    public PriorityQueue<MBSchedule> getPQ(){
+    public PriorityQueueAlpha<MBSchedule> getPQ(){
         return _ascendingFScore;
     }
 

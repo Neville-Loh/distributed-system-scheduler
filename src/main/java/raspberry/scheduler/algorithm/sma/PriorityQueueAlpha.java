@@ -56,7 +56,14 @@ import java.util.function.Consumer;
  * @author Josh Bloch, Doug Lea
  * @param <E> the type of elements held in this collection
  */
-public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
+
+
+/**
+ * PriorityQueueAlpha is our modified version of java.util.PriorityQueue.
+ * It can remove an item in the priorityQueue in O( log(n) )
+ * @author Neville, Takahiro
+ */
+public class PriorityQueueAlpha<E> extends AbstractQueue<E>
         implements java.io.Serializable {
 
     private static final long serialVersionUID = -7720805057305804111L;
@@ -97,7 +104,7 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
      * capacity (11) that orders its elements according to their
      * {@linkplain Comparable natural ordering}.
      */
-    public TwoWayPriorityQueue2() {
+    public PriorityQueueAlpha() {
         this(DEFAULT_INITIAL_CAPACITY, null);
     }
 
@@ -110,7 +117,7 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is less
      *         than 1
      */
-    public TwoWayPriorityQueue2(int initialCapacity) {
+    public PriorityQueueAlpha(int initialCapacity) {
         this(initialCapacity, null);
     }
 
@@ -123,7 +130,7 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
      *         natural ordering} of the elements will be used.
      * @since 1.8
      */
-    public TwoWayPriorityQueue2(Comparator<? super E> comparator) {
+    public PriorityQueueAlpha(Comparator<? super E> comparator) {
         this(DEFAULT_INITIAL_CAPACITY, comparator);
     }
 
@@ -138,7 +145,7 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is
      *         less than 1
      */
-    public TwoWayPriorityQueue2(int initialCapacity,
+    public PriorityQueueAlpha(int initialCapacity,
                          Comparator<? super E> comparator) {
         // Note: This restriction of at least one is not actually needed,
         // but continues for 1.5 compatibility
@@ -165,14 +172,14 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
      *         of its elements are null
      */
     @SuppressWarnings("unchecked")
-    public TwoWayPriorityQueue2(Collection<? extends E> c) {
+    public PriorityQueueAlpha(Collection<? extends E> c) {
         if (c instanceof SortedSet<?>) {
             SortedSet<? extends E> ss = (SortedSet<? extends E>) c;
             this.comparator = (Comparator<? super E>) ss.comparator();
             initElementsFromCollection(ss);
         }
-        else if (c instanceof  raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2<?>) {
-             raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2<? extends E> pq = ( raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2<? extends E>) c;
+        else if (c instanceof  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<?>) {
+             raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<? extends E> pq = ( raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<? extends E>) c;
             this.comparator = (Comparator<? super E>) pq.comparator();
             initFromPriorityQueue(pq);
         }
@@ -197,7 +204,7 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
      *         of its elements are null
      */
     @SuppressWarnings("unchecked")
-    public TwoWayPriorityQueue2( raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2<? extends E> c) {
+    public PriorityQueueAlpha( raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<? extends E> c) {
         this.comparator = (Comparator<? super E>) c.comparator();
         initFromPriorityQueue(c);
     }
@@ -216,13 +223,13 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
      *         of its elements are null
      */
     @SuppressWarnings("unchecked")
-    public TwoWayPriorityQueue2(SortedSet<? extends E> c) {
+    public PriorityQueueAlpha(SortedSet<? extends E> c) {
         this.comparator = (Comparator<? super E>) c.comparator();
         initElementsFromCollection(c);
     }
 
-    private void initFromPriorityQueue( raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2<? extends E> c) {
-        if (c.getClass() ==  raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2.class) {
+    private void initFromPriorityQueue( raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<? extends E> c) {
+        if (c.getClass() ==  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.class) {
             this.queue = c.toArray();
             this.size = c.size();
         } else {
@@ -532,7 +539,7 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
             if (expectedModCount != modCount)
                 throw new ConcurrentModificationException();
             if (lastRet != -1) {
-                E moved = raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2.this.removeAt(lastRet);
+                E moved = raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.this.removeAt(lastRet);
                 lastRet = -1;
                 if (moved == null)
                     cursor--;
@@ -542,7 +549,7 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
                     forgetMeNot.add(moved);
                 }
             } else if (lastRetElt != null) {
-                raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2.this.removeEq(lastRetElt);
+                raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.this.removeEq(lastRetElt);
                 lastRetElt = null;
             } else {
                 throw new IllegalStateException();
@@ -808,7 +815,7 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
      * @since 1.8
      */
     public final Spliterator<E> spliterator() {
-        return new  raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2.PriorityQueueSpliterator<E>(this, 0, -1, 0);
+        return new  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.PriorityQueueSpliterator<E>(this, 0, -1, 0);
     }
 
     static final class PriorityQueueSpliterator<E> implements Spliterator<E> {
@@ -816,13 +823,13 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
          * This is very similar to ArrayList Spliterator, except for
          * extra null checks.
          */
-        private final  raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2<E> pq;
+        private final  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<E> pq;
         private int index;            // current index, modified on advance/split
         private int fence;            // -1 until first use
         private int expectedModCount; // initialized when fence set
 
         /** Creates new spliterator covering the given range */
-        PriorityQueueSpliterator(raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2<E> pq, int origin, int fence,
+        PriorityQueueSpliterator(raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<E> pq, int origin, int fence,
                                  int expectedModCount) {
             this.pq = pq;
             this.index = origin;
@@ -839,17 +846,17 @@ public class TwoWayPriorityQueue2<E> extends AbstractQueue<E>
             return hi;
         }
 
-        public  raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2.PriorityQueueSpliterator<E> trySplit() {
+        public  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.PriorityQueueSpliterator<E> trySplit() {
             int hi = getFence(), lo = index, mid = (lo + hi) >>> 1;
             return (lo >= mid) ? null :
-                    new  raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2.PriorityQueueSpliterator<E>(pq, lo, index = mid,
+                    new  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.PriorityQueueSpliterator<E>(pq, lo, index = mid,
                             expectedModCount);
         }
 
         @SuppressWarnings("unchecked")
         public void forEachRemaining(Consumer<? super E> action) {
             int i, hi, mc; // hoist accesses and checks from loop
-             raspberry.scheduler.algorithm.sma.TwoWayPriorityQueue2<E> q; Object[] a;
+             raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<E> q; Object[] a;
             if (action == null)
                 throw new NullPointerException();
             if ((q = pq) != null && (a = q.queue) != null) {

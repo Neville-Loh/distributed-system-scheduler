@@ -2,6 +2,7 @@
 package raspberry.scheduler;
 
 import raspberry.scheduler.algorithm.*;
+import raspberry.scheduler.algorithm.sma.MemoryBoundAStar;
 import raspberry.scheduler.cli.CLIConfig;
 import raspberry.scheduler.cli.CLIParser;
 import raspberry.scheduler.cli.exception.ParserException;
@@ -19,7 +20,7 @@ public class Main {
             GraphReader reader = new GraphReader(CLIConfig.getDotFile());
 
             IGraph graph = reader.read();
-            Astar astar = new Astar(graph, CLIConfig.get_numProcessors(),5);
+            Astar astar = new Astar(graph, CLIConfig.get_numProcessors(),Integer.MAX_VALUE);
             OutputSchedule outputSchedule = astar.findPath();
             Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
             writer.write();
