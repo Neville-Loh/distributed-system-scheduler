@@ -126,14 +126,6 @@ public class Astar implements Algorithm {
                     }
                 }
             }
-//            if (_pq.size() > 100000){
-//                PriorityQueue<Schedule> newPQ = new PriorityQueue<Schedule>();
-//                for (int i = 0 ; i< 100; i++){
-//                    newPQ.add( _pq.poll() );
-//                }
-//                System.out.println("TRIMMED");
-//                _pq = newPQ;
-//            }
         }
         System.out.printf("\nDUPLCIATE : %d\n", duplicate);
         return new Solution(cSchedule, _numP);
@@ -267,33 +259,6 @@ public class Astar implements Algorithm {
         return tmp;
     }
 
-    /**
-     * Print the path to command line/ terminal.
-     *
-     * @param x : Partial schedule to print.
-     */
-    public void printPath(Schedule x) {
-        System.out.println("");
-        Hashtable<INode, int[]> path = x.getPath();
-        //path.sort((o1, o2) -> o1.node.getName().compareTo(o2.node.getName()));
-        for (INode i : path.keySet()) {
-            System.out.printf("%s : {start:%d}, {finish:%d}, {p_id:%d} \n",
-                    i.getName(), path.get(i)[0], path.get(i)[1], path.get(i)[2]);
-        }
-    }
-
-    /**
-     * Print hashtable : Used for debugging purposes.
-     *
-     * @param table : table to print. ( i think this was mainly used for printing outDegreeEdge table)
-     */
-    public void printHashTable(Hashtable<INode, Integer> table) {
-        System.out.printf("{ ");
-        for (INode i : table.keySet()) {
-            System.out.printf("%s_%d, ", i.getName(), table.get(i));
-        }
-        System.out.printf(" }\n");
-    }
 
     /**
      * Creates a maximum dependency path table.
