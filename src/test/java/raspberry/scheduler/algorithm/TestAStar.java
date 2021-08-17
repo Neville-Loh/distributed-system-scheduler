@@ -184,7 +184,7 @@ public class TestAStar {
     public void testNodesBIG_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("big.dot", 2);
-        assertEquals(227, output.getFinishTime());
+        assertEquals(92, output.getFinishTime());
     }
 
     @Test

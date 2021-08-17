@@ -10,6 +10,7 @@ import raspberry.scheduler.algorithm.OutputSchedule;
 import raspberry.scheduler.algorithm.Solution;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.graph.*;
+import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 
 /**
