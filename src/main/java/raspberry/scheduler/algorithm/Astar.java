@@ -21,7 +21,6 @@ public class Astar implements Algorithm {
     Hashtable<String, Integer> _heuristic = new Hashtable<String, Integer>();
     Hashtable<Integer, ArrayList<Schedule>> _visited;
 
-    ArrayList<String> _equivalence = new ArrayList<String>();
     int _upperBound;
     /**
      * Constructor for A*
@@ -127,6 +126,7 @@ public class Astar implements Algorithm {
                 }
             }
         }
+        System.out.printf("PQ SIZE: %d\n", _pq.size());
         System.out.printf("\nDUPLCIATE : %d\n", duplicate);
         return new Solution(cSchedule, _numP);
     }
@@ -312,7 +312,7 @@ public class Astar implements Algorithm {
      */
     public Boolean isIrrelevantDuplicate(ArrayList<Schedule> scheduleList, Schedule cSchedule) {
         for (Schedule s : scheduleList) {
-            if ( s.equals2(cSchedule) ){
+            if ( s.equals3(cSchedule) ){
                 if ( s.getTotal() > cSchedule.getTotal()) {
 //                    System.out.printf("%d -> %d\n", s.getTotal(), cSchedule.getTotal());
                     return false;

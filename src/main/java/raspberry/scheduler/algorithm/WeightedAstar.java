@@ -67,22 +67,10 @@ public class WeightedAstar implements Algorithm {
         }
 
         Schedule cSchedule;
-        int duplicate = 0; // Duplicate counter, Used for debugging purposes.
 
         while (true) {
 //            System.out.printf("PQ SIZE: %d\n", _pq.size());
             cSchedule = _pq.poll();
-//            ArrayList<Schedule> listVisitedForSize = _visited.get(cSchedule.getHash());
-//            if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
-//                duplicate++;
-//                continue;
-//            } else {
-//                if (listVisitedForSize == null) {
-//                    listVisitedForSize = new ArrayList<Schedule>();
-//                    _visited.put(cSchedule.getHash(), listVisitedForSize);
-//                }
-//                listVisitedForSize.add(cSchedule);
-//            }
 
             // Return if all task is scheduled
             if (cSchedule.getSize() == _numNode) {

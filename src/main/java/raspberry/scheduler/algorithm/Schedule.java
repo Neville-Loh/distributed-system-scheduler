@@ -1,10 +1,10 @@
 package raspberry.scheduler.algorithm;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Hashtable;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import raspberry.scheduler.graph.INode;
+
 
 /**
  * The Schedule class represents a partial schedule of the tasks
@@ -14,14 +14,21 @@ import raspberry.scheduler.graph.INode;
  */
 public class Schedule implements Comparable<Schedule> {
 
-    private int _h; // h: Heuristic weight
-    private int _total; // t: Total weight
-    private int _startTime; //the time this node start running.
-    private int _finishTime; //the time at this node finish running
-    private INode _node;
-    private int _pid;  //Processor Id
     private Schedule _parent; // Parent Schedule
     private int _size; // Size of the partial schedule. # of tasks scheduled.
+
+    
+    private int _h; // h: Heuristic weight
+    private int _total; // t: Total weight
+
+
+    
+    private INode _node;
+    private int _startTime; //the time this node start running.
+    private int _finishTime; //the time at this node finish running
+    private int _pid;  //Processor Id
+
+
     private Hashtable<String, List<Integer>> _scheduling; // partial schedule. //TODO : Implement this idea with less memory intensive manner.
     private Hashtable<Integer, String> _lastForEachProcessor; //the last task schedule, for each processor.
     private int _maxPid; //The largest pid currently used to schedule
@@ -66,6 +73,7 @@ public class Schedule implements Comparable<Schedule> {
         _scheduling.put(node.getName(), Arrays.asList(processorId, startTime));
         _lastForEachProcessor.put(processorId, node.getName());
     }
+    
 
     /**
      * Since we calculate heuristic after the creation of Schedule instance, this was added.
@@ -116,9 +124,9 @@ public class Schedule implements Comparable<Schedule> {
             return false;
         } else {
             Schedule schedule = (Schedule) otherSchedule;
-            if (schedule._size != schedule._size) {
+            if ( this._size != schedule._size) {
                 return false;
-            } else if (schedule.getMaxPid() != schedule.getMaxPid()) {
+            } else if ( _maxPid != schedule.getMaxPid()) {
                 return false;
             } else {
                 // Group by pid. Compare match
@@ -156,7 +164,6 @@ public class Schedule implements Comparable<Schedule> {
                     }
                 }
             }
-//            }
 
 //            if ( !_scheduling.equals(schedule.getScheduling()) ){ //Processor swap
 //                System.out.println("");
@@ -164,6 +171,36 @@ public class Schedule implements Comparable<Schedule> {
 //                System.out.println(schedule);
 //            }
             return true;
+        }
+    }
+
+    //Risky version of equals. Dont know if this actually outputs optimal path.
+    public boolean equals3(Object otherSchedule) {
+        if (otherSchedule == this) {
+            return true;
+        } else if (!(otherSchedule instanceof Schedule)) {
+            return false;
+        } else {
+            Schedule schedule = (Schedule) otherSchedule;
+            if (schedule._size != schedule._size) {
+                return false;
+            } else if (schedule.getMaxPid() != schedule.getMaxPid()) {
+                return false;
+            } else {
+                // Group by pid. Compare match
+                Hashtable<String, List<Integer>> _scheduling2 = schedule.getScheduling();
+
+                Set<HashSet<Integer>> hash4scheduling = new HashSet<HashSet<Integer>>();
+                Set<HashSet<Integer>> hash4scheduling2 = new HashSet<HashSet<Integer>>();
+
+                for (String s : _scheduling.keySet()) {
+                    hash4scheduling.add(new HashSet<Integer>(Arrays.asList(s.hashCode(),_scheduling.get(s).get(1))));
+                }
+                for (String s : _scheduling2.keySet()) {
+                    hash4scheduling2.add(new HashSet<Integer>(Arrays.asList(s.hashCode(),_scheduling2.get(s).get(1))));
+                }
+                return hash4scheduling.equals(hash4scheduling2);
+            }
         }
     }
 
@@ -336,7 +373,7 @@ public class Schedule implements Comparable<Schedule> {
      * @return _lowerBound Represents the base case for BNB
      */
     public int getLowerBound() {
-        return _lowerBound;
+        return _total;
     }
 
 
@@ -344,9 +381,12 @@ public class Schedule implements Comparable<Schedule> {
     public String toString(){
         String r = "";
         for ( String i: _scheduling.keySet() ) {
-            r +=  "{"+  i + "-" + _scheduling.get(i).get(0) + "-" + _scheduling.get(i).get(1) + "}";
+            r +=  "{Task:"+  i + "-pid:" + _scheduling.get(i).get(0) + "-t:" + _scheduling.get(i).get(1) + "}";
         }
         return r;
     }
 
+    public int getTaskStartTime(String taskName){
+        return _scheduling.get(taskName).get(1);
+    }
 }

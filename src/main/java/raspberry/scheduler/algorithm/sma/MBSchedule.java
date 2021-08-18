@@ -3,6 +3,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
+import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.Schedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
@@ -16,10 +17,10 @@ import raspberry.scheduler.graph.INode;
 public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     public MBSchedule parent;
     private ScheduledTask _scheduledTask;
-    public int size;
+    private int _size;
     private int _fScore;
     private int _hScore;
-    private Hashtable<INode, Integer> _parentsLeftOfSchedulableTask;
+    private Hashtable<INode, Integer> _parentsLeftOfSchedulableTask; //
     private int _overallFinishTime;
 
     // Manhattan heuristic specific attribute
@@ -32,6 +33,10 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     private Hashtable<ScheduledTask,Integer> _forgotten;
     private int _minForgottenFScore;
 
+    //NEW STUFF
+    private Hashtable<String, List<Integer>> _scheduling; // partial schedule. /
+    private int _maxPid; //The largest pid currently used to schedule
+    private Hashtable<Integer, String> _lastForEachProcessor; //the last task schedule, for each processor.
 
 
     public MBSchedule(){
@@ -51,24 +56,143 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         parent = parentSchedule;
         _remainingComputeTime = remainingComputeTime;
         if (parentSchedule == null){
-            size = 1;
+            _size = 1;
             _overallFinishTime = scheduledTask.getFinishTime();
-
-            // Manhattan distance heuristic
-            //_earliestFinishProcessorID = 1;
+            
+            // new stuff
+            _maxPid = scheduledTask.getProcessorID();
+            _scheduling = new Hashtable<String, List<Integer>>();
+            _lastForEachProcessor = new Hashtable<Integer, String>();
         }else{
-            size = parentSchedule.size + 1;
+            _size = parentSchedule.getSize() + 1;
             _overallFinishTime = Math.max(parent.getOverallFinishTime(), _scheduledTask.getFinishTime());
 
-//            // Manhattan distance heuristic
-//            if (_earliestFinishProcessorID == this.parent.getEarliestFinishProcessorID()){
-//                _earliestFinishTimeOfAllProcessors = _scheduledTask.getFinishTime();
-//            } else if (_earliestFinishProcessorID){
-//
-//            }
+            // new stuff
+            if (scheduledTask.getProcessorID() > parentSchedule.getMaxPid()) {
+                _maxPid = scheduledTask.getProcessorID();
+            } else {
+                _maxPid = parentSchedule.getMaxPid();
+            }
+            _scheduling = (Hashtable<String, List<Integer>>) parentSchedule.getScheduling().clone();
+            _lastForEachProcessor = (Hashtable<Integer, String>) parentSchedule.getLastForEachProcessor().clone();
+        }
 
+        // new stuff
+        _scheduling.put(scheduledTask.getTask().getName(), Arrays.asList(scheduledTask.getProcessorID(), scheduledTask.getStartTime()));
+        _lastForEachProcessor.put(scheduledTask.getProcessorID(), scheduledTask.getTask().getName());
+    }
+
+    //-----------------------------------------------------------------------------------------------
+
+
+    
+    public int getMaxPid(){
+        return _maxPid;
+    }
+
+    /**
+     * get _scheduling the partial schedule
+     *
+     * @return _scheduling the partial schedule
+     */
+    public Hashtable<String, List<Integer>> getScheduling() {
+        return _scheduling;
+    }
+
+
+
+        /**
+     * Check if two Schedule instance is the same. (this is for detecting duplicate scheduling)
+     *
+     * @param otherSchedule : the other schedule instance we are comparing to.
+     * @return Boolean : True : if its the same.
+     * False: if its different.
+     */
+//    @Override
+    public boolean equals2(Object otherSchedule) {
+        if (otherSchedule == this) {
+            return true;
+        } else if (!(otherSchedule instanceof MBSchedule)) {
+            return false;
+        } else {
+            MBSchedule schedule = (MBSchedule) otherSchedule;
+            if ( _size != schedule.getSize()) {
+                return false;
+            } else if ( _maxPid != schedule.getMaxPid()) {
+                return false;
+            } else {
+                // Group by pid. Compare match
+                Hashtable<String, List<Integer>> _scheduling2 = schedule.getScheduling();
+
+                Hashtable<Integer, Hashtable<String, Integer>> hash4scheduling = new Hashtable<Integer, Hashtable<String, Integer>>();
+                Hashtable<Integer, Hashtable<String, Integer>> hash4scheduling2 = new Hashtable<Integer, Hashtable<String, Integer>>();
+
+                for (String s : _scheduling.keySet()) {
+                    Hashtable<String, Integer> tmp = hash4scheduling.get(_scheduling.get(s).get(0)); //get(0) gets pid
+                    if (tmp == null) {
+                        tmp = new Hashtable<String, Integer>();
+                    }
+                    tmp.put(s, _scheduling.get(s).get(1));
+                    hash4scheduling.put( _scheduling.get(s).get(0), tmp );
+                }
+                for (String s : _scheduling2.keySet()) {
+                    Hashtable<String, Integer> tmp = hash4scheduling2.get(_scheduling2.get(s).get(0)); //get(0) gets pid
+                    if (tmp == null) {
+                        tmp = new Hashtable<String, Integer>();
+                    }
+                    tmp.put(s, _scheduling2.get(s).get(1));
+                    hash4scheduling2.put( _scheduling2.get(s).get(0), tmp );
+                }
+                for (Hashtable<String, Integer> i : hash4scheduling.values()) {
+                    Boolean foundMatch = false;
+                    for (Hashtable<String, Integer> j : hash4scheduling2.values()) {
+                        if (i.equals(j)) {
+                            foundMatch = true;
+                            break;
+                        }
+                    }
+                    if (!foundMatch) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
     }
+
+    //Risky version of equals. Dont know if this actually outputs optimal path.
+    public boolean equals3(Object otherSchedule) {
+        if (otherSchedule == this) {
+            return true;
+        } else if (!(otherSchedule instanceof Schedule)) {
+            return false;
+        } else {
+            Schedule schedule = (Schedule) otherSchedule;
+            if (this._size != schedule.getSize()) {
+                return false;
+            } else if (this._maxPid != schedule.getMaxPid()) {
+                return false;
+            } else {
+                // Group by pid. Compare match
+                Hashtable<String, List<Integer>> _scheduling2 = schedule.getScheduling();
+
+                Set<HashSet<Integer>> hash4scheduling = new HashSet<HashSet<Integer>>();
+                Set<HashSet<Integer>> hash4scheduling2 = new HashSet<HashSet<Integer>>();
+
+                for (String s : _scheduling.keySet()) {
+                    hash4scheduling.add(new HashSet<Integer>(Arrays.asList(s.hashCode(),_scheduling.get(s).get(1))));
+                }
+                for (String s : _scheduling2.keySet()) {
+                    hash4scheduling2.add(new HashSet<Integer>(Arrays.asList(s.hashCode(),_scheduling2.get(s).get(1))));
+                }
+                return hash4scheduling.equals(hash4scheduling2);
+            }
+        }
+    }
+
+
+    //-----------------------------------------------------------------------------------------------
+
 
 
     /**
@@ -326,7 +450,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     }
 
     public void setHScore(int hScore) {
-        _fScore = _overallFinishTime + hScore;
+        _fScore = _scheduledTask.getFinishTime() + hScore;
         _hScore = hScore;
     }
 
@@ -342,7 +466,34 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         _fScore = fScore;
     }
 
+    public int getSize(){
+        return _size;
+    }
+    public void setSize(int size){
+        _size = size;
+    }
 
+
+    // New stuff
+    public int getHash() {
+        final int prime = 17;
+        int value = 0;
+        for (String i : _scheduling.keySet()) {
+            value = prime * value + (_scheduling.get(i).get(1));
+            value = prime * value + (i.hashCode());
+        }
+        value = prime * value + (_size);
+        return value;
+    }
+
+    /**
+     * lastForEachProcessor the last task schedule, for each processor.
+     *
+     * @return _lastForEachProcessor the last task schedule, for each processor.
+     */
+    public Hashtable<Integer, String> getLastForEachProcessor() {
+        return _lastForEachProcessor;
+    }
 
 }
 
