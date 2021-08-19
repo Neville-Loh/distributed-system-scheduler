@@ -187,7 +187,7 @@ public class TestAStar {
 
         // run and time a* algorithm
         long startTime = System.nanoTime();
-        Astar astar = new Astar(graph,numProcessors);
+        AstarParallel astar = new AstarParallel(graph,numProcessors, 2);
         OutputSchedule output = astar.findPath();
         System.out.printf("------------------------\n" +
                         "File: %s, Number of Processor: %d \nRUNNING TIME : %.2f seconds\n",

@@ -14,15 +14,15 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  * @author Takahiro
  */
 public class Astar implements Algorithm {
-    private IGraph _graph;
-    int _numP;
-    int _numNode;
-    int _maxCriticalPath;
-    PriorityQueue<Schedule> _pq;
-    Hashtable<String, Integer> _heuristic = new Hashtable<String, Integer>();
-    Hashtable<Integer, ArrayList<Schedule>> _visited;
+    protected IGraph _graph;
+    protected int _numP;
+    protected int _numNode;
+    protected int _maxCriticalPath;
+    protected PriorityQueue<Schedule> _pq;
+    protected Hashtable<String, Integer> _heuristic = new Hashtable<String, Integer>();
+    protected Hashtable<Integer, ArrayList<Schedule>> _visited;
 
-    private AlgoObservable _observable;
+    protected AlgoObservable _observable;
 
     /**
      * Constructor for A*
