@@ -5,6 +5,8 @@ import raspberry.scheduler.algorithm.Astar;
 import raspberry.scheduler.cli.CLIConfig;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,11 +28,11 @@ public class Logger {
 
 
     public static void log(CLIConfig CLIConfig, Double startTime, long currentTime) throws IOException {
-        String[] _dataLines = new String[]{"Milestone 1 Statistics:",
-                "Date Time: ", java.time.LocalDateTime.now().toString(),
-                "Input File Name: ", CLIConfig.getDotFile(),
-                "Number of processors: ", Integer.toString(CLIConfig.get_numProcessors()),
-                "Duration: ", Double.toString((currentTime - startTime)/1000000000.0)};
+        String[] _dataLines = new String[]{
+                java.time.LocalDateTime.now().toString(),
+                CLIConfig.getDotFile(),
+                Integer.toString(CLIConfig.get_numProcessors()),
+                Double.toString((currentTime - startTime)/1000000000.0)};
         fileOutput(_dataLines);
     }
 
@@ -39,22 +41,9 @@ public class Logger {
      * @throws IOException
      */
     public static void fileOutput(String[] input) throws IOException {
-        CSVWriter reader = new CSVWriter(new FileWriter("CSV_FILE", true));
+        CSVWriter writer = new CSVWriter(new FileWriter(CSV_FILE, true));
 
-        try (PrintWriter writer = new PrintWriter(new File(CSV_FILE))){
-
-            StringBuilder sb = new StringBuilder();
-            for (String s : input) {
-                sb.append(s);
-                sb.append(" \n");
-            }
-            writer.write(sb.toString());
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        writer.writeNext(input);
+        writer.close();
     }
-
-
-
 }
