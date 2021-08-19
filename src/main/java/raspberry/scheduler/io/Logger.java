@@ -1,17 +1,15 @@
 package raspberry.scheduler.io;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import raspberry.scheduler.algorithm.Astar;
 import raspberry.scheduler.cli.CLIConfig;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static org.junit.Assert.assertTrue;
+import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * This class handles the overall statistics: start time, finish time and memory usage
@@ -41,6 +39,7 @@ public class Logger {
      * @throws IOException
      */
     public static void fileOutput(String[] input) throws IOException {
+        CSVWriter reader = new CSVWriter(new FileWriter("CSV_FILE", true));
 
         try (PrintWriter writer = new PrintWriter(new File(CSV_FILE))){
 
@@ -55,5 +54,7 @@ public class Logger {
             System.out.println(e.getMessage());
         }
     }
+
+
 
 }
