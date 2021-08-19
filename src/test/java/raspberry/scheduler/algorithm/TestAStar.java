@@ -166,7 +166,6 @@ public class TestAStar {
         assertEquals(227, output.getFinishTime());
     }
 
-
     /**
      * Helper method to read the file and run a star
      * with specified number of processor.
@@ -187,7 +186,7 @@ public class TestAStar {
 
         // run and time a* algorithm
         long startTime = System.nanoTime();
-        AstarParallel astar = new AstarParallel(graph,numProcessors, 2);
+        Astar astar = new Astar(graph,numProcessors);
         OutputSchedule output = astar.findPath();
         System.out.printf("------------------------\n" +
                         "File: %s, Number of Processor: %d \nRUNNING TIME : %.2f seconds\n",

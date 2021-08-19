@@ -2,9 +2,7 @@ package raspberry.scheduler.algorithm;
 
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 import raspberry.scheduler.app.visualisation.model.AlgoObservable;
 import raspberry.scheduler.graph.*;
@@ -18,14 +16,13 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  */
 public class AstarParallel extends Astar {
     // the total number of threads to use
-    private static int _numCores;
+    private int _numCores;
 
     // thread pool that will deal with all the threads
-    private static ThreadPoolExecutor _threadPool = null;
+    private ThreadPoolExecutor _threadPool = null;
 
     // concurrentlist of subschedule for threadpool to run
-    private ConcurrentLinkedQueue<Hashtable<Schedule,Hashtable<INode, Integer>>> _subSchedules;
-
+    private ConcurrentLinkedQueue<Hashtable<Schedule, Hashtable<INode, Integer>>> _subSchedules;
 
 
     /**
@@ -37,7 +34,8 @@ public class AstarParallel extends Astar {
     public AstarParallel(IGraph graphToSolve, int numProcessors, int numCores) {
         super(graphToSolve, numProcessors);
         initialiseThreadPool(numCores);
-        _subSchedules = new ConcurrentLinkedQueue<Hashtable<Schedule,Hashtable<INode, Integer>>>();
+        _numCores = numCores;
+        _subSchedules = new ConcurrentLinkedQueue<Hashtable<Schedule, Hashtable<INode, Integer>>>();
     }
 
     /**
@@ -122,28 +120,48 @@ public class AstarParallel extends Astar {
             } else {
                 pidBound = currentMaxPid + 1;
             }
+            int count = 0;
+            for (INode node : cTable.keySet()) {
+                if (cTable.get(node) == 0) {
+                    for (int j = 1; j <= pidBound; j++) {
+                        count++;
+                    }
+                }
+            }
+
+            CountDownLatch latch = new CountDownLatch(count);
+
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
                     //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
                     for (int j = 1; j <= pidBound; j++) {
-                        createSubSchedules(cSchedule, j, node, cTable);
+                        createSubSchedules(cSchedule, j, node, cTable, latch);
                     }
                 }
             }
-            System.out.println(_subSchedules.size());
-            for (Hashtable<Schedule,Hashtable<INode, Integer>> subScheduleTables: _subSchedules) {
+            try {
+//                TimeUnit.MILLISECONDS.sleep(10);
+//                _threadPool.wait();
+//                _threadPool.awaitTermination(10,TimeUnit.MICROSECONDS);
+                latch.await();
+            } catch(Exception e) {
+
+            }
+//            _threadPool.awaitTermination();
+            for (Hashtable<Schedule, Hashtable<INode, Integer>> subScheduleTables : _subSchedules) {
                 for (Schedule subSchedule : subScheduleTables.keySet()) {
                     master.put(subSchedule, subScheduleTables.get(subSchedule));
                     _pq.add(subSchedule);
                 }
             }
+            _subSchedules.clear();
         }
         _observable.setIsFinish(true);
         _observable.setSolution(new Solution(cSchedule, _numP));
         return new Solution(cSchedule, _numP);
     }
 
-    public void createSubSchedules(Schedule cSchedule, int j, INode node,  Hashtable<INode, Integer> cTable) {
+    public void createSubSchedules(Schedule cSchedule, int j, INode node, Hashtable<INode, Integer> cTable, CountDownLatch latch) {
         _threadPool.submit(() -> {
             int start = calculateCost(cSchedule, j, node);
             Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
@@ -153,12 +171,12 @@ public class AstarParallel extends Astar {
                             h(newSchedule),
                             h1(newTable, newSchedule)
                     )));
-            Hashtable<Schedule,Hashtable<INode, Integer>> subSchedule = new Hashtable<Schedule,Hashtable<INode, Integer>>();
+            Hashtable<Schedule, Hashtable<INode, Integer>> subSchedule = new Hashtable<Schedule, Hashtable<INode, Integer>>();
             subSchedule.put(newSchedule, newTable);
             _subSchedules.add(subSchedule);
+            latch.countDown();
         });
     }
-
 
 
 }
