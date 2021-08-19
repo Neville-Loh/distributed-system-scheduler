@@ -2,7 +2,7 @@ package raspberry.scheduler.cli;
 
 /**
  * CLIConfig class holds all the required and optional settings given for the program
- * @author Alan
+ * @author Alan, Jonathon
  */
 public class CLIConfig {
 

@@ -24,6 +24,7 @@ import java.util.List;
 
 /**
  * This class polls and updates the live time statistics for the frontend components.
+ * @author: Alan, Young, Jonathon
  */
 public class Updater {
     // Initialisation of variables
