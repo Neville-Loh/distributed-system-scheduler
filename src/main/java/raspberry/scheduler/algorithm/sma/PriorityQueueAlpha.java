@@ -71,7 +71,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
     private static final int DEFAULT_INITIAL_CAPACITY = 11;
 
 
-    private Hashtable<E,Integer> indexTable = new Hashtable<>();
+    public Hashtable<E,Integer> indexTable = new Hashtable<>();
     /**
      * Priority queue represented as a balanced binary heap: the two
      * children of queue[n] are queue[2*n+1] and queue[2*(n+1)].  The
@@ -363,6 +363,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
      */
     public boolean remove(Object o) {
         int i = indexOf(o);
+//        indexTable.remove(0);
         if (i == -1)
             return false;
         else {
@@ -582,10 +583,12 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
         modCount++;
         E result = (E) queue[0];
         E x = (E) queue[s];
-        indexTable.remove(queue[s]);
+
+        indexTable.remove(result);
         queue[s] = null;
         if (s != 0)
             siftDown(0, x);
+
         return result;
     }
 
