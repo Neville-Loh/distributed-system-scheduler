@@ -287,7 +287,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
 //            _forgotten.put(subSchedule, subSchedule.getFScore());
 //        }
 
-        System.out.println("table: !!!!!!!!" + _forgotten);
+        //System.out.println("table: !!!!!!!!" + _forgotten);
 
     }
 

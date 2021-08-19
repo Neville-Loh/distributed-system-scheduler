@@ -363,11 +363,11 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
      */
     public boolean remove(Object o) {
         int i = indexOf(o);
-//        indexTable.remove(0);
         if (i == -1)
             return false;
         else {
             removeAt(i);
+            indexTable.remove(o);
             return true;
         }
     }
@@ -579,15 +579,16 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
     public E poll() {
         if (size == 0)
             return null;
-        int s = --size;
+        int lastIndex = --size;
         modCount++;
         E result = (E) queue[0];
-        E x = (E) queue[s];
+        E last = (E) queue[lastIndex];
 
-        indexTable.remove(result);
-        queue[s] = null;
-        if (s != 0)
-            siftDown(0, x);
+        //indexTable.remove(result);
+        queue[lastIndex] = null;
+        indexTable.remove(last);
+        if (lastIndex != 0)
+            siftDown(0, last);
 
         return result;
     }
@@ -653,6 +654,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
             Object e = queue[parent];
             if (key.compareTo((E) e) >= 0)
                 break;
+            //indexTable.remove(queue[k]);
             indexTable.put((E) e,k);
             queue[k] = e;
             k = parent;
@@ -696,6 +698,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
         Comparable<? super E> key = (Comparable<? super E>)x;
         int half = size >>> 1;        // loop while a non-leaf
         while (k < half) {
+            //System.out.println(indexTable);
             int child = (k << 1) + 1; // assume left child is least
             Object c = queue[child];
             int right = child + 1;
@@ -704,6 +707,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
                 c = queue[child = right];
             if (key.compareTo((E) c) <= 0)
                 break;
+            indexTable.remove(queue[k]);
             indexTable.put((E) c,k);
             queue[k] = c;
             k = child;
