@@ -127,5 +127,13 @@ public interface IGraph{
      * @return name the name of the graph
      */
     public String getName();
+
+
+    /**
+     * Get the index of the node
+     * @param node
+     * @return index of the node
+     */
+    public int getIndex(INode node);
 }
 

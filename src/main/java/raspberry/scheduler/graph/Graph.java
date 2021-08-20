@@ -17,6 +17,8 @@ public class Graph implements IGraph{
     private Hashtable<String, List<IEdge>> _inDegreeAdjacencyList;
     private Hashtable<String, List<IEdge>> _outDegreeAdjacencyList;
     private Hashtable<String,Integer> _criticalPathWeightTable;
+    private Hashtable<INode, Integer> _indexTable;
+    private ArrayList<INode> _topologicalOrder;
 
     /**
      * Class Constructor
@@ -186,4 +188,53 @@ public class Graph implements IGraph{
         return _name;
     }
 
+    /**
+     *  Topological order
+     */
+
+    @Override
+    public int getIndex(INode node){
+        if (_indexTable == null){
+            setIndexTable();
+        }
+        return _indexTable.get(node);
+    }
+
+
+
+    private void setIndexTable(){
+        _indexTable = new Hashtable<>();
+        ArrayList<INode> visited = new ArrayList<>();
+        Collections.reverse(_topologicalOrder);
+        for(int i = 0; i < _topologicalOrder.size(); i++){
+            _indexTable.put(_topologicalOrder.get(i), i);
+        }
+
+    }
+    private void getTopologicalOrder(){
+        _topologicalOrder = new ArrayList<INode>();
+        for ( INode i : _nodes.values()){
+            getTopoligicalOrderRecursive(i);
+        }
+        printTopo();
+    }
+
+    private void getTopoligicalOrderRecursive(INode i){
+        if ( _outDegreeAdjacencyList.get(i) == null || _outDegreeAdjacencyList.get(i).isEmpty() ){
+            //
+        }else{
+            for ( IEdge e : _outDegreeAdjacencyList.get(i) ) {
+                getTopoligicalOrderRecursive(e.getChild());
+            }
+        }
+        if ( !_topologicalOrder.contains(i) ){
+            _topologicalOrder.add(i);
+        }
+    }
+
+    public void printTopo(){
+        for (INode i: _topologicalOrder){
+            System.out.printf("%s_",i.getName());
+        }
+    }
 }
