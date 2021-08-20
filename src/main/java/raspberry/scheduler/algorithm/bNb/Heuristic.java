@@ -1,5 +1,6 @@
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm.bNb;
 
+import raspberry.scheduler.algorithm.Schedule;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;

@@ -1,6 +1,7 @@
 package raspberry.scheduler.algorithm.util;
 
 import raspberry.scheduler.algorithm.Schedule;
+import raspberry.scheduler.algorithm.bNb.ScheduleB;
 import raspberry.scheduler.algorithm.sma.MBSchedule;
 import raspberry.scheduler.graph.INode;
 
@@ -15,6 +16,18 @@ public class Helper {
      */
     public static void printPath(MBSchedule schedule){
         System.out.println("");
+        Hashtable<INode, int[]> path = schedule.getPath();
+
+        ArrayList<INode> list = new ArrayList(path.keySet());
+        list.sort((node1, node2) -> Integer.compare(path.get(node1)[0], path.get(node2)[0]) );
+        for (INode i: list){
+            System.out.printf("%s : {start:%d}, {finish:%d}, {p_id:%d} \n",
+                    i.getName(), path.get(i)[0], path.get(i)[1], path.get(i)[2]);
+        }
+    }
+
+    public static void printPath(ScheduleB schedule){
+        System.out.println(schedule);
         Hashtable<INode, int[]> path = schedule.getPath();
 
         ArrayList<INode> list = new ArrayList(path.keySet());
