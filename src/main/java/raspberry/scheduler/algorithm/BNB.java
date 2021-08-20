@@ -1,5 +1,6 @@
 package raspberry.scheduler.algorithm;
 
+import raspberry.scheduler.algorithm.bNb.Heuristic;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.IEdge;

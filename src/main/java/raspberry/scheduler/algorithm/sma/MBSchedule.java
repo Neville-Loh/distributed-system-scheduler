@@ -495,6 +495,23 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         return _lastForEachProcessor;
     }
 
+    public ArrayList<ScheduledTask> getAllTaskinProcessor(int processorID) {
+        return null;
+    }
+
+    /**
+     *
+     * @param task
+     * @return
+     */
+    public ScheduledTask getScheduledTask(INode task) {
+        MBSchedule cSchedule = this;
+        while (cSchedule != null &&
+                cSchedule.getScheduledTask().getTask() != task){
+            cSchedule = cSchedule.parent;
+        }
+        return cSchedule.getScheduledTask();
+    }
 }
 
 
