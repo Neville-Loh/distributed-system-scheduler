@@ -134,8 +134,18 @@ public class ScheduleB implements Comparable<ScheduleB> {
                     }
                 }
             }
+//            printPath( this.getPath() );
+//            printPath( oSchedule.getPath());
             return true;
         }
+    }
+
+    public void printPath( Hashtable<INode, int[]> x){
+        String r ="";
+        for (INode i : x.keySet()){
+            r +=  "{Task:"+  i.getName() + "-pid:" + x.get(i)[2] + "-t:" + x.get(i)[0] + "}";
+        }
+        System.out.println(r);
     }
 
     //Risky version of equals. Dont know if this actually outputs optimal path.
@@ -291,4 +301,5 @@ public class ScheduleB implements Comparable<ScheduleB> {
     public Hashtable<INode, Integer> getIndegreeTable(){
         return _inDegreeTable;
     }
+
 }
