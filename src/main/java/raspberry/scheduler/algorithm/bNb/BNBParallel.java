@@ -1,9 +1,8 @@
 package raspberry.scheduler.algorithm.bNb;
 
-import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.algorithm.Schedule;
-import raspberry.scheduler.algorithm.Solution;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
+import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
@@ -14,8 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class BNBParallel extends BNB2{
-
-
 
     private int _numCores;
     // thread pool that will deal with all the threads
