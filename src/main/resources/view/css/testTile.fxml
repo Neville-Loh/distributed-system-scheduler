@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import eu.hansolo.tilesfx.Tile?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="905.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="raspberry.scheduler.app.visualisation.controller.testController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0" />
+      <Tile fx:id="_memTile" />
+   </children>
+</VBox>

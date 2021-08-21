@@ -36,7 +36,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/MainView2.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/view/testTile.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Raspberry Spritz A* Program");
