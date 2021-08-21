@@ -1,8 +1,10 @@
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm.bnb;
 
-import org.junit.Before;
 import org.junit.Test;
-import raspberry.scheduler.algorithm.sma.MemoryBoundAStar;
+import raspberry.scheduler.algorithm.OutputChecker;
+import raspberry.scheduler.algorithm.astar.WeightedAstar;
+import raspberry.scheduler.algorithm.bNb.BNB2;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.io.GraphReader;
@@ -13,12 +15,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * Integrated test for A star algorithm
+ * Integrated test for bnb star algorithm
  * Test 5 graph in the resource folder with specified number of processor
  * output was given prior to the development
  * @Author Neville
  */
-public class TestAStar {
+
+public class TestBnb {
     // input path of the resource folder
     private String INPUT_PATH = "src/test/resources/input/";
 
@@ -28,7 +31,6 @@ public class TestAStar {
      *
      * ===========================================
      */
-
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_7_OutTree.dot
@@ -167,40 +169,10 @@ public class TestAStar {
         assertEquals(227, output.getFinishTime());
     }
 
-//    @Test
-//    public void testNodes16_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
-//        // read input graph and find path
-//        OutputSchedule output = readAndFindPath("16_466.dot", 2);
-//        assertEquals(624, output.getFinishTime());
-//    }
-//
-//    @Test
-//    public void testNodes16_5Processor() throws FileNotFoundException, EdgeDoesNotExistException {
-//        // read input graph and find path
-//        OutputSchedule output = readAndFindPath("16_466.dot", 5);
-//        assertEquals(466, output.getFinishTime());
-//    }
-
-//    @Test
-//    public void testNodesBIG_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
-//        // read input graph and find path
-//        OutputSchedule output = readAndFindPath("big.dot", 2);
-//        assertEquals(92, output.getFinishTime());
-//    }
-//
-//    @Test
-//    public void testNodesBIG_4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
-//        // read input graph and find path
-//        OutputSchedule output = readAndFindPath("big.dot", 5);
-//        assertEquals(227, output.getFinishTime());
-//    }
-
-
     /**
      * Helper method to read the file and run a star
      * with specified number of processor.
      * Do validity check upon finish
-     *
      * @param filename filename of the dot file of dependency graph
      * @param numProcessors number of resource available to allocate to task
      * @return output schedule
@@ -216,16 +188,18 @@ public class TestAStar {
 
         // run and time a* algorithm
         long startTime = System.nanoTime();
+
+
         WeightedAstar wA = new WeightedAstar(graph,numProcessors);
         OutputSchedule outputBound = wA.findPath();
-        wA = null;
         int upperbound = outputBound.getFinishTime();
-        outputBound = null;
-        System.out.printf("UPPERBOUND : %d", upperbound);
 
-        //Astar astar = new Astar(graph,numProcessors,upperbound);
-        MemoryBoundAStar astar = new MemoryBoundAStar(graph,numProcessors,3000);
-        OutputSchedule output = astar.findPath();
+        wA = null;
+        outputBound = null;
+        //System.out.printf("UPPERBOUND : %d", upperbound);
+
+        BNB2 bnb = new BNB2(graph,numProcessors, upperbound);
+        OutputSchedule output = bnb.findPath();
         System.out.printf("------------------------\n" +
                         "File: %s, Number of Processor: %d \nRUNNING TIME : %.2f seconds\n",
                 filename, numProcessors, (System.nanoTime() - startTime) / 1000000000.0);

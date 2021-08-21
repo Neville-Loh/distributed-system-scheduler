@@ -1,6 +1,6 @@
 package raspberry.scheduler.algorithm.util;
 
-import raspberry.scheduler.algorithm.Schedule;
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.algorithm.bNb.ScheduleB;
 import raspberry.scheduler.algorithm.sma.MBSchedule;
 import raspberry.scheduler.graph.INode;
@@ -43,7 +43,7 @@ public class Helper {
      *
      * @param x : Partial schedule to print.
      */
-    public static void printPath(Schedule x) {
+    public static void printPath(ScheduleAStar x) {
         System.out.println("");
         Hashtable<INode, int[]> path = x.getPath();
         //path.sort((o1, o2) -> o1.node.getName().compareTo(o2.node.getName()));
@@ -65,5 +65,25 @@ public class Helper {
         System.out.printf(" }\n");
     }
 
+//    /**
+//     * Gets the full path of the partial schedule.
+//     * (as Schedule instance is linked with parents like linked list)
+//     *
+//     * @return : Hashtable :  key : task (INode)
+//     * Value : List of Integers. ( size of 3 )
+//     * index 0 : start time of the task
+//     * index 1 : finsih time of the task
+//     * index 2 : processor id of the task.
+//     */
+//    public Hashtable<INode, int[]> getPath() {
+//        Hashtable<INode, int[]> tmp;
+//        if (_parent == null) {
+//            tmp = new Hashtable<INode, int[]>();
+//        } else {
+//            tmp = _parent.getPath();
+//        }
+//        tmp.put(_node, new int[]{_startTime, _finishTime, _pid});
+//        return tmp;
+//    }
 
 }

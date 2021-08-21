@@ -1,8 +1,13 @@
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm.astar;
 
 import java.util.*;
 import java.util.List;
 
+import raspberry.scheduler.algorithm.Algorithm;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
+import raspberry.scheduler.algorithm.common.ScheduledTask;
+import raspberry.scheduler.algorithm.common.Solution;
+import raspberry.scheduler.app.visualisation.model.AlgoObservable;
 import raspberry.scheduler.graph.*;
 
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -12,27 +17,36 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  *
  * @author Takahiro
  */
-public class WeightedAstar implements Algorithm {
+public class Astar implements Algorithm {
+
     private IGraph _graph;
     int _numP;
     int _numNode;
     int _maxCriticalPath;
-    PriorityQueue<Schedule> _pq;
+    PriorityQueue<ScheduleAStar> _pq;
     Hashtable<String, Integer> _heuristic = new Hashtable<String, Integer>();
-//    Hashtable<Integer, ArrayList<Schedule>> _visited;
+    Hashtable<Integer, ArrayList<ScheduleAStar>> _visited;
+
+    int _upperBound;
+    protected AlgoObservable _observable;
 
     /**
      * Constructor for A*
      *
      * @param graphToSolve  : graph to solve (graph represents the task and dependencies)
-     * @param numProcessors : number of processor we can used to scheudle tasks.
+     * @param numProcessors : number of processor we can use to schedule tasks.
      */
-    public WeightedAstar(IGraph graphToSolve, int numProcessors) {
+    public Astar(IGraph graphToSolve, int numProcessors, int upperBound) {
         _graph = graphToSolve;
-        _pq = new PriorityQueue<Schedule>();
-//        _visited = new Hashtable<Integer, ArrayList<Schedule>>();
+        _pq = new PriorityQueue<ScheduleAStar>();
+        _visited = new Hashtable<Integer, ArrayList<ScheduleAStar>>();
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
+        _upperBound = upperBound;
+        _observable = AlgoObservable.getInstance();
+    }
+
+    public Astar(IGraph graphToSolve, int numProcessors) {
     }
 
     /**
@@ -53,24 +67,53 @@ public class WeightedAstar implements Algorithm {
 //        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
         Hashtable<INode, Integer> rootTable = this.getRootTable();
 
-        for (INode i : rootTable.keySet()) {
-            if (rootTable.get(i) == 0) {
-                Schedule newSchedule = new Schedule(0, null, i, 1, getChildTable(rootTable, i));
-                newSchedule.addWeightedHeuristic(
+        for (INode node : rootTable.keySet()) {
+            if (rootTable.get(node) == 0) {
+
+//                ScheduleAStar newSchedule = new ScheduleAStar(
+//                        0, null, node, 1, getChildTable(rootTable, node));
+//
+                ScheduleAStar newSchedule = new ScheduleAStar(
+                        new ScheduledTask(1,node, 0),
+                        getChildTable(rootTable, node)
+                );
+
+                newSchedule.addHeuristic(
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
-                                h1(getChildTable(rootTable, i), newSchedule)
+                                h1(getChildTable(rootTable, node), newSchedule)
                         )));
 //                master.put(newSchedule, getChildTable(rootTable, i));
                 _pq.add(newSchedule);
             }
         }
 
-        Schedule cSchedule;
-
+        ScheduleAStar cSchedule;
+        int duplicate = 0; // Duplicate counter, Used for debugging purposes.
+        _observable.setIterations(0);
+        _observable.setIsFinish(false);
+      //  System.out.println(_observable.getIterations());
         while (true) {
 //            System.out.printf("PQ SIZE: %d\n", _pq.size());
+            _observable.increment();
+            //System.out.println(_observable.getIterations());
             cSchedule = _pq.poll();
+
+            Solution cScheduleSolution = new Solution(cSchedule, _numP);
+            _observable.setSolution(cScheduleSolution);
+
+            ArrayList<ScheduleAStar> listVisitedForSize = _visited.get(cSchedule.getHash());
+
+            if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
+                duplicate++;
+                continue;
+            } else {
+                if (listVisitedForSize == null) {
+                    listVisitedForSize = new ArrayList<ScheduleAStar>();
+                    _visited.put(cSchedule.getHash(), listVisitedForSize);
+                }
+                listVisitedForSize.add(cSchedule);
+            }
 
             // Return if all task is scheduled
             if (cSchedule.getSize() == _numNode) {
@@ -79,7 +122,6 @@ public class WeightedAstar implements Algorithm {
 //            Hashtable<INode, Integer> cTable = master.get(cSchedule);
 //            master.remove(cSchedule);
             Hashtable<INode, Integer> cTable = cSchedule._inDegreeTable;
-
             // Find the next empty processor. (
             int currentMaxPid = cSchedule.getMaxPid();
             int pidBound;
@@ -90,31 +132,42 @@ public class WeightedAstar implements Algorithm {
             }
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
-                    //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
-                    for (int j = 1; j <= pidBound; j++) {
-                        int start = calculateCost(cSchedule, j, node);
+                    for (int pid = 1; pid <= pidBound; pid++) {
+                        int start = calculateEarliestStartTime(cSchedule, pid, node);
+
+
                         Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
-                        Schedule newSchedule = new Schedule(start, cSchedule, node, j, newTable);
-                        newSchedule.addWeightedHeuristic(
+
+                        ScheduleAStar newSchedule = new ScheduleAStar(
+                                cSchedule,
+                                new ScheduledTask(pid, node, start),
+                                newTable);
+
+                        newSchedule.addHeuristic(
                                 Collections.max(Arrays.asList(
                                         h(newSchedule),
                                         h1(newTable, newSchedule)
                                 )));
-//                        master.put(newSchedule, newTable);
-                        _pq.add(newSchedule);
+
+                        if (newSchedule.getTotal() <= _upperBound){
+                            ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
+                            if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
+                                duplicate++;
+                            }else{
+                                _pq.add(newSchedule);
+                            }
+                        }
+
+
                     }
                 }
             }
-
-            if (_pq.size() > 100000){
-                PriorityQueue<Schedule> newPQ = new PriorityQueue<Schedule>();
-                for (int i = 0 ; i< 100; i++){
-                    newPQ.add( _pq.poll() );
-                }
-                System.out.println("TRIMMED");
-                _pq = newPQ;
-            }
         }
+        System.out.printf("PQ SIZE: %d\n", _pq.size());
+        System.out.printf("\nDUPLCIATE : %d\n", duplicate);
+
+        _observable.setIsFinish(true);
+        _observable.setSolution(new Solution(cSchedule,_numP));
 
         return new Solution(cSchedule, _numP);
     }
@@ -127,7 +180,7 @@ public class WeightedAstar implements Algorithm {
      * @param cSchedule : schedule of which we are trying to find heuristic cost for.
      * @return integer : represeting the heuristic cost
      */
-    public int h(Schedule cSchedule) {
+    public int h(ScheduleAStar cSchedule) {
         int max = 0;
         for (String s : cSchedule.getLastForEachProcessor().values()) {
             int tmp = _heuristic.get(s) + cSchedule.getScheduling().get(s).get(1) +
@@ -146,7 +199,7 @@ public class WeightedAstar implements Algorithm {
      * @param cSchedule : current schedule . Used to find the last task which was scheduled for each processor.
      * @return Integer : Representing the best case scheduling.
      */
-    public int h1(Hashtable<INode, Integer> x, Schedule cSchedule) {
+    public int h1(Hashtable<INode, Integer> x, ScheduleAStar cSchedule) {
         int sum = 0;
         for (String s : cSchedule.getLastForEachProcessor().values()) {
             sum += cSchedule.getScheduling().get(s).get(1) +
@@ -166,11 +219,11 @@ public class WeightedAstar implements Algorithm {
      * @param nodeToBeSchedule : node/task to be scheduled.
      * @return Integer : representing the earliest time. (start time)
      */
-    public int calculateCost(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
+    public int calculateEarliestStartTime(ScheduleAStar parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
         // Find last finish time for current processor id.
-        Schedule last_processorId_use = null; //last time processor with "processorId" was used.
-        Schedule cParentSchedule = parentSchedule;
+        ScheduleAStar last_processorId_use = null; //last time processor with "processorId" was used.
+        ScheduleAStar cParentSchedule = parentSchedule;
 
         while (cParentSchedule != null) {
             if (cParentSchedule.getPid() == processorId) {
@@ -298,13 +351,17 @@ public class WeightedAstar implements Algorithm {
      * @return True : if reopening is not needed
      * False : if reopening needs to happend for this schedule.
      */
-    public Boolean isIrrelevantDuplicate(ArrayList<Schedule> scheduleList, Schedule cSchedule) {
-        for (Schedule s : scheduleList) {
-            if (s.equals(cSchedule) && s.getTotal() > cSchedule.getTotal()) {
-                System.out.printf("%d -> %d\n", s.getTotal(), cSchedule.getTotal());
-                return false;
+    public Boolean isIrrelevantDuplicate(ArrayList<ScheduleAStar> scheduleList, ScheduleAStar cSchedule) {
+        for (ScheduleAStar s : scheduleList) {
+            if ( s.equals2(cSchedule) ){
+                if ( s.getTotal() > cSchedule.getTotal()) {
+//                    System.out.printf("%d -> %d\n", s.getTotal(), cSchedule.getTotal());
+                    return false;
+                }else{
+                    return true;
+                }
             }
         }
-        return true;
+        return false;
     }
 }

@@ -1,12 +1,9 @@
 package raspberry.scheduler.algorithm.common;
 
-import raspberry.scheduler.algorithm.*;
-import raspberry.scheduler.algorithm.sma.MBSchedule;
 import raspberry.scheduler.graph.*;
 
 import java.util.*;
 
-import static raspberry.scheduler.algorithm.sma.MemoryBoundAStar.calculateEarliestStartTime;
 
 public class EquivalenceChecker {
 
@@ -20,7 +17,7 @@ public class EquivalenceChecker {
     }
 
 
-    public boolean weAreDoomned(MBSchedule schedule){
+    public boolean weAreDoomed(Schedule schedule){
         //Require: Each task n ∈ V has a unique index 0 ≤ index(n) ≤ |V| − 1; in ascending index order tasks are also in
 //        a topological order
 //        Input: Partial schedule, including last scheduled task m at end of processor P
@@ -28,7 +25,7 @@ public class EquivalenceChecker {
          ScheduledTask m = schedule.getScheduledTask();
          int TMax = m.getFinishTime();
 //        2: Name tasks on P n1 to nl n start time order B nl = m
-        ArrayList<ScheduledTask> processorTaskList = schedule.getAllTaskinProcessor(m.getProcessorID());
+        ArrayList<ScheduledTask> processorTaskList = schedule.getAllTaskInProcessor(m.getProcessorID());
         // sort by accenting start time
         processorTaskList.sort(Comparator.comparingInt(ScheduledTask::getOriginalStartTime));
 
@@ -43,12 +40,13 @@ public class EquivalenceChecker {
         while (i >= 0
                 && _graph.getIndex(m.getTask()) <
                 _graph.getIndex(callitahhoowwwhatdoicallit.get(i).getTask())){
-                MBSchedule swapped = swap(schedule, m, callitahhoowwwhatdoicallit.get(i));
+            Schedule swapped = swap(schedule, m, callitahhoowwwhatdoicallit.get(i));
 
                 if (swapped.getScheduledTask(callitahhoowwwhatdoicallit
                         .get(justcallitlikesecondlastindex)
                         .getTask())
-                        .getFinishTime() <= TMax && outgoingCommsOK(processorTaskList,swapped)){
+                        .getFinishTime() <= TMax
+                        && outgoingCommsOK(processorTaskList,swapped)){
                     return true;
                 }
                 i--;
@@ -71,7 +69,7 @@ public class EquivalenceChecker {
 
     }
 
-    public boolean outgoingCommsOK(List<ScheduledTask> scheduledTasks, MBSchedule schedule) {
+    public boolean outgoingCommsOK(List<ScheduledTask> scheduledTasks, Schedule schedule) {
 //    Algorithm 3 Subroutine OutgoingCommsOK(ni. . . nl−1)
 //1: for all nk ∈ {ni. . . nl−1} do
 //            2: if ts(nk) > torigs (nk) then B check only if nk starts later
@@ -123,55 +121,56 @@ public class EquivalenceChecker {
     }
     //count all the prefect substring?
     //
-    private MBSchedule swap(MBSchedule schedule, ScheduledTask m, ScheduledTask taskToSwap){
+    private Schedule swap(Schedule schedule, ScheduledTask m, ScheduledTask taskToSwap){
 
-        MBSchedule result;
-        MBSchedule cSchedule = schedule.parent;
-        ArrayList<ScheduledTask> prevTask = new ArrayList<>();
-
-        while (cSchedule != null){
-            if (cSchedule.getScheduledTask().equals(taskToSwap)){
-                cSchedule = cSchedule.parent;
-                break;
-            }
-            prevTask.add(cSchedule.getScheduledTask());
-            cSchedule = cSchedule.parent;
-        }
-
-        //int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, task);
-        //                            MBSchedule subSchedule = cSchedule.createSubSchedule(
-        //                                    new ScheduledTask(numProcessor,task,earliestStartTime), _graph);
-
-        int earliestStartTime = calculateEarliestStartTime(cSchedule, taskToSwap.getProcessorID(), m.getTask());
-        int mProcessorID = m.getProcessorID();
-
-        // create new scheduled Task for m in at a new start Time
-        ScheduledTask scheduleM = new ScheduledTask( m.getProcessorID(),m.getTask(), m.getOriginalStartTime());
-        scheduleM.setStartTime(earliestStartTime);
-        result = cSchedule.parent.createSubSchedule(scheduleM, _graph);
-
-
-        Collections.reverse(prevTask);
-        for (ScheduledTask st : prevTask){
-            if (st.getProcessorID() == mProcessorID){
-                // calculate start time
-                ScheduledTask scheduleST = new ScheduledTask( st.getProcessorID(),st.getTask(), st.getOriginalStartTime());
-                scheduleST.setStartTime(earliestStartTime);
-                result = result.createSubSchedule(scheduleST,_graph);
-            } else {
-                // just schedule
-                result = result.createSubSchedule(st, _graph);
-            }
-        }
-
-        // scheduling
-        ScheduledTask scheduleST = new ScheduledTask( taskToSwap.getProcessorID(),taskToSwap.getTask(), taskToSwap.getOriginalStartTime());
-        scheduleST.setStartTime(earliestStartTime);
-        result = result.createSubSchedule(scheduleST,_graph);
-
-
+//        Schedule result;
+//        Schedule cSchedule = schedule.getParent();
+//        ArrayList<ScheduledTask> prevTask = new ArrayList<>();
+//
+//        while (cSchedule != null){
+//            if (cSchedule.getScheduledTask().equals(taskToSwap)){
+//                cSchedule = cSchedule.getParent();
+//                break;
+//            }
+//            prevTask.add(cSchedule.getScheduledTask());
+//            cSchedule = cSchedule.getParent();
+//        }
+//
+//        //int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, task);
+//        //                            Schedule subSchedule = cSchedule.createSubSchedule(
+//        //                                    new ScheduledTask(numProcessor,task,earliestStartTime), _graph);
+//
+//        int earliestStartTime = calculateEarliestStartTime(cSchedule, taskToSwap.getProcessorID(), m.getTask());
+//        int mProcessorID = m.getProcessorID();
+//
+//        // create new scheduled Task for m in at a new start Time
+//        ScheduledTask scheduleM = new ScheduledTask( m.getProcessorID(),m.getTask(), m.getOriginalStartTime());
+//        scheduleM.setStartTime(earliestStartTime);
+//        result = cSchedule.getParent().createSubSchedule(scheduleM, _graph);
+//
+//
+//        Collections.reverse(prevTask);
+//        for (ScheduledTask st : prevTask){
+//            if (st.getProcessorID() == mProcessorID){
+//                // calculate start time
+//                ScheduledTask scheduleST = new ScheduledTask( st.getProcessorID(),st.getTask(), st.getOriginalStartTime());
+//                scheduleST.setStartTime(earliestStartTime);
+//                result = result.createSubSchedule(scheduleST,_graph);
+//            } else {
+//                // just schedule
+//                result = result.createSubSchedule(st, _graph);
+//            }
+//        }
+//
+//        // scheduling
+//        ScheduledTask scheduleST = new ScheduledTask( taskToSwap.getProcessorID(),taskToSwap.getTask(), taskToSwap.getOriginalStartTime());
+//        scheduleST.setStartTime(earliestStartTime);
+//        result = result.createSubSchedule(scheduleST,_graph);
 
 
-        return result;
+
+
+//        return result;
+        return null;
     }
 }

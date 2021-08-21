@@ -1,12 +1,15 @@
-package raspberry.scheduler.graph;
+package raspberry.scheduler.graph.adjacencylist;
 
+
+import raspberry.scheduler.graph.IEdge;
+import raspberry.scheduler.graph.INode;
 
 /**
  * This class represents edges, which represent the communication cost of moving between
  * two nodes/tasks. It also stores the parent and child nodes connected.
  * @author Neville
  */
-public class Edge implements IEdge{
+public class Edge implements IEdge {
     private INode _parentNode;
     private INode _childNode;
     private int _weight;

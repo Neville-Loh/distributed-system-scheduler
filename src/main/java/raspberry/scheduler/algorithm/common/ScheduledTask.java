@@ -52,24 +52,16 @@ public class ScheduledTask {
     }
 
 
-    public int getOriginalStartTime() {
-        return _originalStartTime;
-    }
-
-//    public void setOriginalStartTime(int originStartTime) {
-//        _originalStartTime = originStartTime;
-//    }
-
     @Override
     public String toString(){
         return _task + "" + _processorID;
     }
 
-//    /**
-//     * //TODO check, might be the bug
-//     * @param obj
-//     * @return
-//     */
+    public int getOriginalStartTime() {
+        return _originalStartTime;
+    }
+
+
 //    @Override
 //    public boolean equals(Object obj) {
 //        if (obj == null) {
@@ -83,11 +75,9 @@ public class ScheduledTask {
 //                other.getTask().getName() + other.getProcessorID()
 //        );
 //    }
-
-    @Override
-    public int hashCode() {
-        return (_task.getName()+_processorID).hashCode();
-    }
-
-
+//
+//    @Override
+//    public int hashCode() {
+//        return (_task.getName()+_processorID).hashCode();
+//    }
 }

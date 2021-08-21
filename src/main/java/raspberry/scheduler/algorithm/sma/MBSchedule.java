@@ -1,10 +1,9 @@
 package raspberry.scheduler.algorithm.sma;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 import raspberry.scheduler.algorithm.common.ScheduledTask;
-import raspberry.scheduler.algorithm.Schedule;
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 
@@ -39,8 +38,7 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     private Hashtable<Integer, String> _lastForEachProcessor; //the last task schedule, for each processor.
 
 
-    public MBSchedule(){
-    }
+    public MBSchedule(){};
 
     /**
      * Class constructor
@@ -164,10 +162,10 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     public boolean equals3(Object otherSchedule) {
         if (otherSchedule == this) {
             return true;
-        } else if (!(otherSchedule instanceof Schedule)) {
+        } else if (!(otherSchedule instanceof ScheduleAStar)) {
             return false;
         } else {
-            Schedule schedule = (Schedule) otherSchedule;
+            ScheduleAStar schedule = (ScheduleAStar) otherSchedule;
             if (this._size != schedule.getSize()) {
                 return false;
             } else if (this._maxPid != schedule.getMaxPid()) {
@@ -495,23 +493,6 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
         return _lastForEachProcessor;
     }
 
-    public ArrayList<ScheduledTask> getAllTaskinProcessor(int processorID) {
-        return null;
-    }
-
-    /**
-     *
-     * @param task
-     * @return
-     */
-    public ScheduledTask getScheduledTask(INode task) {
-        MBSchedule cSchedule = this;
-        while (cSchedule != null &&
-                cSchedule.getScheduledTask().getTask() != task){
-            cSchedule = cSchedule.parent;
-        }
-        return cSchedule.getScheduledTask();
-    }
 }
 
 

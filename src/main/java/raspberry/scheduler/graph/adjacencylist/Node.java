@@ -1,10 +1,12 @@
-package raspberry.scheduler.graph;
+package raspberry.scheduler.graph.adjacencylist;
+
+import raspberry.scheduler.graph.INode;
 
 /**
  * This class represents the nodes of the input graph, which represent tasks.
  * The Node object created stores the node's name and its weight (execution time).
  */
-public class Node implements INode{
+public class Node implements INode {
 
     private String _name;
     private int _weight;

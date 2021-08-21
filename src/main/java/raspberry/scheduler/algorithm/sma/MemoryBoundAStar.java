@@ -7,9 +7,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 import raspberry.scheduler.algorithm.Algorithm;
-import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.algorithm.Schedule;
-import raspberry.scheduler.algorithm.Solution;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
+import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.graph.*;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -21,7 +20,7 @@ import raspberry.scheduler.algorithm.common.ScheduledTask;
  * @author Neville L.
  */
 public class MemoryBoundAStar implements Algorithm {
-    private static IGraph _graph;
+    private IGraph _graph;
     private TwoWayPriorityQueue _pq;
     private final int TOTAL_NUM_PROCESSOR;
     private int numNode;
@@ -105,7 +104,7 @@ public class MemoryBoundAStar implements Algorithm {
          */
         int iterCount = 0;
         while (true){
-            if (VERBOSE) System.out.printf("\nPQ SIZE :  %d\n", _pq.size());
+            if (!VERBOSE) System.out.printf("\nPQ SIZE :  %d\n", _pq.size());
 
             if (VERBOSE) System.out.println("\n====================");
             if (VERBOSE) System.out.println("Start: "+ iterCount);
@@ -180,43 +179,43 @@ public class MemoryBoundAStar implements Algorithm {
             }
 
 
-//            if (VERBOSE) System.out.println("After Exploring: " + iterCount);
-//            if (VERBOSE) System.out.println(_pq);
-//
-//            /*
-//             * Forget Routine
-//             * Forget about the low f score schedule
-//             */
-//            ArrayList<MBSchedule> startingPoint = new ArrayList<MBSchedule>();
-//            while (_pq.size() > (MAX_NUMBER_NODE - startingPoint.size())){
-//                if (VERBOSE) System.out.println("----------------------");
-//                if (VERBOSE) System.out.println(_pq);
-//                MBSchedule badSchedule = _pq.pollMax();
-//
-//
-//                if (VERBOSE) System.out.println("bad schedule = " +badSchedule);
-//                if (VERBOSE) System.out.println("Starting point = " + startingPoint);
-//                if (badSchedule.parent != null){
-//                    MBSchedule badScheduleParent = badSchedule.parent;
-//                    badScheduleParent.forget(badSchedule);
-//                    // if parent is not in the queue
-//                    if (VERBOSE) System.out.println("Forget -----" + badScheduleParent+ " Forgetting " + badSchedule);
-//                    if (_pq.contains(badScheduleParent)){
-//                        _pq.remove(badScheduleParent);
-//                        _pq.add(badScheduleParent);
-//
-//                    } else if (!startingPoint.contains(badScheduleParent)) {
-//                        if (VERBOSE) System.out.println("Adding " + badScheduleParent + " back to queue");
-//                        _pq.add(badScheduleParent);
-//                    }
-//                } else {
-//                    if (VERBOSE) System.out.println("Adding badSchedule: " + badSchedule +" to starting point");
-//                    startingPoint.add(badSchedule);
-//                }
-//                if (VERBOSE) System.out.println("----------------------");
-//            }
-//            _pq.addAll(startingPoint);
-//            iterCount++;
+            if (VERBOSE) System.out.println("After Exploring: " + iterCount);
+            if (VERBOSE) System.out.println(_pq);
+
+            /*
+             * Forget Routine
+             * Forget about the low f score schedule
+             */
+            ArrayList<MBSchedule> startingPoint = new ArrayList<MBSchedule>();
+            while (_pq.size() > (MAX_NUMBER_NODE - startingPoint.size())){
+                if (VERBOSE) System.out.println("----------------------");
+                if (VERBOSE) System.out.println(_pq);
+                MBSchedule badSchedule = _pq.pollMax();
+
+
+                if (VERBOSE) System.out.println("bad schedule = " +badSchedule);
+                if (VERBOSE) System.out.println("Starting point = " + startingPoint);
+                if (badSchedule.parent != null){
+                    MBSchedule badScheduleParent = badSchedule.parent;
+                    badScheduleParent.forget(badSchedule);
+                    // if parent is not in the queue
+                    if (VERBOSE) System.out.println("Forget -----" + badScheduleParent+ " Forgetting " + badSchedule);
+                    if (_pq.contains(badScheduleParent)){
+                        _pq.remove(badScheduleParent);
+                        _pq.add(badScheduleParent);
+
+                    } else if (!startingPoint.contains(badScheduleParent)) {
+                        if (VERBOSE) System.out.println("Adding " + badScheduleParent + " back to queue");
+                        _pq.add(badScheduleParent);
+                    }
+                } else {
+                    if (VERBOSE) System.out.println("Adding badSchedule: " + badSchedule +" to starting point");
+                    startingPoint.add(badSchedule);
+                }
+                if (VERBOSE) System.out.println("----------------------");
+            }
+            _pq.addAll(startingPoint);
+            iterCount++;
         }
 
         System.out.print("\n === THE FINAL ANSWER ===");
@@ -256,7 +255,7 @@ public class MemoryBoundAStar implements Algorithm {
      * @param nodeToBeSchedule The task schedule
      * @return start time the earliest start time that a task begin in the given processor id
      */
-    public static int calculateEarliestStartTime(MBSchedule parentSchedule, int processorId, INode nodeToBeSchedule) {
+    public int calculateEarliestStartTime(MBSchedule parentSchedule, int processorId, INode nodeToBeSchedule) {
         MBSchedule last_processorId_use = null; //last time processor with "processorId" was used.
         MBSchedule cParentSchedule = parentSchedule;
         //---------------------------------------- Getting start time
