@@ -39,7 +39,7 @@ public class Updater {
     private AlgoObservable _observable;
     private GanttChart _ganttChart, _currentBestSchedule;
     private ProcessorColors _assignedColors;
-    private static final Image doneTick = new Image("/icons/doneTick.png");
+    private static final Image _doneTick = new Image("/icons/doneTick.png");
 
     /**
      * Default constructor for class
@@ -94,13 +94,12 @@ public class Updater {
      */
     public void stopTimer() {
         _isRunning = false;
-        // _polling.stop();
         _timer.stop();
 
         //clear progress indicator and add done image
         _statusBox.getChildren().clear();
         ImageView imv = new ImageView();
-        imv.setImage(doneTick);
+        imv.setImage(_doneTick);
         _statusBox.getChildren().add(imv);
         _statusText.setText("Done");
     }
@@ -159,7 +158,7 @@ public class Updater {
     }
 
     /**
-     * Updates the Gantt chart.
+     * Updates the current schedule Gantt chart to display the current schedule
      */
     private void updateGanttChart() {
 
@@ -178,7 +177,7 @@ public class Updater {
                         int startTime = solution.getStartTime(node);
                         int compTime = node.getValue();
                         String nodeName = node.getName();
-                        String color = _assignedColors.getProcessorColor(Integer.parseInt(processor) - 1);
+                        String color = _assignedColors.getProcessorCurrentColor(Integer.parseInt(processor) - 1);
                         series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "-fx-background-color:" + color + ";", nodeName)));
 
 
@@ -187,7 +186,9 @@ public class Updater {
                 }
         }
     }
-
+    /**
+     * Updates the current best schedule Gantt chart to display the current best optimal schedule
+     */
     private void updateCurrentBest(){
         if(_isRunning){
             OutputSchedule solution = _observable.getcurrentBestSchedule();

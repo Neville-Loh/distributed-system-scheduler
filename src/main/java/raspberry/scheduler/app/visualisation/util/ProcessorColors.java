@@ -28,15 +28,20 @@ public class ProcessorColors {
         setProcessorColors();
     }
 
+
     /**
      * Return the color for the specified processor
      * @param processorNumber processor number
-     * @return processor color
+     * @return processor color for the current schedule gantt chart
      */
-    public String getProcessorColor(int processorNumber) {
+    public String getProcessorCurrentColor(int processorNumber) {
         return _processorCurrentColor.get(processorNumber);
     }
-
+    /**
+     * Return the color for the specified processor
+     * @param processorNumber processor number
+     * @return processor color for the current best schedule gantt chart
+     */
     public String getProcessorBestColor(int processorNumber){
         return _processorBestColor.get(processorNumber);
     }

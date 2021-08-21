@@ -38,7 +38,7 @@ public class Main {
 
     private static void startVisualisation(CLIConfig config, GraphReader reader) {
 //        new Thread(()-> {
-        App.main(config, reader);
+        VisualisationLauncher.main(config, reader);
 //        }).start();
     }
 }

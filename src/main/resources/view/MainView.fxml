@@ -7,6 +7,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="raspberry.scheduler.app.visualisation.controller.MainController">
    <children>
@@ -18,11 +20,27 @@
                      <children>
                         <VBox prefHeight="114.0" prefWidth="300.0" style="-fx-background-radius: 15;">
                            <children>
-                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="126.0" prefWidth="344.0" stylesheets="@css/Main.css" text="Runtime Statistics" textAlignment="CENTER" textFill="#495057">
-                                 <font>
-                                    <Font name="HoloLens MDL2 Assets" size="34.0" />
-                                 </font>
-                              </Label>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <HBox fx:id="_logoBox" prefHeight="100.0" prefWidth="201.0">
+                                       <padding>
+                                          <Insets left="15.0" top="25.0" />
+                                       </padding>
+                                    </HBox>
+                                    <TextFlow prefHeight="125.0" prefWidth="345.0">
+                                       <children>
+                                          <Text fill="#495057" strokeType="OUTSIDE" strokeWidth="0.0" text="Runtime Statistics" wrappingWidth="188.05078125">
+                                             <font>
+                                                <Font name="HoloLens MDL2 Assets" size="24.0" />
+                                             </font>
+                                          </Text>
+                                       </children>
+                                       <padding>
+                                          <Insets top="30.0" />
+                                       </padding>
+                                    </TextFlow>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                         <VBox prefHeight="25.0" prefWidth="300.0" />
@@ -138,7 +156,7 @@
                                                          </font>
                                                       </Label>
                                                    </children></VBox>
-                                                <VBox fx:id="_statusBox" prefHeight="22.0" prefWidth="51.0" />
+                                                <VBox fx:id="_statusBox" prefHeight="17.0" prefWidth="39.0" />
                                              </children>
                                           </HBox>
                                        </children>

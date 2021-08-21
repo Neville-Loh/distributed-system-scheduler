@@ -21,7 +21,7 @@ import java.io.IOException;
 /**
  * This class launches the front end visualisation.
  */
-public class App extends Application {
+public class VisualisationLauncher extends Application {
 
     private static CLIConfig _config;
     private static GraphReader _reader;
@@ -36,10 +36,10 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/testTile.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
-            primaryStage.setTitle("Raspberry Spritz A* Program");
+            primaryStage.setTitle("Raspberry Spritz Scheduler");
             primaryStage.setResizable(false);
             primaryStage.show();
             primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {

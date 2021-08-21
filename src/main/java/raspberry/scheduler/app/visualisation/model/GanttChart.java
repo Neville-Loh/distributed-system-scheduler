@@ -200,7 +200,7 @@ public class GanttChart<X, Y> extends XYChart<X, Y> {
 
                         num.setMinSize(num.USE_PREF_SIZE, num.USE_PREF_SIZE);
                         num.setPadding(new Insets(ellipse.getHeight(),0,0,ellipse.getWidth()));
-                        num.setStyle("-fx-font-family: 'System', Arial; -fx-font-weight: BOLD; -fx-text-fill: white; -fx-font-size: 22");
+                        num.setStyle("-fx-font-family: 'System', Arial; -fx-font-weight: BOLD; -fx-text-fill: white; -fx-font-size: 20");
 
                         region.getChildren().add(num);
 
