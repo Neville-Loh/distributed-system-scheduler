@@ -39,7 +39,7 @@ public class App extends Application {
             Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
-
+            primaryStage.setTitle("Raspberry Spritz A* Program");
             primaryStage.setResizable(false);
             primaryStage.show();
             primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {

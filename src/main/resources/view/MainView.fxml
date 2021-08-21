@@ -18,9 +18,9 @@
                      <children>
                         <VBox prefHeight="114.0" prefWidth="300.0" style="-fx-background-radius: 15;">
                            <children>
-                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="126.0" prefWidth="344.0" text="Runtime Statistics" textAlignment="CENTER" textFill="#6c757d">
+                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="126.0" prefWidth="344.0" stylesheets="@css/Main.css" text="Runtime Statistics" textAlignment="CENTER" textFill="#495057">
                                  <font>
-                                    <Font size="33.0" />
+                                    <Font name="HoloLens MDL2 Assets" size="34.0" />
                                  </font>
                               </Label>
                            </children>
@@ -30,9 +30,9 @@
                            <children>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Input file:" textFill="#6c757d">
+                                    <Label prefHeight="0.0" prefWidth="138.0" stylesheets="@css/Main.css" text="Input file:" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font>
                                        <opaqueInsets>
                                           <Insets />
@@ -40,17 +40,17 @@
                                        <VBox.margin>
                                           <Insets />
                                        </VBox.margin></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Output file:" textFill="#6c757d">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Output file:" textFill="#495057">
                                        <font>
                                           <Font size="16.0" />
                                        </font></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Algorithm:" textFill="#6c757d">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Algorithm:" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Active cores:" textFill="#6c757d">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Active cores:" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
                                  </children>
                                  <HBox.margin>
@@ -59,22 +59,22 @@
                               </VBox>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
-                                    <Label fx:id="_inputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="input.dot" textAlignment="RIGHT" textFill="#6c757d">
+                                    <Label fx:id="_inputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" stylesheets="@css/Main.css" text="input.dot" textAlignment="RIGHT" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="_outputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="Output.dot" textAlignment="RIGHT" textFill="#6c757d">
+                                    <Label fx:id="_outputFile" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" stylesheets="@css/Main.css" text="Output.dot" textAlignment="RIGHT" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
-                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="A*" textAlignment="RIGHT" textFill="#6c757d">
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="A*" textAlignment="RIGHT" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
-                                    <Label fx:id="_numCores" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="#6c757d">
+                                    <Label fx:id="_numCores" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
                                  </children>
                               </VBox>
@@ -88,21 +88,21 @@
                            <children>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
-                                    <Label prefHeight="23.0" prefWidth="138.0" text="Processors:" textFill="#6c757d">
+                                    <Label prefHeight="23.0" prefWidth="138.0" text="Processors:" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Iterations:" textFill="#6c757d">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Iterations:" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Time elapsed:" textFill="#6c757d">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Time elapsed:" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
-                                    <Label prefHeight="0.0" prefWidth="138.0" text="Status:" textFill="#6c757d">
+                                    <Label prefHeight="0.0" prefWidth="138.0" text="Status:" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
                                  </children>
                                  <HBox.margin>
@@ -111,27 +111,34 @@
                               </VBox>
                               <VBox prefHeight="26.0" prefWidth="275.0">
                                  <children>
-                                    <Label fx:id="_numProcessors" alignment="CENTER_RIGHT" prefHeight="23.0" prefWidth="138.0" text="1" textFill="#6c757d">
+                                    <Label fx:id="_numProcessors" alignment="CENTER_RIGHT" prefHeight="23.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
-                                    <Label fx:id="_iterations" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textFill="#6c757d">
+                                    <Label fx:id="_iterations" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="1" textAlignment="RIGHT" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
-                                    <Label fx:id="_timeElapsed" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="0" textFill="#6c757d">
+                                    <Label fx:id="_timeElapsed" alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="0" textAlignment="RIGHT" textFill="#495057">
                                        <font>
-                                          <Font size="16.0" />
+                                          <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
                                     <VBox prefHeight="200.0" prefWidth="100.0">
                                        <opaqueInsets>
                                           <Insets />
                                        </opaqueInsets>
                                        <children>
-                                          <HBox prefHeight="100.0" prefWidth="200.0">
+                                          <HBox prefHeight="27.0" prefWidth="148.0">
                                              <children>
-                                                <VBox prefHeight="200.0" prefWidth="100.0" />
-                                                <VBox fx:id="_statusBox" prefHeight="25.0" prefWidth="54.0" />
+                                                <VBox prefHeight="27.0" prefWidth="129.0">
+                                                   <children>
+                                                      <Label fx:id="_statusText" alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="27.0" prefWidth="111.0" text="Running" textFill="#495057">
+                                                         <font>
+                                                            <Font name="HoloLens MDL2 Assets" size="16.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children></VBox>
+                                                <VBox fx:id="_statusBox" prefHeight="22.0" prefWidth="51.0" />
                                              </children>
                                           </HBox>
                                        </children>
@@ -152,13 +159,13 @@
                               <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
                            </backgroundColor>
                            <valueColor>
-                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
                            </valueColor>
                            <unitColor>
-                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
                            </unitColor>
                            <titleColor>
-                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
                            </titleColor>
                         </Tile>
                      </children></VBox>
@@ -169,13 +176,13 @@
                               <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
                            </backgroundColor>
                            <valueColor>
-                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
                            </valueColor>
                            <unitColor>
-                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
                            </unitColor>
                            <titleColor>
-                              <Color red="0.42352941632270813" green="0.4588235318660736" blue="0.4901960790157318" />
+                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
                            </titleColor>
                         </Tile>
                      </children></VBox>
@@ -183,7 +190,8 @@
             </VBox>
             <VBox prefHeight="800.0" prefWidth="900.0" styleClass="Pane" stylesheets="@css/Main.css">
                <children>
-                  <VBox fx:id="_ganttBox" prefHeight="500.0" prefWidth="900.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" />
+                  <VBox fx:id="_ganttBox" prefHeight="400.0" prefWidth="900.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" />
+                  <VBox fx:id="_currentBestBox" prefHeight="400.0" prefWidth="900.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css" />
                </children>
             </VBox>
          </children>

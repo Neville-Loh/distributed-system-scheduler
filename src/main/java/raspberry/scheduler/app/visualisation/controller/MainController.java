@@ -32,16 +32,16 @@ public class MainController implements Initializable {
 
     // Initialisation of fields
     @FXML
-    private Label _inputFile, _outputFile, _numProcessors, _numCores, _timeElapsed, _iterations;
+    private Label _inputFile, _outputFile, _numProcessors, _numCores, _timeElapsed, _iterations,_statusText;
     @FXML
     private Tile _memTile, _CPUChart;
     @FXML
-    private VBox _ganttBox, _statusBox;
+    private VBox _ganttBox, _currentBestBox, _statusBox;
 
     private ProgressIndicator _statusIndicator;
     private CLIConfig _config;
     private ProcessorColors _assignedColors;
-    private GanttChart _ganttChart;
+    private GanttChart _ganttChart, _currentBest;
     private Updater _updater;
     private int _numP;
 
@@ -54,15 +54,16 @@ public class MainController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // setting up all the differetn components
+        // setting up all the different components
         _config = App.GetCLIConfig();
         setIdleStats();
         setupMemTile();
         setupCPUChart();
         setUpGanttChart();
+        setUpCurrentBestGanttChart();
         setUpStatus();
         // creating an updater for the live time components
-        _updater = new Updater(_timeElapsed, _iterations, _memTile, _CPUChart, _ganttChart, _statusBox, _assignedColors);
+        _updater = new Updater(_timeElapsed, _iterations,_statusText, _memTile, _CPUChart, _ganttChart,_currentBest, _statusBox, _assignedColors);
 
     }
 
@@ -142,16 +143,48 @@ public class MainController implements Initializable {
         _ganttChart.setBlockHeight(50);
         _ganttChart.setAnimated(false);
         double chartHeight = _ganttChart.getMaxHeight();
-        _ganttChart.setPrefHeight(500);
+        _ganttChart.setPrefHeight(400);
         _ganttChart.setPrefWidth(900);
-        _ganttChart.minHeight(500);
+        _ganttChart.minHeight(400);
         _ganttChart.minWidth(900);
-        _ganttChart.setBlockHeight(320 / _numP);
+        _ganttChart.setBlockHeight(230 / _numP);
         _ganttBox.getChildren().add(_ganttChart);
         _ganttChart.getStylesheets().add(getClass().getResource("/view/css/Gantt.css").toExternalForm());
         Color color = new Color(0.49, 0.57, 0.60, 1);
         _ganttChart.setStyle("-fx-fill:#31393C");
 
+    }
+
+    private void setUpCurrentBestGanttChart(){
+     //   _numP = _config.get_numProcessors();
+       // _assignedColors = new ProcessorColors(_numP);
+        List<String> processors = new ArrayList<String>();
+        for (int i = 1; i <= _numP; i++) {
+            processors.add(String.valueOf(i));
+        }
+
+        NumberAxis xAxis = new NumberAxis();
+        CategoryAxis yAxis = new CategoryAxis();
+        xAxis.setLabel("Time");
+        yAxis.setLabel("Processors");
+        yAxis.setTickLabelGap(10);
+        yAxis.setCategories(FXCollections.<String>observableArrayList(processors));
+        _currentBest = new GanttChart<Number, String>(xAxis, yAxis);
+        _currentBest.setAnimated(false);
+        _currentBest.setTitle("Current Best Schedule");
+        _currentBest.setLegendVisible(false);
+        _currentBest.setBlockHeight(50);
+        _currentBest.setAnimated(false);
+        double chartHeight = _currentBest.getMaxHeight();
+        _currentBest.setPrefHeight(400);
+        _currentBest.setPrefWidth(900);
+        _currentBest.minHeight(400);
+        _currentBest.minWidth(900);
+        _currentBest.setBlockHeight(230 / _numP);
+        _currentBestBox.getChildren().add(_currentBest);
+        _currentBest.getStylesheets().add(getClass().getResource("/view/css/Gantt.css").toExternalForm());
+        Color color = new Color(0.49, 0.57, 0.60, 1);
+        _currentBest.setStyle("-fx-fill:#31393C");
     }
 
 }

@@ -1,5 +1,8 @@
 package raspberry.scheduler.app.visualisation.model;
+import raspberry.scheduler.algorithm.Schedule;
 import raspberry.scheduler.algorithm.Solution;
+import raspberry.scheduler.graph.INode;
+import raspberry.scheduler.graph.Node;
 
 /**
  * AlgoObservable class receives the output data from the algorithm classes, such as iterations
@@ -13,6 +16,8 @@ public class AlgoObservable{
     private boolean _isFinish;
     // the current output schedule
     private Solution _solution;
+    //current best schedule
+    private  Solution _currentBestSchedule;
 
     // checks for whether there is a single instance of the class running
     private static AlgoObservable single_instance = null;
@@ -21,8 +26,8 @@ public class AlgoObservable{
      * Default constructor for class
      */
     private AlgoObservable(){
-        super();
         _isFinish = false;
+        _currentBestSchedule = new Solution(new Schedule(0,null,new Node("zero",0),0),0);
     }
 
     /**
@@ -78,6 +83,13 @@ public class AlgoObservable{
      */
     public void setSolution(Solution solution) {
         _solution = solution;
+        if ((_solution.getNumTasks() > _currentBestSchedule.getNumTasks()) || (_solution.getNumTasks() == _currentBestSchedule.getNumTasks() && _solution.getFinishTime() < _currentBestSchedule.getFinishTime())){
+            _currentBestSchedule = _solution;
+        }
+    }
+
+    public Solution getcurrentBestSchedule(){
+        return _currentBestSchedule;
     }
 
     /**

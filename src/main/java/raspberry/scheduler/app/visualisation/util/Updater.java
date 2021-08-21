@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class Updater {
     // Initialisation of variables
-    private Label _timeElapsed, _iterations;
+    private Label _timeElapsed, _iterations, _statusText;
     private VBox _statusBox;
     private Tile _memTile;
     private Tile _CPUChart;
@@ -37,8 +37,7 @@ public class Updater {
     private double _startTime;
     private DateFormat _timeFormat = new SimpleDateFormat("mm:ss:SSS");
     private AlgoObservable _observable;
-    private MainController mainController;
-    private GanttChart _ganttChart;
+    private GanttChart _ganttChart, _currentBestSchedule;
     private ProcessorColors _assignedColors;
     private static final Image doneTick = new Image("/icons/doneTick.png");
 
@@ -52,13 +51,15 @@ public class Updater {
      * @param statusBox Status symbol (spinning circle during execution/ tick for completion)
      * @param assignedColors Assigned colors for the processors in the Gantt chart
      */
-    public Updater(Label timeElapsed, Label iterations, Tile memTile, Tile CPUChart, GanttChart ganttChart, VBox statusBox, ProcessorColors assignedColors) {
+    public Updater(Label timeElapsed, Label iterations,Label statusText, Tile memTile, Tile CPUChart, GanttChart ganttChart,GanttChart currentBest, VBox statusBox, ProcessorColors assignedColors) {
         _timeElapsed = timeElapsed;
         _iterations = iterations;
         _statusBox = statusBox;
+        _statusText = statusText;
         _memTile = memTile;
         _CPUChart = CPUChart;
         _ganttChart = ganttChart;
+        _currentBestSchedule = currentBest;
         _observable = AlgoObservable.getInstance();
         _assignedColors = assignedColors;
         // Begin polling and record time
@@ -101,6 +102,7 @@ public class Updater {
         ImageView imv = new ImageView();
         imv.setImage(doneTick);
         _statusBox.getChildren().add(imv);
+        _statusText.setText("Done");
     }
 
     /**
@@ -115,6 +117,7 @@ public class Updater {
             updateIterations();
             updateCPUChart();
             updateGanttChart();
+            updateCurrentBest();
             if (_observable.getIsFinish()) {
                 stopTimer();
             }
@@ -182,6 +185,31 @@ public class Updater {
                     }
                     _ganttChart.getData().add(series);
                 }
+        }
+    }
+
+    private void updateCurrentBest(){
+        if(_isRunning){
+            OutputSchedule solution = _observable.getcurrentBestSchedule();
+            int numP = _observable.getSolution().getTotalProcessorNum();
+            List<String> processors = new ArrayList<String>();
+            for(int i = 1; i <=numP; i++){
+                processors.add(String.valueOf(i));
+            }
+            _currentBestSchedule.getData().clear();
+            for(String processor: processors){
+                XYChart.Series series = new XYChart.Series();
+                List<INode> nodesList = solution.getNodes(Integer.parseInt(processor));
+                for(INode node : nodesList){
+                    int startTime = solution.getStartTime(node);
+                    int compTime = node.getValue();
+                    String nodeName = node.getName();
+                    String color = _assignedColors.getProcessorBestColor(Integer.parseInt(processor) - 1);
+                    series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "-fx-background-color:" + color + ";", nodeName)));
+                }
+                _currentBestSchedule.getData().add(series);
+            }
+
         }
     }
 
