@@ -1,6 +1,9 @@
-package raspberry.scheduler.graph;
+package raspberry.scheduler.graph.adjacencylist;
 
 
+import raspberry.scheduler.graph.IEdge;
+import raspberry.scheduler.graph.IGraph;
+import raspberry.scheduler.graph.INode;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 import java.util.*;
@@ -11,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * This class store the graph data using adjacency list
  * which a list of edges is stored for each node.
  */
-public class Graph implements IGraph{
+public class Graph implements IGraph {
     private String _name;
     private Hashtable<String, INode> _nodes;
     private Hashtable<String, List<IEdge>> _inDegreeAdjacencyList;

@@ -11,6 +11,7 @@ public class ScheduledTask {
     private int _processorID;
     private INode _task;
     private int _startTime;
+    private int _originalStartTime;
 
 
     /**
@@ -23,6 +24,7 @@ public class ScheduledTask {
         _processorID = processorID;
         _task = task;
         _startTime = startTime;
+        _originalStartTime = startTime;
     }
 
 
@@ -38,6 +40,13 @@ public class ScheduledTask {
         return _startTime;
     }
 
+    public void setStartTime(int startTime) {
+//        if (_originalStartTime != -1){
+//            _originalStartTime = _startTime;
+//        }
+        _startTime = startTime;
+    }
+
     public int getFinishTime() {
         return _startTime + _task.getValue();
     }
@@ -48,23 +57,27 @@ public class ScheduledTask {
         return _task + "" + _processorID;
     }
 
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj.getClass() != this.getClass()) {
-            return false;
-        }
-        final ScheduledTask other = (ScheduledTask) obj;
-        return (this.getTask().getName()+ this.getProcessorID()).equals(
-                other.getTask().getName() + other.getProcessorID()
-        );
+    public int getOriginalStartTime() {
+        return _originalStartTime;
     }
 
-    @Override
-    public int hashCode() {
-        return (_task.getName()+_processorID).hashCode();
-    }
+
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (obj == null) {
+//            return false;
+//        }
+//        if (obj.getClass() != this.getClass()) {
+//            return false;
+//        }
+//        final ScheduledTask other = (ScheduledTask) obj;
+//        return (this.getTask().getName()+ this.getProcessorID()).equals(
+//                other.getTask().getName() + other.getProcessorID()
+//        );
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return (_task.getName()+_processorID).hashCode();
+//    }
 }

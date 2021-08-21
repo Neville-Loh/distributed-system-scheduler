@@ -1,7 +1,7 @@
 package raspberry.scheduler.algorithm.sma;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
-import raspberry.scheduler.graph.*;
 import raspberry.scheduler.graph.IGraph;
+import raspberry.scheduler.graph.adjacencylist.Graph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.io.exceptions.InvalidFormatException;
 
