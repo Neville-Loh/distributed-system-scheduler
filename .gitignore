@@ -60,9 +60,13 @@ buildNumber.properties
 .classpath
 .project
 /bin/
+<<<<<<< HEAD
+*output.dot
+=======
 
 
 .factorypath
 .settings/*
 #ignore output
 .+output.dot
+>>>>>>> master

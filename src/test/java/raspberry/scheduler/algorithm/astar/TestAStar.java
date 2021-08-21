@@ -166,7 +166,6 @@ public class TestAStar {
         assertEquals(227, output.getFinishTime());
     }
 
-
     /**
      * Helper method to read the file and run a star
      * with specified number of processor.

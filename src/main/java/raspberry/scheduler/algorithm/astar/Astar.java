@@ -18,6 +18,7 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  * @author Takahiro
  */
 public class Astar implements Algorithm {
+
     private IGraph _graph;
     int _numP;
     int _numNode;
@@ -27,7 +28,7 @@ public class Astar implements Algorithm {
     Hashtable<Integer, ArrayList<ScheduleAStar>> _visited;
 
     int _upperBound;
-    private AlgoObservable _observable;
+    protected AlgoObservable _observable;
 
     /**
      * Constructor for A*
@@ -43,6 +44,9 @@ public class Astar implements Algorithm {
         _numNode = _graph.getNumNodes();
         _upperBound = upperBound;
         _observable = AlgoObservable.getInstance();
+    }
+
+    public Astar(IGraph graphToSolve, int numProcessors) {
     }
 
     /**
