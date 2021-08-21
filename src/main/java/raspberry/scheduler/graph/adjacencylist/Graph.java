@@ -208,6 +208,7 @@ public class Graph implements IGraph {
     private void setIndexTable(){
         _indexTable = new Hashtable<>();
         ArrayList<INode> visited = new ArrayList<>();
+        getTopologicalOrder();
         Collections.reverse(_topologicalOrder);
         for(int i = 0; i < _topologicalOrder.size(); i++){
             _indexTable.put(_topologicalOrder.get(i), i);

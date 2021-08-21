@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.List;
 
 import raspberry.scheduler.algorithm.Algorithm;
+import raspberry.scheduler.algorithm.common.EquivalenceChecker;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
@@ -19,7 +20,7 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  */
 public class Astar implements Algorithm {
 
-    private IGraph _graph;
+    private static IGraph _graph;
     int _numP;
     int _numNode;
     int _maxCriticalPath;
@@ -29,6 +30,8 @@ public class Astar implements Algorithm {
 
     int _upperBound;
     protected AlgoObservable _observable;
+
+    EquivalenceChecker equivalenceChecker;
 
     /**
      * Constructor for A*
@@ -44,6 +47,7 @@ public class Astar implements Algorithm {
         _numNode = _graph.getNumNodes();
         _upperBound = upperBound;
         _observable = AlgoObservable.getInstance();
+        equivalenceChecker = new EquivalenceChecker(_graph, numProcessors);
     }
 
     public Astar(IGraph graphToSolve, int numProcessors) {
@@ -153,7 +157,9 @@ public class Astar implements Algorithm {
                             ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
                             if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
                                 duplicate++;
-                            }else{
+                            } else if (equivalenceChecker.weAreDoomed(newSchedule)) {
+                                System.out.println("nevilles gay");
+                            } else {
                                 _pq.add(newSchedule);
                             }
                         }
@@ -219,7 +225,7 @@ public class Astar implements Algorithm {
      * @param nodeToBeSchedule : node/task to be scheduled.
      * @return Integer : representing the earliest time. (start time)
      */
-    public int calculateEarliestStartTime(ScheduleAStar parentSchedule, int processorId, INode nodeToBeSchedule) {
+    public static int calculateEarliestStartTime(ScheduleAStar parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
         // Find last finish time for current processor id.
         ScheduleAStar last_processorId_use = null; //last time processor with "processorId" was used.

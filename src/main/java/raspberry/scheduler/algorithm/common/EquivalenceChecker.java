@@ -1,5 +1,7 @@
 package raspberry.scheduler.algorithm.common;
 
+import raspberry.scheduler.algorithm.astar.Astar;
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.graph.*;
 
 import java.util.*;
@@ -10,14 +12,14 @@ public class EquivalenceChecker {
 
     private IGraph _graph;
     private int _numProcessors;
-
+    private static int _counter = 0;
     public EquivalenceChecker(IGraph graph, int numProcessors){
         _graph = graph;
         _numProcessors = numProcessors;
     }
 
 
-    public boolean weAreDoomed(Schedule schedule){
+    public boolean weAreDoomed(ScheduleAStar schedule){
         //Require: Each task n ∈ V has a unique index 0 ≤ index(n) ≤ |V| − 1; in ascending index order tasks are also in
 //        a topological order
 //        Input: Partial schedule, including last scheduled task m at end of processor P
@@ -28,7 +30,7 @@ public class EquivalenceChecker {
         ArrayList<ScheduledTask> processorTaskList = schedule.getAllTaskInProcessor(m.getProcessorID());
         // sort by accenting start time
         processorTaskList.sort(Comparator.comparingInt(ScheduledTask::getOriginalStartTime));
-
+        System.out.println(processorTaskList.toString());
         Hashtable<Integer, ScheduledTask> callitahhoowwwhatdoicallit = new Hashtable<Integer, ScheduledTask>();
         int i = 1;
         while (i < processorTaskList.size() + 1){
@@ -37,16 +39,20 @@ public class EquivalenceChecker {
         }
         int justcallitlikesecondlastindex = callitahhoowwwhatdoicallit.size()-1;
         i = justcallitlikesecondlastindex;
-        while (i >= 0
+        System.out.println(callitahhoowwwhatdoicallit.toString());
+        while (i > 0
                 && _graph.getIndex(m.getTask()) <
                 _graph.getIndex(callitahhoowwwhatdoicallit.get(i).getTask())){
-            Schedule swapped = swap(schedule, m, callitahhoowwwhatdoicallit.get(i));
+//                    INode task = callitahhoowwwhatdoicallit.get(i).getTask();
+            ScheduleAStar swapped = swap(schedule, m, callitahhoowwwhatdoicallit.get(i));
 
                 if (swapped.getScheduledTask(callitahhoowwwhatdoicallit
                         .get(justcallitlikesecondlastindex)
                         .getTask())
                         .getFinishTime() <= TMax
                         && outgoingCommsOK(processorTaskList,swapped)){
+                    _counter++;
+                    System.out.println("counter is: " + _counter);
                     return true;
                 }
                 i--;
@@ -69,7 +75,7 @@ public class EquivalenceChecker {
 
     }
 
-    public boolean outgoingCommsOK(List<ScheduledTask> scheduledTasks, Schedule schedule) {
+    public boolean outgoingCommsOK(List<ScheduledTask> scheduledTasks, ScheduleAStar schedule) {
 //    Algorithm 3 Subroutine OutgoingCommsOK(ni. . . nl−1)
 //1: for all nk ∈ {ni. . . nl−1} do
 //            2: if ts(nk) > torigs (nk) then B check only if nk starts later
@@ -121,56 +127,101 @@ public class EquivalenceChecker {
     }
     //count all the prefect substring?
     //
-    private Schedule swap(Schedule schedule, ScheduledTask m, ScheduledTask taskToSwap){
+    private ScheduleAStar swap(ScheduleAStar schedule, ScheduledTask m, ScheduledTask taskToSwap){
 
-//        Schedule result;
-//        Schedule cSchedule = schedule.getParent();
-//        ArrayList<ScheduledTask> prevTask = new ArrayList<>();
-//
-//        while (cSchedule != null){
-//            if (cSchedule.getScheduledTask().equals(taskToSwap)){
-//                cSchedule = cSchedule.getParent();
-//                break;
-//            }
-//            prevTask.add(cSchedule.getScheduledTask());
-//            cSchedule = cSchedule.getParent();
-//        }
-//
-//        //int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, task);
-//        //                            Schedule subSchedule = cSchedule.createSubSchedule(
-//        //                                    new ScheduledTask(numProcessor,task,earliestStartTime), _graph);
-//
-//        int earliestStartTime = calculateEarliestStartTime(cSchedule, taskToSwap.getProcessorID(), m.getTask());
-//        int mProcessorID = m.getProcessorID();
-//
-//        // create new scheduled Task for m in at a new start Time
-//        ScheduledTask scheduleM = new ScheduledTask( m.getProcessorID(),m.getTask(), m.getOriginalStartTime());
-//        scheduleM.setStartTime(earliestStartTime);
+        ScheduleAStar result;
+        ScheduleAStar cSchedule = schedule.getParent();
+        ArrayList<ScheduledTask> prevTask = new ArrayList<>();
+
+        while (cSchedule != null){
+            if (cSchedule.getScheduledTask().equals(taskToSwap)){
+                cSchedule = cSchedule.getParent();
+                break;
+            }
+            prevTask.add(cSchedule.getScheduledTask());
+            cSchedule = cSchedule.getParent();
+        }
+
+        //int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, task);
+        //                            Schedule subSchedule = cSchedule.createSubSchedule(
+        //                                    new ScheduledTask(numProcessor,task,earliestStartTime), _graph);
+
+        int earliestStartTime = Astar.calculateEarliestStartTime(cSchedule, taskToSwap.getProcessorID(), m.getTask());
+        int mProcessorID = m.getProcessorID();
+
+        // create new scheduled Task for m in at a new start Time
+        ScheduledTask scheduleM = new ScheduledTask( m.getProcessorID(),m.getTask(), m.getOriginalStartTime());
+        scheduleM.setStartTime(earliestStartTime);
+
 //        result = cSchedule.getParent().createSubSchedule(scheduleM, _graph);
-//
-//
-//        Collections.reverse(prevTask);
-//        for (ScheduledTask st : prevTask){
-//            if (st.getProcessorID() == mProcessorID){
-//                // calculate start time
-//                ScheduledTask scheduleST = new ScheduledTask( st.getProcessorID(),st.getTask(), st.getOriginalStartTime());
-//                scheduleST.setStartTime(earliestStartTime);
+        if (cSchedule != null && cSchedule.getParent() != null) {
+            result = createSubSchedule(cSchedule.getParent(), scheduleM);
+        } else {
+            Hashtable<INode, Integer> rootTable = this.getRootTable();
+
+            result = new ScheduleAStar(
+                    scheduleM,
+                    getChildTable(rootTable, scheduleM.getTask())
+            );
+        }
+
+        Collections.reverse(prevTask);
+        for (ScheduledTask st : prevTask){
+            if (st.getProcessorID() == mProcessorID){
+                // calculate start time
+                ScheduledTask scheduleST = new ScheduledTask( st.getProcessorID(),st.getTask(), st.getOriginalStartTime());
+                scheduleST.setStartTime(earliestStartTime);
 //                result = result.createSubSchedule(scheduleST,_graph);
-//            } else {
-//                // just schedule
+                result = createSubSchedule(result, scheduleST);
+            } else {
+                // just schedule
 //                result = result.createSubSchedule(st, _graph);
-//            }
-//        }
-//
-//        // scheduling
-//        ScheduledTask scheduleST = new ScheduledTask( taskToSwap.getProcessorID(),taskToSwap.getTask(), taskToSwap.getOriginalStartTime());
-//        scheduleST.setStartTime(earliestStartTime);
+                result = createSubSchedule(result, st);
+            }
+        }
+
+        // scheduling
+        ScheduledTask scheduleST = new ScheduledTask( taskToSwap.getProcessorID(),taskToSwap.getTask(), taskToSwap.getOriginalStartTime());
+        scheduleST.setStartTime(earliestStartTime);
 //        result = result.createSubSchedule(scheduleST,_graph);
+        result = createSubSchedule(result, scheduleST);
 
 
 
 
-//        return result;
-        return null;
+        return result;
+//        return null;
+    }
+
+    private ScheduleAStar createSubSchedule(ScheduleAStar schedule, ScheduledTask scheduledTask) {
+//        Hashtable<INode, Integer> newTable = getChildTable(schedule._inDegreeTable, scheduledTask.getTask());
+
+        return new ScheduleAStar(
+                schedule,
+                scheduledTask,
+                null);
+    }
+
+    public Hashtable<INode, Integer> getChildTable(Hashtable<INode, Integer> parentTable, INode x) {
+        Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>(parentTable);
+        tmp.remove(x);
+        for (IEdge i : _graph.getOutgoingEdges(x.getName())) {
+            int somthing = tmp.get(i.getChild()) - 1;
+            tmp.replace(i.getChild(), tmp.get(i.getChild()) - 1);
+        }
+        return tmp;
+    }
+
+    public Hashtable<INode, Integer> getRootTable() {
+        Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>();
+        for (INode i : _graph.getAllNodes()) {
+            tmp.put(i, 0);
+        }
+        for (INode i : _graph.getAllNodes()) {
+            for (IEdge j : _graph.getOutgoingEdges(i.getName())) {
+                tmp.replace(j.getChild(), tmp.get(j.getChild()) + 1);
+            }
+        }
+        return tmp;
     }
 }
