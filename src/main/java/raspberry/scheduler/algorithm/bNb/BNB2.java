@@ -20,7 +20,7 @@ public class BNB2 implements Algorithm {
     int _bound;
     int _numNode;
     int _maxCriticalPath;
-
+    protected ScheduleB shortestPath;
 
     Hashtable<String, Integer> _heuristicTable;
     Stack<ScheduleB> _scheduleStack;
@@ -43,7 +43,7 @@ public class BNB2 implements Algorithm {
     @Override
     public OutputSchedule findPath(){
         //Compute topological order and return it.
-        ScheduleB shortestPath = null;
+        shortestPath = null;
 
         // Stack - Keeps track of all available/scheduable tasks.
         _scheduleStack = new Stack<ScheduleB>();
@@ -211,8 +211,8 @@ public class BNB2 implements Algorithm {
     public Boolean isIrrelevantDuplicate(ArrayList<ScheduleB> scheduleList, ScheduleB cSchedule) {
         for (ScheduleB s : scheduleList) {
             if ( s.equals2(cSchedule) ){
-                if ( s.getLowerBound() > cSchedule.getLowerBound()) {
-                    System.out.println("Re-opening node: Should not happen if heuristic is consistant");
+                if ( s.getLowerBound() > cSchedule.getLowerBound() ) {
+//                    System.out.println("Re-opening node: Should not happen if heuristic is consistant");
                     return false;
                 }else{
                     return true;
