@@ -2,7 +2,6 @@ package raspberry.scheduler.algorithm.bNb;
 
 import java.util.*;
 
-import raspberry.scheduler.algorithm.Schedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.graph.INode;
 
@@ -16,10 +15,11 @@ import raspberry.scheduler.graph.INode;
 public class ScheduleB implements Comparable<ScheduleB> {
 
     private ScheduleB _parent; // Parent Schedule
+    private int _size; // Size of the partial schedule. # of tasks scheduled.
+
     private ScheduledTask _scheduleTask;
 
 
-    private int _size; // Size of the partial schedule. # of tasks scheduled.
     private int _overallFinishTime; // t: Total weight
     private int _maxPid; //The largest pid currently used to schedule. This ranges from 1 ~ n. (not 0 ~ n-1)
     private Hashtable<INode, Integer> _inDegreeTable;

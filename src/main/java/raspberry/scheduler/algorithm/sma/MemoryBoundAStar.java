@@ -7,9 +7,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 import raspberry.scheduler.algorithm.Algorithm;
-import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.algorithm.Schedule;
-import raspberry.scheduler.algorithm.Solution;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
+import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.graph.*;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;

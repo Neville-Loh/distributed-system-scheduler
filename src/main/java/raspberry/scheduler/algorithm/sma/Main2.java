@@ -1,15 +1,11 @@
 package raspberry.scheduler.algorithm.sma;
-import raspberry.scheduler.algorithm.Astar;
-import raspberry.scheduler.algorithm.sma.MemoryBoundAStar;
-import raspberry.scheduler.algorithm.OutputSchedule;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.*;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
-import raspberry.scheduler.io.GraphReader;
 import raspberry.scheduler.io.exceptions.InvalidFormatException;
 
 import java.io.FileNotFoundException;
-import java.util.TooManyListenersException;
 
 
 public class Main2 {

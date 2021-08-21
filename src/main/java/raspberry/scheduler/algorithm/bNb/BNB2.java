@@ -1,9 +1,8 @@
 package raspberry.scheduler.algorithm.bNb;
 
 import raspberry.scheduler.algorithm.Algorithm;
-import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.algorithm.Schedule;
-import raspberry.scheduler.algorithm.Solution;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
+import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.graph.IEdge;

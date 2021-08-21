@@ -1,8 +1,8 @@
 
 package raspberry.scheduler;
 
-import raspberry.scheduler.algorithm.*;
-import raspberry.scheduler.algorithm.sma.MemoryBoundAStar;
+import raspberry.scheduler.algorithm.astar.Astar;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.cli.CLIConfig;
 import raspberry.scheduler.cli.CLIParser;
 import raspberry.scheduler.cli.exception.ParserException;

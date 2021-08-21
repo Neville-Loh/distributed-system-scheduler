@@ -1,4 +1,4 @@
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm.common;
 
 import raspberry.scheduler.graph.INode;
 

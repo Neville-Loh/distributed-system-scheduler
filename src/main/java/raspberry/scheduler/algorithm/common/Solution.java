@@ -1,5 +1,6 @@
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm.common;
 
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.algorithm.bNb.ScheduleB;
 import raspberry.scheduler.algorithm.sma.MBSchedule;
 import raspberry.scheduler.graph.INode;
@@ -21,7 +22,7 @@ public class Solution implements OutputSchedule {
      * @param schedule a linked list that contain a valid solution
      * @param numP the specified number of processors that algorithm takes in as input
      */
-    public Solution(Schedule schedule, int numP) {
+    public Solution(ScheduleAStar schedule, int numP) {
         _table = schedule.getPath();
         for (INode node : _table.keySet()) {
             _finshTime = Math.max(getStartTime(node) + node.getValue(), _finshTime);

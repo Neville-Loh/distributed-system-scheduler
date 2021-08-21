@@ -1,9 +1,8 @@
 package raspberry.iotest;
 
 import org.junit.Test;
-import raspberry.scheduler.algorithm.OutputChecker;
-import raspberry.scheduler.algorithm.Astar;
-import raspberry.scheduler.algorithm.OutputSchedule;
+import raspberry.scheduler.algorithm.astar.Astar;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.io.GraphReader;

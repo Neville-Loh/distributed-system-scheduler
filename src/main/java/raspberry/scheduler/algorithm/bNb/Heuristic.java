@@ -1,6 +1,6 @@
 package raspberry.scheduler.algorithm.bNb;
 
-import raspberry.scheduler.algorithm.Schedule;
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
@@ -74,7 +74,7 @@ public class Heuristic {
      * @param numP   : number of processors allowed to use for scheduling.
      * @return Integer : Representing the heuristics of best case scheduling.
      */
-    public static int h2(Hashtable<INode, Integer> x, int start, int cost, Schedule parent, int numP) {
+    public static int h2(Hashtable<INode, Integer> x, int start, int cost, ScheduleAStar parent, int numP) {
         int sum = cost;
         for (int i = 0; i < numP; i++) {
             sum += getLastPTime(parent, i);
@@ -93,7 +93,7 @@ public class Heuristic {
      * @param processorId     : processor id.
      * @return Integer : Representing the time of last time a specific processor was used.
      */
-    public static int getLastPTime(Schedule cParentSchedule, int processorId) {
+    public static int getLastPTime(ScheduleAStar cParentSchedule, int processorId) {
         while (cParentSchedule != null) {
             if (cParentSchedule.getPid() == processorId) {
                 return cParentSchedule.getFinishTime();
