@@ -62,5 +62,10 @@ buildNumber.properties
 /bin/
 
 
+<<<<<<< HEAD
 .factorypath
 .settings/*
+=======
+#ignore output
+.+output.dot
+>>>>>>> master

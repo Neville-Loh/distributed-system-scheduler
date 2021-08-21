@@ -76,12 +76,9 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
 
     /**
      * Constructor for partial schedule
-     *
-     * @param startTime      : the earliest start time a node can be scheduled.
-     * @param parentSchedule : parent schedule
-     * @param node           : the task this partial schedule is scheduling.
-     * @param processorId    : id of a processor a node is being scheduled
-     *
+     * @param parentSchedule
+     * @param scheduledTask
+     * @param inDegreeTable
      */
     public ScheduleAStar(ScheduleAStar parentSchedule, ScheduledTask scheduledTask, Hashtable<INode, Integer> inDegreeTable) {
         super(parentSchedule, scheduledTask);

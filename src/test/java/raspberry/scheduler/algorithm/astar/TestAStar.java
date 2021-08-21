@@ -187,14 +187,14 @@ public class TestAStar {
 
         // run and time a* algorithm (seeker weighted a* routine)
         long startTime = System.nanoTime();
-        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
-        OutputSchedule outputBound = wA.findPath();
-        int upperbound = outputBound.getFinishTime();
-        wA = null;
-        outputBound = null;
+//        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
+//        OutputSchedule outputBound = wA.findPath();
+//        int upperbound = outputBound.getFinishTime();
+//        wA = null;
+//        outputBound = null;
 
         // run a star
-        Astar astar = new Astar(graph,numProcessors,upperbound);
+        Astar astar = new Astar(graph,numProcessors,Integer.MAX_VALUE);
         OutputSchedule output = astar.findPath();
 
         System.out.printf("------------------------\n" +

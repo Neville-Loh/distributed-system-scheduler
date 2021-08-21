@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * 
- * @author Young, Neville, Johnathan
+ * @author Young, Neville, Jonathon
  */
 public class OutputChecker {
     /**

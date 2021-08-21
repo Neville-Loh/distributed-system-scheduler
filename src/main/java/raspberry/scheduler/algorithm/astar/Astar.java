@@ -7,6 +7,7 @@ import raspberry.scheduler.algorithm.Algorithm;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
+import raspberry.scheduler.app.visualisation.model.AlgoObservable;
 import raspberry.scheduler.graph.*;
 
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -26,6 +27,8 @@ public class Astar implements Algorithm {
     Hashtable<Integer, ArrayList<ScheduleAStar>> _visited;
 
     int _upperBound;
+    private AlgoObservable _observable;
+
     /**
      * Constructor for A*
      *
@@ -39,6 +42,7 @@ public class Astar implements Algorithm {
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
         _upperBound = upperBound;
+        _observable = AlgoObservable.getInstance();
     }
 
     /**
@@ -68,8 +72,8 @@ public class Astar implements Algorithm {
                 ScheduleAStar newSchedule = new ScheduleAStar(
                         new ScheduledTask(1,node, 0),
                         getChildTable(rootTable, node)
-
                 );
+
                 newSchedule.addHeuristic(
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
@@ -82,12 +86,20 @@ public class Astar implements Algorithm {
 
         ScheduleAStar cSchedule;
         int duplicate = 0; // Duplicate counter, Used for debugging purposes.
-
+        _observable.setIterations(0);
+        _observable.setIsFinish(false);
+      //  System.out.println(_observable.getIterations());
         while (true) {
 //            System.out.printf("PQ SIZE: %d\n", _pq.size());
+            _observable.increment();
+            //System.out.println(_observable.getIterations());
             cSchedule = _pq.poll();
 
+            Solution cScheduleSolution = new Solution(cSchedule, _numP);
+            _observable.setSolution(cScheduleSolution);
+
             ArrayList<ScheduleAStar> listVisitedForSize = _visited.get(cSchedule.getHash());
+
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
                 duplicate++;
                 continue;
@@ -149,6 +161,10 @@ public class Astar implements Algorithm {
         }
         System.out.printf("PQ SIZE: %d\n", _pq.size());
         System.out.printf("\nDUPLCIATE : %d\n", duplicate);
+
+        _observable.setIsFinish(true);
+        _observable.setSolution(new Solution(cSchedule,_numP));
+
         return new Solution(cSchedule, _numP);
     }
 
@@ -333,7 +349,7 @@ public class Astar implements Algorithm {
      */
     public Boolean isIrrelevantDuplicate(ArrayList<ScheduleAStar> scheduleList, ScheduleAStar cSchedule) {
         for (ScheduleAStar s : scheduleList) {
-            if ( s.equals3(cSchedule) ){
+            if ( s.equals2(cSchedule) ){
                 if ( s.getTotal() > cSchedule.getTotal()) {
 //                    System.out.printf("%d -> %d\n", s.getTotal(), cSchedule.getTotal());
                     return false;
