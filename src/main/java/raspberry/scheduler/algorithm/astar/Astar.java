@@ -5,6 +5,7 @@ import java.util.List;
 
 import raspberry.scheduler.algorithm.Algorithm;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
+import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.graph.*;
 
@@ -29,7 +30,7 @@ public class Astar implements Algorithm {
      * Constructor for A*
      *
      * @param graphToSolve  : graph to solve (graph represents the task and dependencies)
-     * @param numProcessors : number of processor we can used to scheudle tasks.
+     * @param numProcessors : number of processor we can use to schedule tasks.
      */
     public Astar(IGraph graphToSolve, int numProcessors, int upperBound) {
         _graph = graphToSolve;
@@ -58,13 +59,21 @@ public class Astar implements Algorithm {
 //        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
         Hashtable<INode, Integer> rootTable = this.getRootTable();
 
-        for (INode i : rootTable.keySet()) {
-            if (rootTable.get(i) == 0) {
-                ScheduleAStar newSchedule = new ScheduleAStar(0, null, i, 1, getChildTable(rootTable, i));
+        for (INode node : rootTable.keySet()) {
+            if (rootTable.get(node) == 0) {
+
+//                ScheduleAStar newSchedule = new ScheduleAStar(
+//                        0, null, node, 1, getChildTable(rootTable, node));
+//
+                ScheduleAStar newSchedule = new ScheduleAStar(
+                        new ScheduledTask(1,node, 0),
+                        getChildTable(rootTable, node)
+
+                );
                 newSchedule.addHeuristic(
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
-                                h1(getChildTable(rootTable, i), newSchedule)
+                                h1(getChildTable(rootTable, node), newSchedule)
                         )));
 //                master.put(newSchedule, getChildTable(rootTable, i));
                 _pq.add(newSchedule);
@@ -107,16 +116,23 @@ public class Astar implements Algorithm {
             }
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
-                    //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
-                    for (int j = 1; j <= pidBound; j++) {
-                        int start = calculateCost(cSchedule, j, node);
+                    for (int pid = 1; pid <= pidBound; pid++) {
+                        int start = calculateEarliestStartTime(cSchedule, pid, node);
+
+
                         Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
-                        ScheduleAStar newSchedule = new ScheduleAStar(start, cSchedule, node, j, newTable);
+
+                        ScheduleAStar newSchedule = new ScheduleAStar(
+                                cSchedule,
+                                new ScheduledTask(pid, node, start),
+                                newTable);
+
                         newSchedule.addHeuristic(
                                 Collections.max(Arrays.asList(
                                         h(newSchedule),
                                         h1(newTable, newSchedule)
                                 )));
+
                         if (newSchedule.getTotal() <= _upperBound){
                             ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
                             if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
@@ -125,6 +141,8 @@ public class Astar implements Algorithm {
                                 _pq.add(newSchedule);
                             }
                         }
+
+
                     }
                 }
             }
@@ -181,7 +199,7 @@ public class Astar implements Algorithm {
      * @param nodeToBeSchedule : node/task to be scheduled.
      * @return Integer : representing the earliest time. (start time)
      */
-    public int calculateCost(ScheduleAStar parentSchedule, int processorId, INode nodeToBeSchedule) {
+    public int calculateEarliestStartTime(ScheduleAStar parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
         // Find last finish time for current processor id.
         ScheduleAStar last_processorId_use = null; //last time processor with "processorId" was used.

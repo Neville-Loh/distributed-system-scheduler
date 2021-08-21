@@ -13,7 +13,7 @@ import raspberry.scheduler.graph.INode;
  *
  * @author Takahiro
  */
-public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>  {
+public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar> {
 
     //private ScheduleAStar _parent; // Parent Schedule
     //private int _size; // Size of the partial schedule. # of tasks scheduled.
@@ -24,11 +24,8 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
 //    private int _pid;  //Processor Id
 
 
-    
     private int _h; // h: Heuristic weight
     private int _total; // t: Total weight
-
-
 
 
     private Hashtable<String, List<Integer>> _scheduling; // partial schedule. //TODO : Implement this idea with less memory intensive manner.
@@ -36,46 +33,75 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
     private int _maxPid; //The largest pid currently used to schedule
     Hashtable<INode, Integer> _inDegreeTable;
 
-    private int _upperBound;    // For BNB. Represents the worst case. <- Bad schedling.
-    private int _lowerBound;   // For BNB. Represents the base case. <- perfect schedling.
-
+    public ScheduleAStar(ScheduledTask scheduledTask, Hashtable<INode, Integer> inDegreeTable) {
+        super(scheduledTask);
+        _inDegreeTable = inDegreeTable;
+        _h = 0;
+        _total = super.getScheduledTask().getFinishTime() + _h;
+        _scheduling = new Hashtable<String, List<Integer>>();
+        _lastForEachProcessor = new Hashtable<Integer, String>();
+        _maxPid = scheduledTask.getProcessorID();
+        _scheduling.put(scheduledTask.getTask().getName(), Arrays.asList(scheduledTask.getProcessorID(),
+                scheduledTask.getStartTime()));
+        _lastForEachProcessor.put(scheduledTask.getProcessorID(), scheduledTask.getTask().getName());
+    }
 
     /**
      * Constructor for partial schedule
      *
-     * @param startTime      : the earliest start time a node can be scheudled.
+     * @param startTime      : the earliest start time a node can be scheduled.
      * @param parentSchedule : parent schedule
      * @param node           : the task this partial schedule is scheduling.
      * @param processorId    : id of a processor a node is being scheduled
+     * @deprecated
      */
     public ScheduleAStar(int startTime, ScheduleAStar parentSchedule, INode node, int processorId, Hashtable<INode, Integer> inDegreeTable) {
-
         super(parentSchedule, new ScheduledTask(processorId, node, startTime));
-
-
         _h = 0;
-        _total = super.getScheduledTask().getFinishTime()+ _h;
+        _total = super.getScheduledTask().getFinishTime() + _h;
         _inDegreeTable = inDegreeTable;
-        if (super.getParent() == null) {
-            //_size = 1;
-            _scheduling = new Hashtable<String, List<Integer>>();
-            _lastForEachProcessor = new Hashtable<Integer, String>();
+
+        if (processorId > super.getParent().getMaxPid()) {
             _maxPid = processorId;
         } else {
-            if (processorId > super.getParent().getMaxPid()) {
-                _maxPid = processorId;
-            } else {
-                _maxPid = super.getParent().getMaxPid();
-            }
-            super.setSize(super.getSize()+1);
-            //_size = parentSchedule._size + 1;
-            _scheduling = (Hashtable<String, List<Integer>>) ((ScheduleAStar) super.getParent()).getScheduling().clone();
-            _lastForEachProcessor = (Hashtable<Integer, String>) ((ScheduleAStar) super.getParent()).getLastForEachProcessor().clone();
+            _maxPid = super.getParent().getMaxPid();
         }
+
+        _scheduling = (Hashtable<String, List<Integer>>) ((ScheduleAStar) super.getParent()).getScheduling().clone();
+        _lastForEachProcessor = (Hashtable<Integer, String>) ((ScheduleAStar) super.getParent()).getLastForEachProcessor().clone();
+
         _scheduling.put(node.getName(), Arrays.asList(processorId, startTime));
         _lastForEachProcessor.put(processorId, node.getName());
     }
-    
+
+    /**
+     * Constructor for partial schedule
+     *
+     * @param startTime      : the earliest start time a node can be scheduled.
+     * @param parentSchedule : parent schedule
+     * @param node           : the task this partial schedule is scheduling.
+     * @param processorId    : id of a processor a node is being scheduled
+     *
+     */
+    public ScheduleAStar(ScheduleAStar parentSchedule, ScheduledTask scheduledTask, Hashtable<INode, Integer> inDegreeTable) {
+        super(parentSchedule, scheduledTask);
+        _h = 0;
+        _total = super.getScheduledTask().getFinishTime() + _h;
+        _inDegreeTable = inDegreeTable;
+
+        if (scheduledTask.getProcessorID() > super.getParent().getMaxPid()) {
+            _maxPid = scheduledTask.getProcessorID();
+        } else {
+            _maxPid = super.getParent().getMaxPid();
+        }
+        _scheduling = (Hashtable<String, List<Integer>>) ((ScheduleAStar) super.getParent()).getScheduling().clone();
+        _lastForEachProcessor = (Hashtable<Integer, String>) ((ScheduleAStar) super.getParent()).getLastForEachProcessor().clone();
+
+        _scheduling.put(scheduledTask.getTask().getName(), Arrays.asList(scheduledTask.getProcessorID(), scheduledTask.getStartTime()));
+        _lastForEachProcessor.put(scheduledTask.getProcessorID(), scheduledTask.getTask().getName());
+    }
+
+
 
     /**
      * Since we calculate heuristic after the creation of Schedule instance, this was added.
@@ -126,9 +152,9 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
             return false;
         } else {
             ScheduleAStar schedule = (ScheduleAStar) otherSchedule;
-            if ( this.getSize() != schedule.getSize()) {
+            if (this.getSize() != schedule.getSize()) {
                 return false;
-            } else if ( this.getMaxPid() != schedule.getMaxPid()) {
+            } else if (this.getMaxPid() != schedule.getMaxPid()) {
                 return false;
             } else {
                 // Group by pid. Compare match
@@ -143,7 +169,7 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
                         tmp = new Hashtable<String, Integer>();
                     }
                     tmp.put(s, _scheduling.get(s).get(1));
-                    hash4scheduling.put( _scheduling.get(s).get(0), tmp );
+                    hash4scheduling.put(_scheduling.get(s).get(0), tmp);
                 }
                 for (String s : _scheduling2.keySet()) {
                     Hashtable<String, Integer> tmp = hash4scheduling2.get(_scheduling2.get(s).get(0)); //get(0) gets pid
@@ -151,7 +177,7 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
                         tmp = new Hashtable<String, Integer>();
                     }
                     tmp.put(s, _scheduling2.get(s).get(1));
-                    hash4scheduling2.put( _scheduling2.get(s).get(0), tmp );
+                    hash4scheduling2.put(_scheduling2.get(s).get(0), tmp);
                 }
                 for (Hashtable<String, Integer> i : hash4scheduling.values()) {
                     Boolean foundMatch = false;
@@ -190,10 +216,10 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
                 Set<HashSet<Integer>> hash4scheduling2 = new HashSet<HashSet<Integer>>();
 
                 for (String s : _scheduling.keySet()) {
-                    hash4scheduling.add(new HashSet<Integer>(Arrays.asList(s.hashCode(),_scheduling.get(s).get(1))));
+                    hash4scheduling.add(new HashSet<Integer>(Arrays.asList(s.hashCode(), _scheduling.get(s).get(1))));
                 }
                 for (String s : _scheduling2.keySet()) {
-                    hash4scheduling2.add(new HashSet<Integer>(Arrays.asList(s.hashCode(),_scheduling2.get(s).get(1))));
+                    hash4scheduling2.add(new HashSet<Integer>(Arrays.asList(s.hashCode(), _scheduling2.get(s).get(1))));
                 }
                 return hash4scheduling.equals(hash4scheduling2);
             }
@@ -334,39 +360,39 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
     }
 
 
-    /**
-     * get upper bound which Represents the worst case for BNB
-     *
-     * @return _upperBound Represents the worst case for BNB
-     */
-    public int getUpperBound() {
-        return _upperBound;
-    }
+//    /**
+//     * get upper bound which Represents the worst case for BNB
+//     *
+//     * @return _upperBound Represents the worst case for BNB
+//     */
+//    public int getUpperBound() {
+//        return _upperBound;
+//    }
+//
+//    /**
+//     * get upper bound which Represents the base case for BNB
+//     *
+//     * @return _lowerBound Represents the base case for BNB
+//     */
+//    public int getLowerBound() {
+//        return _total;
+//    }
 
-    /**
-     * get upper bound which Represents the base case for BNB
-     *
-     * @return _lowerBound Represents the base case for BNB
-     */
-    public int getLowerBound() {
-        return _total;
-    }
-
-    public int getSize(){
+    public int getSize() {
         return super.getSize();
     }
 
 
     @Override
-    public String toString(){
+    public String toString() {
         String r = "";
-        for ( String i: _scheduling.keySet() ) {
-            r +=  "{Task:"+  i + "-pid:" + _scheduling.get(i).get(0) + "-t:" + _scheduling.get(i).get(1) + "}";
+        for (String i : _scheduling.keySet()) {
+            r += "{Task:" + i + "-pid:" + _scheduling.get(i).get(0) + "-t:" + _scheduling.get(i).get(1) + "}";
         }
         return r;
     }
 
-    public int getTaskStartTime(String taskName){
+    public int getTaskStartTime(String taskName) {
         return _scheduling.get(taskName).get(1);
     }
 }

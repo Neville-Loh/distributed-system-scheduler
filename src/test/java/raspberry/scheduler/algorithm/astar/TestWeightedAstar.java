@@ -1,9 +1,7 @@
-package raspberry.scheduler.algorithm.bnb;
+package raspberry.scheduler.algorithm.astar;
 
 import org.junit.Test;
 import raspberry.scheduler.algorithm.OutputChecker;
-import raspberry.scheduler.algorithm.astar.WeightedAstar;
-import raspberry.scheduler.algorithm.bNb.BNB2;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -11,17 +9,16 @@ import raspberry.scheduler.io.GraphReader;
 
 import java.io.FileNotFoundException;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * Integrated test for bnb star algorithm
+ * Integrated test for weighted A star algorithm
  * Test 5 graph in the resource folder with specified number of processor
  * output was given prior to the development
  * @Author Neville
  */
+public class TestWeightedAstar {
 
-public class TestBnb {
     // input path of the resource folder
     private String INPUT_PATH = "src/test/resources/input/";
 
@@ -34,66 +31,56 @@ public class TestBnb {
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_7_OutTree.dot
-     * Expected total Time for schedule: 28
-     * @throws FileNotFoundException file does not exists
+     * @throws FileNotFoundException file does not exist
      */
     @Test
     public void testNodes7OutTree2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("Nodes_7_OutTree.dot", 2);
-        assertEquals(28,output.getFinishTime());
     }
 
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_8_Random
-     * Expected total Time for schedule: 571
-     * @throws FileNotFoundException file does not exists
+     * @throws FileNotFoundException file does not exist
      */
     @Test
     public void testNodes8Random2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("Nodes_8_Random.dot", 2);
-        assertEquals(581,output.getFinishTime());
     }
 
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_9_SeriesParallel.dot
-     * Expected total Time for schedule: 55
-     * @throws FileNotFoundException file does not exists
+     * @throws FileNotFoundException file does not exist
      */
     @Test
     public void testNodes9SeriesParallel2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("Nodes_9_SeriesParallel.dot", 2);
-        assertEquals(55,output.getFinishTime());
     }
 
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_10_Random.dot
-     * Expected total Time for schedule: 50
-     * @throws FileNotFoundException file does not exists
+     * @throws FileNotFoundException file does not exist
      */
     @Test
     public void testNodes10Random2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("Nodes_10_Random.dot", 2);
-        assertEquals(50, output.getFinishTime());
     }
 
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_11_OutTree.dot
-     * Expected total Time for schedule: 350
-     * @throws FileNotFoundException file does not exists
+     * @throws FileNotFoundException file does not exist
      */
     @Test
     public void testNodes11OutTree2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("Nodes_11_OutTree.dot", 2);
-        assertEquals(350, output.getFinishTime());
     }
 
 
@@ -107,66 +94,56 @@ public class TestBnb {
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_7_OutTree.dot
-     * Expected total Time for schedule: 22
-     * @throws FileNotFoundException file does not exists
+     * @throws FileNotFoundException file does not exist
      */
     @Test
     public void testNodes7OutTree4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("Nodes_7_OutTree.dot", 4);
-        assertEquals(22,output.getFinishTime());
     }
 
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_8_Random
-     * Expected total Time for schedule: 581
-     * @throws FileNotFoundException file does not exists
+     * @throws FileNotFoundException file does not exist
      */
     @Test
     public void testNodes8Random4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("Nodes_8_Random.dot", 4);
-        assertEquals(581,output.getFinishTime());
     }
 
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_9_SeriesParallel.dot
-     * Expected total Time for schedule: 55
-     * @throws FileNotFoundException file does not exists
+     * @throws FileNotFoundException file does not exist
      */
     @Test
     public void testNodes9SeriesParallel4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("Nodes_9_SeriesParallel.dot", 4);
-        assertEquals(55,output.getFinishTime());
     }
 
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_10_Random.dot
-     * Expected total Time for schedule: 50
-     * @throws FileNotFoundException file does not exists
+     * @throws FileNotFoundException file does not exist
      */
     @Test
     public void testNodes10Random4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("Nodes_10_Random.dot", 4);
-        assertEquals(50, output.getFinishTime());
     }
 
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_11_OutTree.dot
-     * Expected total Time for schedule: 227
-     * @throws FileNotFoundException file does not exists
+     * @throws FileNotFoundException file does not exist
      */
     @Test
     public void testNodes11OutTree4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
         OutputSchedule output = readAndFindPath("Nodes_11_OutTree.dot", 4);
-        assertEquals(227, output.getFinishTime());
     }
 
     /**
@@ -191,15 +168,7 @@ public class TestBnb {
 
 
         WeightedAstar wA = new WeightedAstar(graph,numProcessors);
-        OutputSchedule outputBound = wA.findPath();
-        int upperbound = outputBound.getFinishTime();
-
-        wA = null;
-        outputBound = null;
-        //System.out.printf("UPPERBOUND : %d", upperbound);
-
-        BNB2 bnb = new BNB2(graph,numProcessors, upperbound);
-        OutputSchedule output = bnb.findPath();
+        OutputSchedule output = wA.findPath();
         System.out.printf("------------------------\n" +
                         "File: %s, Number of Processor: %d \nRUNNING TIME : %.2f seconds\n",
                 filename, numProcessors, (System.nanoTime() - startTime) / 1000000000.0);
