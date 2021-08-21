@@ -10,6 +10,9 @@ import raspberry.scheduler.io.GraphReader;
 
 import java.io.FileNotFoundException;
 
+/**
+ * This class tests the input dot file for the reader.
+ */
 public class TestIO {
 
     /**

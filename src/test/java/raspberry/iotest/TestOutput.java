@@ -12,6 +12,9 @@ import raspberry.scheduler.io.Writer;
 
 import java.io.IOException;
 
+/**
+ * This class tests the output from the writer class.
+ */
 public class TestOutput {
 
     /**
