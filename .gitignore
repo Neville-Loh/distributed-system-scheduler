@@ -62,5 +62,7 @@ buildNumber.properties
 /bin/
 
 
+.factorypath
+.settings/*
 #ignore output
 .+output.dot

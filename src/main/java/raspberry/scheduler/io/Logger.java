@@ -1,17 +1,10 @@
 package raspberry.scheduler.io;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import raspberry.scheduler.algorithm.Astar;
 import raspberry.scheduler.cli.CLIConfig;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import au.com.bytecode.opencsv.CSVReader;
+
 
 /**
  * This class handles the overall statistics: start time, finish time and memory usage
