@@ -17,7 +17,7 @@ import au.com.bytecode.opencsv.CSVReader;
  * This class handles the overall statistics: start time, finish time and memory usage
  * for the program and exports it to a csv class for the report. It will compare the
  * milestone 1, program without multithreading and program with multithreading.
- * @author Jonathon, Young
+ * @author Jonathon, Young, Neville
  */
 public class Logger {
     // Output file declaration
@@ -38,6 +38,22 @@ public class Logger {
                 CLIConfig.getDotFile(),
                 Integer.toString(CLIConfig.get_numProcessors()),
                 Double.toString((currentTime - startTime)/1000000000.0)};
+        fileOutput(_dataLines);
+    }
+
+    /**
+     * The correct way of writing this
+     * @param fileName File name of the log
+     * @param numProcessors number of processor
+     * @param duration duration of the time
+     * @throws IOException for when a file is not called/created properly
+     */
+    public static void log(String fileName, int numProcessors, int duration) throws IOException {
+        String[] _dataLines = new String[]{
+                java.time.LocalDateTime.now().toString(),
+                fileName,
+                String.valueOf(numProcessors),
+                String.valueOf(duration)};
         fileOutput(_dataLines);
     }
 
