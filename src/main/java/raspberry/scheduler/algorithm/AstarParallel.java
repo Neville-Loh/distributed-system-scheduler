@@ -15,9 +15,6 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  * @author Alan, Young
  */
 public class AstarParallel extends Astar {
-    // the total number of threads to use
-    private int _numCores;
-
     // thread pool that will deal with all the threads
     private ThreadPoolExecutor _threadPool = null;
 
@@ -34,7 +31,6 @@ public class AstarParallel extends Astar {
     public AstarParallel(IGraph graphToSolve, int numProcessors, int numCores) {
         super(graphToSolve, numProcessors);
         initialiseThreadPool(numCores);
-        _numCores = numCores;
         _subSchedules = new ConcurrentLinkedQueue<Hashtable<Schedule, Hashtable<INode, Integer>>>();
     }
 
@@ -44,7 +40,6 @@ public class AstarParallel extends Astar {
      * @param numCores
      */
     public void initialiseThreadPool(int numCores) {
-        _numCores = numCores;
         // Allow numParallelCores - 1 extra threads to be made
         _threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numCores - 1);
     }
