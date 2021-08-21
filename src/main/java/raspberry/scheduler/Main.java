@@ -1,6 +1,8 @@
 package raspberry.scheduler;
 
-import raspberry.scheduler.algorithm.*;
+import raspberry.scheduler.algorithm.astar.Astar;
+import raspberry.scheduler.algorithm.bNb.BNB2;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.cli.CLIConfig;
 import raspberry.scheduler.cli.CLIParser;
 import raspberry.scheduler.cli.exception.ParserException;
@@ -24,11 +26,9 @@ public class Main {
             if (CLIConfig.getVisualise()) {
                 startVisualisation(CLIConfig, reader);
             } else {
-
-
                 IGraph graph = reader.read();
                 if (COLLECT_STATS_ENABLE) {_startTime = System.nanoTime();}
-                Astar astar = new Astar(graph, CLIConfig.get_numProcessors());
+                Astar astar = new Astar(graph, CLIConfig.get_numProcessors(), Integer.MAX_VALUE);
                 OutputSchedule outputSchedule = astar.findPath();
                 if (COLLECT_STATS_ENABLE) {Logger.log(CLIConfig, _startTime, System.nanoTime());}
                 Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
