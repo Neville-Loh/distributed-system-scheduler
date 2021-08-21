@@ -87,14 +87,20 @@ public class TwoWayPriorityQueue{
         _descendingFScore.addAll(collection);
     }
 
-    /**
-     * Get Method
-     * Return the ascending priority queue
-     * @return priorityQueue
-     */
-    public PriorityQueue<MBSchedule> getPQ(){
-        return _ascendingFScore;
+
+    public void remove(MBSchedule schedule){
+        _ascendingFScore.remove(schedule);
+        _descendingFScore.remove(schedule);
     }
+
+//    /**
+//     * Get Method
+//     * Return the ascending priority queue
+//     * @return priorityQueue
+//     */
+//    public PriorityQueue<MBSchedule> getPQ(){
+//        return _ascendingFScore;
+//    }
 
     /**
      * String method, return a string

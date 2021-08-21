@@ -1,5 +1,6 @@
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm.bNb;
 
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
@@ -33,11 +34,12 @@ public class Heuristic {
      * @param numP            : number of processors allowed to use for scheduling.
      * @return Integer representing the lower bound of this partial schedule
      */
-    public int getH(Hashtable<String, Integer> heuristicTable, INode i,
+    public static int getH(Hashtable<String, Integer> heuristicTable, INode i,
                     Hashtable<INode, Integer> rootTable,
                     int maxCriticalPath,
                     int numP) {
         return Collections.max(Arrays.asList(
+                0,
                 heuristicTable.get(i.getName()),
                 h1(rootTable, i.getValue(), numP),
                 maxCriticalPath - i.getValue(),
@@ -52,7 +54,7 @@ public class Heuristic {
      * @param numP       : number of processors allowed to use for scheduling.
      * @return Integer : Representing the heuristics of best case scheduling.
      */
-    public int h1(Hashtable<INode, Integer> x, int finishTime, int numP) {
+    public static int h1(Hashtable<INode, Integer> x, int finishTime, int numP) {
         int sum = finishTime;
         for (INode i : x.keySet()) {
             sum += i.getValue();
@@ -72,7 +74,7 @@ public class Heuristic {
      * @param numP   : number of processors allowed to use for scheduling.
      * @return Integer : Representing the heuristics of best case scheduling.
      */
-    public int h2(Hashtable<INode, Integer> x, int start, int cost, Schedule parent, int numP) {
+    public static int h2(Hashtable<INode, Integer> x, int start, int cost, ScheduleAStar parent, int numP) {
         int sum = cost;
         for (int i = 0; i < numP; i++) {
             sum += getLastPTime(parent, i);
@@ -91,7 +93,7 @@ public class Heuristic {
      * @param processorId     : processor id.
      * @return Integer : Representing the time of last time a specific processor was used.
      */
-    public int getLastPTime(Schedule cParentSchedule, int processorId) {
+    public static int getLastPTime(ScheduleAStar cParentSchedule, int processorId) {
         while (cParentSchedule != null) {
             if (cParentSchedule.getPid() == processorId) {
                 return cParentSchedule.getFinishTime();
@@ -109,7 +111,7 @@ public class Heuristic {
      * key : name of the task.
      * value : heuristic cost based on dependencies.
      */
-    public Hashtable<String, Integer> getHeuristicTable(IGraph graph) {
+    public static Hashtable<String, Integer> getHeuristicTable(IGraph graph) {
         Hashtable<String, Integer> heuristic = new Hashtable<String, Integer>();
         for (INode i : graph.getAllNodes()) {
             heuristic.put(i.getName(), 0);
@@ -127,7 +129,7 @@ public class Heuristic {
      * @param graph : graph representing the tasks and its dependencies.
      * @return : Integer representing the heuristic cost of node n.
      */
-    public int getHRecursive(INode n, IGraph graph) {
+    public static int getHRecursive(INode n, IGraph graph) {
         List<IEdge> e = graph.getOutgoingEdges(n.getName());
         if (e.size() == 0) {
             return 0;
@@ -143,4 +145,6 @@ public class Heuristic {
         }
         return max;
     }
+
+
 }

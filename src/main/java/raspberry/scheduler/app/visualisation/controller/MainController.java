@@ -27,6 +27,7 @@ import static javafx.scene.paint.Color.rgb;
 /**
  * The MainController class handles the initialisation of the frontend component of the program.
  * It builds the live components as well as the Gantt chart.
+ * @author: Alan, Young, Jonathon, Takahiro
  */
 public class MainController implements Initializable {
 

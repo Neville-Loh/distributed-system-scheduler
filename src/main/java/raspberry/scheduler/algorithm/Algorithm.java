@@ -1,5 +1,7 @@
 package raspberry.scheduler.algorithm;
 
+import raspberry.scheduler.algorithm.common.OutputSchedule;
+
 /**
  * Represent the scheduling algorithm
  * @Author Takahiro

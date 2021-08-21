@@ -1,9 +1,12 @@
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm.astar;
 
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
 
+import raspberry.scheduler.algorithm.common.OutputSchedule;
+import raspberry.scheduler.algorithm.common.ScheduledTask;
+import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.app.visualisation.model.AlgoObservable;
 import raspberry.scheduler.graph.*;
 
@@ -19,7 +22,7 @@ public class AstarParallel extends Astar {
     private ThreadPoolExecutor _threadPool = null;
 
     // concurrentlist of subschedule for threadpool to run
-    private ConcurrentLinkedQueue<Hashtable<Schedule, Hashtable<INode, Integer>>> _subSchedules;
+    private ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>> _subSchedules;
 
 
     /**
@@ -29,10 +32,17 @@ public class AstarParallel extends Astar {
      * @param numProcessors : number of processor we can used to scheudle tasks.
      */
     public AstarParallel(IGraph graphToSolve, int numProcessors, int numCores) {
-        super(graphToSolve, numProcessors);
+        super(graphToSolve, numProcessors, Integer.MAX_VALUE);
         initialiseThreadPool(numCores);
-        _subSchedules = new ConcurrentLinkedQueue<Hashtable<Schedule, Hashtable<INode, Integer>>>();
+        _subSchedules = new ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>>();
     }
+
+    public AstarParallel(IGraph graphToSolve, int numProcessors, int upperbound,int numCores) {
+        super(graphToSolve, numProcessors,upperbound);
+        initialiseThreadPool(numCores);
+        _subSchedules = new ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>>();
+    }
+
 
     /**
      * Initialises the ThreadPool. Called in VariableScheduler
@@ -60,23 +70,27 @@ public class AstarParallel extends Astar {
          */
         getH();
 
-        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
+        Hashtable<ScheduleAStar, Hashtable<INode, Integer>> master = new Hashtable<ScheduleAStar, Hashtable<INode, Integer>>();
         Hashtable<INode, Integer> rootTable = this.getRootTable();
 
-        for (INode i : rootTable.keySet()) {
-            if (rootTable.get(i) == 0) {
-                Schedule newSchedule = new Schedule(0, null, i, 1);
+        for (INode node : rootTable.keySet()) {
+            if (rootTable.get(node) == 0) {
+//                ScheduleAStar newSchedule = new ScheduleAStar(0, null, i, 1);
+                ScheduleAStar newSchedule = new ScheduleAStar(
+                        new ScheduledTask(1,node, 0),
+                        getChildTable(rootTable, node)
+                );
                 newSchedule.addHeuristic(
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
-                                h1(getChildTable(rootTable, i), newSchedule)
+                                h1(getChildTable(rootTable, node), newSchedule)
                         )));
-                master.put(newSchedule, getChildTable(rootTable, i));
+                master.put(newSchedule, getChildTable(rootTable, node));
                 _pq.add(newSchedule);
             }
         }
 
-        Schedule cSchedule;
+        ScheduleAStar cSchedule;
         int duplicate = 0; // Duplicate counter, Used for debugging purposes.
 
         _observable.setIterations(0);
@@ -88,13 +102,13 @@ public class AstarParallel extends Astar {
             cSchedule = _pq.poll();
             Solution cScheduleSolution = new Solution(cSchedule, _numP);
             _observable.setSolution(cScheduleSolution);
-            ArrayList<Schedule> listVisitedForSize = _visited.get(cSchedule.getHash());
+            ArrayList<ScheduleAStar> listVisitedForSize = _visited.get(cSchedule.getHash());
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
                 duplicate++;
                 continue;
             } else {
                 if (listVisitedForSize == null) {
-                    listVisitedForSize = new ArrayList<Schedule>();
+                    listVisitedForSize = new ArrayList<ScheduleAStar>();
                     _visited.put(cSchedule.getHash(), listVisitedForSize);
                 }
                 listVisitedForSize.add(cSchedule);
@@ -129,8 +143,8 @@ public class AstarParallel extends Astar {
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
                     //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
-                    for (int j = 1; j <= pidBound; j++) {
-                        createSubSchedules(cSchedule, j, node, cTable, latch);
+                    for (int pid = 1; pid <= pidBound; pid++) {
+                        createSubSchedules(cSchedule, pid, node, cTable, latch);
                     }
                 }
             }
@@ -143,8 +157,8 @@ public class AstarParallel extends Astar {
 
             }
 //            _threadPool.awaitTermination();
-            for (Hashtable<Schedule, Hashtable<INode, Integer>> subScheduleTables : _subSchedules) {
-                for (Schedule subSchedule : subScheduleTables.keySet()) {
+            for (Hashtable<ScheduleAStar, Hashtable<INode, Integer>> subScheduleTables : _subSchedules) {
+                for (ScheduleAStar subSchedule : subScheduleTables.keySet()) {
                     master.put(subSchedule, subScheduleTables.get(subSchedule));
                     _pq.add(subSchedule);
                 }
@@ -156,17 +170,23 @@ public class AstarParallel extends Astar {
         return new Solution(cSchedule, _numP);
     }
 
-    public void createSubSchedules(Schedule cSchedule, int j, INode node, Hashtable<INode, Integer> cTable, CountDownLatch latch) {
+    public void createSubSchedules(ScheduleAStar cSchedule, int pid, INode node, Hashtable<INode, Integer> cTable, CountDownLatch latch) {
         _threadPool.submit(() -> {
-            int start = calculateCost(cSchedule, j, node);
+            int start = calculateEarliestStartTime(cSchedule, pid, node);
             Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
-            Schedule newSchedule = new Schedule(start, cSchedule, node, j);
+
+//            ScheduleAStar newSchedule = new ScheduleAStar(start, cSchedule, node, j);
+            ScheduleAStar newSchedule = new ScheduleAStar(
+                    cSchedule,
+                    new ScheduledTask(pid, node, start),
+                    newTable);
+
             newSchedule.addHeuristic(
                     Collections.max(Arrays.asList(
                             h(newSchedule),
                             h1(newTable, newSchedule)
                     )));
-            Hashtable<Schedule, Hashtable<INode, Integer>> subSchedule = new Hashtable<Schedule, Hashtable<INode, Integer>>();
+            Hashtable<ScheduleAStar, Hashtable<INode, Integer>> subSchedule = new Hashtable<ScheduleAStar, Hashtable<INode, Integer>>();
             subSchedule.put(newSchedule, newTable);
             _subSchedules.add(subSchedule);
             latch.countDown();

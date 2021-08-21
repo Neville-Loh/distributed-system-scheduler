@@ -1,9 +1,10 @@
 package raspberry.scheduler.app.visualisation.model;
-import raspberry.scheduler.algorithm.Solution;
+import raspberry.scheduler.algorithm.common.Solution;
 
 /**
  * AlgoObservable class receives the output data from the algorithm classes, such as iterations
  * and current schedule for live visualisation and stores it.
+ * @author: Alan, Young
  */
 public class AlgoObservable{
 

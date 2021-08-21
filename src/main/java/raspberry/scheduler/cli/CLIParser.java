@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * This class handles the parsing of the commands and exceptions thrown when the program is accessed
  * from the command line.
- * @author Alan
+ * @author Alan, Jonathon
  */
 
 public class CLIParser {
