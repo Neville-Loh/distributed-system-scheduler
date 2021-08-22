@@ -54,20 +54,25 @@ public class EquivalenceChecker {
                             .get(secondlastindex)
                             .getTask());
             System.out.println("TEMP is not null: " + temp);
-            if (cSchedule.getScheduledTask(indexTable
-                            .get(secondlastindex)
-                            .getTask())
+
+            // task in the same processor from task to swap to send to last index
+            ArrayList<ScheduledTask> inputList = new ArrayList<>();
+            for (int index = i; index <= secondlastindex; index ++){
+                inputList.add(indexTable.get(index));
+            }
+
+            if (cSchedule.getScheduledTask(indexTable.get(secondlastindex).getTask())
                     .getFinishTime() <= TMax
-                    && outgoingCommsOK(processorTaskList, cSchedule)) {
+                    && outgoingCommsOK(inputList, cSchedule)) {
                 _counter++;
                 System.out.println("counter is: " + _counter);
-                try {
-                    if (!OutputChecker.isValid(_graph, new Solution(cSchedule, 10))) {
-                        System.out.println("We are Screwed!!!!!!!!!!!!!!!!!!!!!!!!!");
-                    }
-                } catch (EdgeDoesNotExistException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    if (!OutputChecker.isValid(_graph, new Solution(cSchedule, 10))) {
+//                        System.out.println("We are Screwed!!!!!!!!!!!!!!!!!!!!!!!!!");
+//                    }
+//                } catch (EdgeDoesNotExistException e) {
+//                    e.printStackTrace();
+//                }
                 return true;
             }
             i--;
@@ -235,13 +240,18 @@ public class EquivalenceChecker {
     }
 
 
-
+    /**
+     * Algorithm 3 Subroutine OutgoingCommsOK(ni ... nl−1)
+     * @param scheduledTasks
+     * @param schedule
+     * @return
+     */
     public boolean outgoingCommsOK(List<ScheduledTask> scheduledTasks, ScheduleAStar schedule) {
-//    Algorithm 3 Subroutine OutgoingCommsOK(ni. . . nl−1)
-//1: for all nk ∈ {ni. . . nl−1} do
-//            2: if ts(nk) > torigs (nk) then B check only if nk starts later
+        //1: for all nk ∈ {ni. . . nl−1} do
         for (ScheduledTask scheduledTask : scheduledTasks) {
-            if (schedule.getScheduledTask(scheduledTask.getTask()).getStartTime() > scheduledTask.getStartTime()) {
+            // 2: if ts(nk) > t_originStartTime (nk) then B check only if nk starts later
+            if (schedule.getScheduledTask(scheduledTask.getTask()).getStartTime() >
+                    scheduledTask.getOriginalStartTime()) {
                 //3: for all nc ∈ children(nk) do
                 for (IEdge outEdge : _graph.getOutgoingEdges(scheduledTask.getTask())) {
                     INode childNode = outEdge.getChild();
@@ -249,7 +259,7 @@ public class EquivalenceChecker {
 //              4: T ← tf (nk) + c(ekc) B remote data arrival from nk
                     int T = scheduledTask.getFinishTime() + outEdge.getWeight();
 //              5: if nc scheduled then
-                    if (schedule.getScheduling().containsKey(childNode.getName())) {
+                    if (schedule.getScheduledTask(childNode) != null) {
                         ScheduledTask childScheduledTask = schedule.getScheduledTask(childNode);
 //              6: if ts(nc) > T ∧ proc(nc) 6= P then B on same proc always OK
                         if (childScheduledTask.getStartTime() > T && childScheduledTask.getProcessorID() != scheduledTask.getProcessorID()) {
@@ -261,13 +271,16 @@ public class EquivalenceChecker {
                     else {
 //                        System.out.println("\n\n\n\n\nELSE STATMENT IS REACHED \n\n\n\n\n");
                         //9: for all Pi ∈ P/P do B nc can be on any proc; P always OK
-                        for (int i = 1; i < _numProcessors + 1 && i != scheduledTask.getProcessorID(); i++) {
+                        for (int i = 1; i < _numProcessors + 1; i++) {
+                            if (i == scheduledTask.getProcessorID()){
+                                continue;
+                            }
                             //10: atLeastOneLater ← false
                             boolean atLeastOneLater = false;
                             //            11: for all np ∈ parents(nc) − nk do
                             for (IEdge inEdge : _graph.getIngoingEdges(childNode)) {
                                 INode parentNode = inEdge.getParent();
-                                if (schedule.getScheduling().containsKey(parentNode.getName())) {
+                                if (schedule.getScheduledTask(parentNode) != null) {
                                     ScheduledTask parentScheduledTask = schedule.getScheduledTask(parentNode);
                                     //            12: if data arrival from np≥ T then and (parents(nc) − nk from line 11)
                                     System.out.println(schedule.toString());
@@ -278,7 +291,7 @@ public class EquivalenceChecker {
                                         atLeastOneLater = true;
                                     }
                                 } else {
-                                    atLeastOneLater = false;
+                                    return false;
                                 }
 
                             }
@@ -292,7 +305,7 @@ public class EquivalenceChecker {
                 }
             }
         }
-        //        16: return true
+        //16: return true
         return true;
     }
 
