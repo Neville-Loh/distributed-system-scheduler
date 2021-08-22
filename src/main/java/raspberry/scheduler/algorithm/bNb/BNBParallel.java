@@ -3,6 +3,7 @@ package raspberry.scheduler.algorithm.bNb;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
+import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 
@@ -19,6 +20,7 @@ public class BNBParallel extends BNB {
     private ThreadPoolExecutor _threadPool = null;
     private List<Stack<ScheduleB>> stacks;
     private Semaphore _lock;
+    private AlgoStats _algoStats;
 
     public BNBParallel(IGraph graphToSolve, int numProcessors, int bound, int numCores) {
         super(graphToSolve, numProcessors, bound);
@@ -31,6 +33,7 @@ public class BNBParallel extends BNB {
         for (int i=0; i<_numCores; i++){
             stacks.add( new Stack<ScheduleB>() );
         }
+        _algoStats = AlgoStats.getInstance();
     }
 
     /**
@@ -46,12 +49,15 @@ public class BNBParallel extends BNB {
 
     @Override
     public OutputSchedule findPath(){
+        _algoStats.setIterations(0);
+        _algoStats.setIsFinish(false);
         _visited = new Hashtable<Integer, ArrayList<ScheduleB>>();
         Hashtable<INode, Integer> rootTable = getRootTable();
         getH();
 
         Stack<ScheduleB> rootSchedules = getRootSchedules();
         if (rootSchedules.isEmpty()){
+            _algoStats.setSolution(new Solution(shortestPath, _numP));
             return new Solution(shortestPath, _numP);
         }else{
             Collections.reverse(rootSchedules);
@@ -75,6 +81,9 @@ public class BNBParallel extends BNB {
         if (shortestPath == null){
             System.out.println("- Algorithm failed to find solution -");
         }
+        _algoStats.setSolution(new Solution(shortestPath, _numP));
+        _algoStats.setIsFinish(true);
+        _threadPool.shutdownNow();
         return new Solution(shortestPath, _numP);
     }
 
@@ -86,9 +95,10 @@ public class BNBParallel extends BNB {
         ScheduleB cSchedule;
         Hashtable<INode, Integer> cTable;
         while (true) {
+            _algoStats.increment();
 //            System.out.printf("Stack SIZE: %d\n", stack.size());
             if (stack.isEmpty()) {
-                System.out.println("-- BOUND_DFS FINISHED --");
+//                System.out.println("-- BOUND_DFS FINISHED --");
                 break;
             }
 
@@ -106,7 +116,9 @@ public class BNBParallel extends BNB {
                     if (totalFinishTime <= _bound) {
                         _bound = totalFinishTime;
                         shortestPath = cSchedule;
-                        if( totalFinishTime < _bound ){ System.out.printf("\nNEW BOUND : %d", _bound); }
+                        if( totalFinishTime < _bound ){
+//                            System.out.printf("\nNEW BOUND : %d", _bound);
+                        }
                     }
                     _lock.release();
                     continue;
@@ -130,6 +142,7 @@ public class BNBParallel extends BNB {
                         int start = calculateCost(cSchedule, j, node);
                         ScheduleB newSchedule = new ScheduleB(cSchedule,new ScheduledTask(j,node,start),getChildTable(cTable,node));
                         newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                        _algoStats.setSolution(new Solution(newSchedule, _numP));
 
                         if ( canPrune( newSchedule , false)){
                             continue;
@@ -167,7 +180,7 @@ public class BNBParallel extends BNB {
         Hashtable<INode, Integer> cTable;
         while ( rootSchedules.size() < _numCores ) {
             if (rootSchedules.isEmpty()) {
-                System.out.println("-- BOUND_DFS FINISHED --");
+//                System.out.println("-- BOUND_DFS FINISHED --");
                 break;
             }
 
@@ -181,7 +194,9 @@ public class BNBParallel extends BNB {
                 if (totalFinishTime <= _bound) {
                     _bound = totalFinishTime;
                     shortestPath = cSchedule;
-                    if( totalFinishTime < _bound){ System.out.printf("\nBOUND : %d", _bound); }
+                    if( totalFinishTime < _bound){
+//                        System.out.printf("\nBOUND : %d", _bound);
+                    }
                 }
                 continue;
             }

@@ -5,6 +5,7 @@ import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.util.Helper;
+import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
@@ -24,6 +25,7 @@ public class BNB implements Algorithm {
     Hashtable<String, Integer> _heuristicTable;
     Stack<ScheduleB> _scheduleStack;
     Hashtable<Integer, ArrayList<ScheduleB>> _visited;
+    private AlgoStats _algoStats;
 
     /**
      * BNB algorithm constructor. with bound
@@ -36,6 +38,7 @@ public class BNB implements Algorithm {
         _graph = graphToSolve;
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
+        _algoStats = AlgoStats.getInstance();
         _bound = bound;
     }
 
@@ -65,10 +68,13 @@ public class BNB implements Algorithm {
 
         ScheduleB cSchedule;
         Hashtable<INode, Integer> cTable;
+        _algoStats.setIterations(0);
+        _algoStats.setIsFinish(false);
         while (true) {
 //            System.out.printf("Stack SIZE: %d\n", _scheduleStack.size());
+            _algoStats.increment();
             if (_scheduleStack.isEmpty()) {
-                System.out.println("-- BOUND_DFS FINISHED --");
+//                System.out.println("-- BOUND_DFS FINISHED --");
                 break;
             }
 
@@ -84,7 +90,9 @@ public class BNB implements Algorithm {
                 if (totalFinishTime <= _bound) {
                     _bound = totalFinishTime;
                     shortestPath = cSchedule;
-                    if( totalFinishTime < _bound){ System.out.printf("\nBOUND : %d", _bound); }
+                    if( totalFinishTime < _bound){
+//                        System.out.printf("\nBOUND : %d", _bound);
+                    }
                 }
                 continue;
             }
@@ -103,7 +111,7 @@ public class BNB implements Algorithm {
                         int start = calculateCost(cSchedule, j, node);
                         ScheduleB newSchedule = new ScheduleB(cSchedule,new ScheduledTask(j,node,start),getChildTable(cTable,node));
                         newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
-
+                        _algoStats.setSolution(new Solution(newSchedule, _numP));
                         if ( canPrune( newSchedule , false)){
                             continue;
                         }
@@ -113,9 +121,11 @@ public class BNB implements Algorithm {
             }
         }
         if (shortestPath == null){
-            System.out.println("==== WTF IS WRONG WITH U");
+//            System.out.println("==== WTF IS WRONG WITH U");
         }
-        Helper.printPath(shortestPath);
+//        Helper.printPath(shortestPath);
+        _algoStats.setIsFinish(true);
+        _algoStats.setSolution(new Solution(shortestPath,_numP));
         return new Solution(shortestPath, _numP);
     }
 
