@@ -11,7 +11,6 @@ public class ScheduledTask {
     private int _processorID;
     private INode _task;
     private int _startTime;
-    private int _originalStartTime;
 
 
     /**
@@ -24,7 +23,6 @@ public class ScheduledTask {
         _processorID = processorID;
         _task = task;
         _startTime = startTime;
-        _originalStartTime = startTime;
     }
 
 
@@ -40,26 +38,20 @@ public class ScheduledTask {
         return _startTime;
     }
 
-    public void setStartTime(int startTime) {
-//        if (_originalStartTime != -1){
-//            _originalStartTime = _startTime;
-//        }
-        _startTime = startTime;
-    }
 
     public int getFinishTime() {
         return _startTime + _task.getValue();
     }
 
+    public String getName() {
+        return _task.getName();
+    }
 
     @Override
     public String toString(){
         return _task + "" + _processorID;
     }
-
-    public int getOriginalStartTime() {
-        return _originalStartTime;
-    }
+    
 
 
 //    @Override
