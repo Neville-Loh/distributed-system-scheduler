@@ -146,7 +146,7 @@ public class TestOutputChecker {
         // Make outputSchedule.
         OutputSchedule outputSchedule1 = new Solution(testSchedule1, 2);
 
-        // Should pass all three checks, isValid contains all three checks.
+        // Should fail
         assertEquals(false , OutputChecker.isValid(testGraph1, outputSchedule1));
     }
 
@@ -214,69 +214,78 @@ public class TestOutputChecker {
         // Make outputSchedule.
         OutputSchedule outputSchedule1 = new Solution(testSchedule1, 2);
 
-        // Should pass all three checks, isValid contains all three checks.
+        // Should fail
         assertEquals(false , OutputChecker.isValid(testGraph1, outputSchedule1));
     }
 
-//    /**
-//     * Test no.4 for when not all tasks given in the input graph are not
-//     * present in the output schedule, to avoid false positive.
-//     */
-//    @Test
-//    public void testAllTasksPresent() throws EdgeDoesNotExistException {
-//        Graph testGraph1 = new Graph("testGraph1");
-//        testGraph1.addNode("a", 2);
-//        testGraph1.addNode("b", 2);
-//        testGraph1.addNode("c", 2);
-//        testGraph1.addNode("d", 3);
-//        testGraph1.addNode("e", 2);
-//        testGraph1.addNode("f", 3);
-//        testGraph1.addNode("g", 2);
-//
-//        testGraph1.addEdge("a","b",1);
-//        testGraph1.addEdge("a","c",3);
-//        testGraph1.addEdge("a","d",1);
-//        testGraph1.addEdge("b","e",3);
-//        testGraph1.addEdge("b","g",4);
-//        testGraph1.addEdge("c","f",1);
-//        testGraph1.addEdge("d","f",1);
-//        testGraph1.addEdge("e","g",2);
-//        testGraph1.addEdge("f","g",2);
-//
-//        //Test output schedule for test case no.1
-//        // Output schedule expects (Schedule from algorithm, number of processors as int)
-//
-//        // Create the tasks.
-//        ScheduledTask taska1 = new ScheduledTask(1, testGraph1.getNode("a"), 0);
-//        ScheduledTask taskb1 = new ScheduledTask(1, testGraph1.getNode("b"), 4);
-//        ScheduledTask taskc1 = new ScheduledTask(1, testGraph1.getNode("c"), 2);
-//        ScheduledTask taskd1 = new ScheduledTask(2, testGraph1.getNode("d"), 3);
-//        ScheduledTask taske1 = new ScheduledTask(1, testGraph1.getNode("e"), 6);
-//        ScheduledTask taskf1 = new ScheduledTask(2, testGraph1.getNode("f"), 6);
-//        ScheduledTask taskg1 = new ScheduledTask(2, testGraph1.getNode("g"), 10);
-//        ScheduledTask taskg2 = new ScheduledTask(2, testGraph1.getNode("g"), 12);
-//
-//        // Add an indegree table for BnB schedule typing (empty, just for convention)
-//        Hashtable<INode, Integer> inDegreeTable1 = new Hashtable<INode, Integer>();
-//
-//        // Append the tasks to the test output schedule.
-//
-//        // Set the head of the schedule linked list as taska1.
-//        ScheduleB testSchedule1 = new ScheduleB(null, taska1, inDegreeTable1);
-//        // Add the rest of the tasks to the linked list.
-//        testSchedule1 = new ScheduleB(testSchedule1, taskb1, inDegreeTable1);
-//        testSchedule1 = new ScheduleB(testSchedule1, taskc1, inDegreeTable1);
-//        testSchedule1 = new ScheduleB(testSchedule1, taskd1, inDegreeTable1);
-//        testSchedule1 = new ScheduleB(testSchedule1, taske1, inDegreeTable1);
-//        testSchedule1 = new ScheduleB(testSchedule1, taskf1, inDegreeTable1);
-//        testSchedule1 = new ScheduleB(testSchedule1, taskg1, inDegreeTable1);
-//        testSchedule1 = new ScheduleB(testSchedule1, taskg2, inDegreeTable1);
-//
-//        // Make outputSchedule.
-//        OutputSchedule outputSchedule1 = new Solution(testSchedule1, 2);
-//
-//        // Should pass all three checks, isValid contains all three checks.
-//        assertEquals(false , OutputChecker.isValid(testGraph1, outputSchedule1));
-//    }
+    /**
+     * Test no.4 for when not all tasks given in the input graph are not
+     * present in the output schedule, to avoid false positive.
+     */
+    @Test
+    public void testAllTasksPresent() throws EdgeDoesNotExistException {
+        try {
+            Graph testGraph1 = new Graph("testGraph1");
+            testGraph1.addNode("a", 2);
+            testGraph1.addNode("b", 2);
+            testGraph1.addNode("c", 2);
+            testGraph1.addNode("d", 3);
+            testGraph1.addNode("e", 2);
+            testGraph1.addNode("f", 3);
+            testGraph1.addNode("g", 2);
+
+            testGraph1.addEdge("a","b",1);
+            testGraph1.addEdge("a","c",3);
+            testGraph1.addEdge("a","d",1);
+            testGraph1.addEdge("b","e",3);
+            testGraph1.addEdge("b","g",4);
+            testGraph1.addEdge("c","f",1);
+            testGraph1.addEdge("d","f",1);
+            testGraph1.addEdge("e","g",2);
+            testGraph1.addEdge("f","g",2);
+
+            //Test output schedule for test case no.1
+            // Output schedule expects (Schedule from algorithm, number of processors as int)
+
+            // Create the tasks.
+            ScheduledTask taska1 = new ScheduledTask(1, testGraph1.getNode("a"), 0);
+            ScheduledTask taskb1 = new ScheduledTask(1, testGraph1.getNode("b"), 4);
+            ScheduledTask taskc1 = new ScheduledTask(1, testGraph1.getNode("c"), 2);
+            ScheduledTask taskd1 = new ScheduledTask(2, testGraph1.getNode("d"), 3);
+            ScheduledTask taske1 = new ScheduledTask(1, testGraph1.getNode("e"), 6);
+            ScheduledTask taskf1 = new ScheduledTask(2, testGraph1.getNode("f"), 6);
+            ScheduledTask taskg1 = new ScheduledTask(2, testGraph1.getNode("g"), 10);
+            ScheduledTask taskh1 = new ScheduledTask(2, testGraph1.getNode("h"), 12);
+
+            // Add an indegree table for BnB schedule typing (empty, just for convention)
+            Hashtable<INode, Integer> inDegreeTable1 = new Hashtable<INode, Integer>();
+
+            // Append the tasks to the test output schedule.
+
+            // Set the head of the schedule linked list as taska1.
+            ScheduleB testSchedule1 = new ScheduleB(null, taska1, inDegreeTable1);
+            // Add the rest of the tasks to the linked list.
+            testSchedule1 = new ScheduleB(testSchedule1, taskb1, inDegreeTable1);
+            testSchedule1 = new ScheduleB(testSchedule1, taskc1, inDegreeTable1);
+            testSchedule1 = new ScheduleB(testSchedule1, taskd1, inDegreeTable1);
+            testSchedule1 = new ScheduleB(testSchedule1, taske1, inDegreeTable1);
+            testSchedule1 = new ScheduleB(testSchedule1, taskf1, inDegreeTable1);
+            testSchedule1 = new ScheduleB(testSchedule1, taskg1, inDegreeTable1);
+            testSchedule1 = new ScheduleB(testSchedule1, taskh1, inDegreeTable1);
+
+//            System.out.println(testSchedule1);
+
+            // Make outputSchedule.
+            OutputSchedule outputSchedule1 = new Solution(testSchedule1, 2);
+
+//            System.out.println("Graph size " + testGraph1.getAllNodes().size());
+//            System.out.println(" Task size " + outputSchedule1.getNumTasks());
+//            System.out.println("Hello");
+
+            // Should pass all three checks, isValid contains all three checks.
+            assertEquals(false , OutputChecker.isValid(testGraph1, outputSchedule1));
+        } catch (NullPointerException e){
+        }
+    }
 
 }
