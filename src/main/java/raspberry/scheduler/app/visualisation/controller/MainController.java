@@ -12,7 +12,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import raspberry.scheduler.app.VisualisationLauncher;
 import raspberry.scheduler.app.visualisation.util.Updater;
 import raspberry.scheduler.app.visualisation.model.GanttChart;
@@ -111,7 +110,7 @@ public class MainController implements Initializable {
         p = Paths.get(filePath);
          fileName = p.getFileName().toString();
         _outputFile.setText(fileName);
-        _numProcessors.setText(String.valueOf(_config.get_numProcessors()));
+        _numProcessors.setText(String.valueOf(_config.getNumProcessors()));
         _numCores.setText(String.valueOf(_config.getNumCores()));
 
     }
@@ -149,7 +148,7 @@ public class MainController implements Initializable {
      * Initialises the current schedule Gantt chart, which shows the current output schedule.
      */
     private void setUpGanttChart() {
-        _numP = _config.get_numProcessors();
+        _numP = _config.getNumProcessors();
         _assignedColors = new ProcessorColors(_numP);
         List<String> processors = new ArrayList<String>();
         for (int i = 1; i <= _numP; i++) {

@@ -25,7 +25,7 @@ public class Main {
 
 
                 IGraph graph = reader.read();
-                Astar astar = new Astar(graph, CLIConfig.get_numProcessors());
+                Astar astar = new Astar(graph, CLIConfig.getNumProcessors());
                 OutputSchedule outputSchedule = astar.findPath();
                 Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
                 writer.write();

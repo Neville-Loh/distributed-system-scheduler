@@ -65,7 +65,7 @@ public class VisualisationLauncher extends Application {
     private void startAlgo() {
         try {
             IGraph graph = _reader.read();
-            Astar astar = new Astar(graph, _config.get_numProcessors());
+            Astar astar = new Astar(graph, _config.getNumProcessors());
             OutputSchedule outputSchedule = astar.findPath();
             Writer writer = new Writer(_config.getOutputFile(), graph, outputSchedule);
             writer.write();

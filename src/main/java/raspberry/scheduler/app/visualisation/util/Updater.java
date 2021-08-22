@@ -9,9 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import raspberry.scheduler.app.visualisation.model.AlgoObservable;
+import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.algorithm.OutputSchedule;
-import raspberry.scheduler.app.visualisation.controller.MainController;
 import raspberry.scheduler.app.visualisation.model.GanttChart;
 import raspberry.scheduler.graph.INode;
 
@@ -36,7 +35,7 @@ public class Updater {
     private double _currentTime;
     private double _startTime;
     private DateFormat _timeFormat = new SimpleDateFormat("mm:ss:SSS");
-    private AlgoObservable _observable;
+    private AlgoStats _algoStats;
     private GanttChart _ganttChart, _currentBestSchedule;
     private ProcessorColors _assignedColors;
     private static final Image _doneTick = new Image("/icons/doneTick.png");
@@ -60,7 +59,7 @@ public class Updater {
         _CPUChart = CPUChart;
         _ganttChart = ganttChart;
         _currentBestSchedule = currentBest;
-        _observable = AlgoObservable.getInstance();
+        _algoStats = AlgoStats.getInstance();
         _assignedColors = assignedColors;
         // Begin polling and record time
         startTimer();
@@ -86,6 +85,9 @@ public class Updater {
         if (_isRunning) {
             _currentTime = System.currentTimeMillis();
             _timeElapsed.setText(_timeFormat.format(_currentTime - _startTime));
+            if (_algoStats.getIsFinish()) {
+                stopTimer();
+            }
         }
     }
 
@@ -115,16 +117,15 @@ public class Updater {
             updateMemTile();
             updateIterations();
             updateCPUChart();
-            updateGanttChart();
-            updateCurrentBest();
-            if (_observable.getIsFinish()) {
-                stopTimer();
+            try {
+                updateGanttChart();
+                updateCurrentBest();
+            }catch(NullPointerException e){
+
             }
+
         }));
         _polling.setCycleCount(_timer.INDEFINITE);
-        if (_observable.getIsFinish() == true) {
-            _polling.stop();
-        }
         _polling.play();
     }
 
@@ -142,7 +143,7 @@ public class Updater {
      * Updates the number of iterations the algorithm has passed through.
      */
     private void updateIterations() {
-        String iteration = String.valueOf(_observable.getIterations());
+        String iteration = String.valueOf(_algoStats.getIterations());
         _iterations.setText(iteration);
     }
 
@@ -163,8 +164,8 @@ public class Updater {
     private void updateGanttChart() {
 
         if (_isRunning) {
-                OutputSchedule solution = _observable.getSolution();
-                int numP = _observable.getSolution().getTotalProcessorNum();
+                OutputSchedule solution = _algoStats.getSolution();
+                int numP = _algoStats.getSolution().getTotalProcessorNum();
                 List<String> processors = new ArrayList<String>();
                 for (int i = 1; i <= numP; i++) {
                     processors.add(String.valueOf(i));
@@ -191,8 +192,8 @@ public class Updater {
      */
     private void updateCurrentBest(){
         if(_isRunning){
-            OutputSchedule solution = _observable.getcurrentBestSchedule();
-            int numP = _observable.getSolution().getTotalProcessorNum();
+            OutputSchedule solution = _algoStats.getcurrentBestSchedule();
+            int numP = _algoStats.getSolution().getTotalProcessorNum();
             List<String> processors = new ArrayList<String>();
             for(int i = 1; i <=numP; i++){
                 processors.add(String.valueOf(i));

@@ -1,6 +1,6 @@
 package raspberry.scheduler.algorithm;
 
-import raspberry.scheduler.app.visualisation.model.AlgoObservable;
+import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.INode;
@@ -23,7 +23,7 @@ public class BNB implements Algorithm {
     Hashtable<String, Integer> _heuristicTable;
     Stack<Schedule> _scheduleStack;
 
-    private AlgoObservable _observable;
+    private AlgoStats _observable;
 
     /**
      * BNB algorithm constructor.
@@ -36,7 +36,7 @@ public class BNB implements Algorithm {
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
 
-        _observable = AlgoObservable.getInstance();
+        _observable = AlgoStats.getInstance();
     }
 
     /**

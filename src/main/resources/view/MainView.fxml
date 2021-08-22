@@ -14,17 +14,17 @@
    <children>
       <HBox prefHeight="819.0" prefWidth="1200.0">
          <children>
-            <VBox prefHeight="650.0" prefWidth="300.0" styleClass="Pane" stylesheets="@css/Main.css">
+            <VBox prefHeight="650.0" prefWidth="300.0" styleClass="Pane-Vbox" stylesheets="@css/Main.css">
                <children>
-                  <VBox prefHeight="429.0" prefWidth="300.0">
+                  <VBox prefHeight="429.0" prefWidth="300.0" style="-fx-background-radius: 30;" styleClass="Pane">
                      <children>
                         <VBox prefHeight="114.0" prefWidth="300.0" style="-fx-background-radius: 15;">
                            <children>
                               <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <HBox fx:id="_logoBox" prefHeight="100.0" prefWidth="201.0">
+                                    <HBox fx:id="_logoBox" prefHeight="100.0" prefWidth="200.0">
                                        <padding>
-                                          <Insets left="15.0" top="25.0" />
+                                          <Insets left="15.0" top="20.0" />
                                        </padding>
                                     </HBox>
                                     <TextFlow prefHeight="125.0" prefWidth="345.0">
@@ -43,7 +43,7 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <VBox prefHeight="25.0" prefWidth="300.0" />
+                        <VBox prefHeight="17.0" prefWidth="300.0" />
                         <HBox prefHeight="124.0" prefWidth="300.0" style="-fx-background-radius: 15;">
                            <children>
                               <VBox prefHeight="26.0" prefWidth="275.0">
@@ -170,40 +170,48 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox prefHeight="164.0" prefWidth="274.0">
+                  <VBox prefHeight="15.0" prefWidth="300.0" />
+                  <VBox prefHeight="375.0" prefWidth="300.0" style="-fx-background-radius: 30;" styleClass="Pane">
                      <children>
-                        <Tile fx:id="_memTile" backgroundImageKeepAspect="false" decimals="0" style="-fx-background-radius: 15;" thresholdVisible="false" unit="MB">
-                           <backgroundColor>
-                              <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
-                           </backgroundColor>
-                           <valueColor>
-                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
-                           </valueColor>
-                           <unitColor>
-                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
-                           </unitColor>
-                           <titleColor>
-                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
-                           </titleColor>
-                        </Tile>
-                     </children></VBox>
-                  <VBox prefHeight="172.0" prefWidth="277.0">
-                     <children>
-                        <Tile fx:id="_CPUChart" backgroundImageKeepAspect="false" decimals="0" style="-fx-background-radius: 15;" thresholdVisible="false" unit="\%">
-                           <backgroundColor>
-                              <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
-                           </backgroundColor>
-                           <valueColor>
-                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
-                           </valueColor>
-                           <unitColor>
-                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
-                           </unitColor>
-                           <titleColor>
-                              <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
-                           </titleColor>
-                        </Tile>
-                     </children></VBox>
+                        <VBox prefHeight="19.0" prefWidth="300.0" />
+                        <VBox prefHeight="165.0" prefWidth="275.0" style="-fx-background-radius: 30;" styleClass="Pane-Vbox">
+                           <children>
+                              <Tile fx:id="_memTile" backgroundImageKeepAspect="false" decimals="0" thresholdVisible="false" unit="MB">
+                                 <backgroundColor>
+                                    <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
+                                 </backgroundColor>
+                                 <valueColor>
+                                    <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
+                                 </valueColor>
+                                 <unitColor>
+                                    <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
+                                 </unitColor>
+                                 <titleColor>
+                                    <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
+                                 </titleColor>
+                              </Tile>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="165.0" prefWidth="275.0">
+                           <children>
+                              <Tile fx:id="_CPUChart" backgroundImageKeepAspect="false" decimals="0" style="-fx-background-radius: 15;" thresholdVisible="false" unit="\%">
+                                 <backgroundColor>
+                                    <Color red="0.8705882430076599" green="0.886274516582489" blue="0.9019607901573181" />
+                                 </backgroundColor>
+                                 <valueColor>
+                                    <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
+                                 </valueColor>
+                                 <unitColor>
+                                    <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
+                                 </unitColor>
+                                 <titleColor>
+                                    <Color red="0.2862745225429535" green="0.3137255012989044" blue="0.34117648005485535" />
+                                 </titleColor>
+                              </Tile>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
                </children>
             </VBox>
             <VBox prefHeight="800.0" prefWidth="900.0" styleClass="Pane" stylesheets="@css/Main.css">
