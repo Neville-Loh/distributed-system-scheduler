@@ -100,9 +100,10 @@ public class Updater {
      * Halts the timer when the algorithm has been completed.
      */
     public void stopTimer() {
+        updateGanttChart();
+        updateCurrentBest();
         _isRunning = false;
         _timer.stop();
-
         //clear progress indicator and add done image
         _statusBox.getChildren().clear();
         ImageView imv = new ImageView();

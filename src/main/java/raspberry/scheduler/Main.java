@@ -14,7 +14,7 @@ import raspberry.scheduler.app.*;
 import java.io.IOException;
 
 public class Main {
-    public static final boolean COLLECT_STATS_ENABLE = true;
+    public static final boolean COLLECT_STATS_ENABLE = false;
     private static double _startTime;
     public static void main(String[] inputs) throws NumberFormatException {
         try {
