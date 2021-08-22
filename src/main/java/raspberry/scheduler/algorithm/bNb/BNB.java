@@ -12,10 +12,9 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 import java.util.*;
 
-public class BNB2 implements Algorithm {
+public class BNB implements Algorithm {
 
     IGraph _graph;
-
     int _numP;
     int _bound;
     int _numNode;
@@ -33,7 +32,7 @@ public class BNB2 implements Algorithm {
      * @param numProcessors : number of processors allowed to use for scheduling.
      * @param bound : value representing the upperbound
      */
-    public BNB2(IGraph graphToSolve, int numProcessors, int bound) {
+    public BNB(IGraph graphToSolve, int numProcessors, int bound) {
         _graph = graphToSolve;
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
@@ -170,11 +169,24 @@ public class BNB2 implements Algorithm {
         return finished_time_of_last_parent;
     }
 
+    /**
+     * Finds lowerbound using the critical path heuristic table.
+     * @param schedule : schedule we want to find the heuristic cost for.
+     * @return Integer : representing the heuristic cost.
+     */
     public int lowerBound_1(ScheduleB schedule){
         return _heuristicTable.get(schedule.getNode().getName()) + schedule.getFinishTime();
     }
 
 
+    /**
+     * Check if schedule can be pruned
+     * @param cSchedule : schedule we want to check
+     * @param visiting True : if the schedule is being visited.
+     *                 False : otherwise
+     * @return True : if it can be pruned
+     *         False : if it cant be pruned
+     */
     public boolean canPrune(ScheduleB cSchedule, Boolean visiting){
         if (cSchedule.getLowerBound() > _bound){ //I think we can do ">=" and not just ">"
             return true;
@@ -294,5 +306,4 @@ public class BNB2 implements Algorithm {
         }
         return max;
     }
-
 }

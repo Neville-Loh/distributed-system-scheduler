@@ -3,7 +3,7 @@ package raspberry.scheduler.algorithm.bnb;
 import org.junit.Test;
 import raspberry.scheduler.algorithm.OutputChecker;
 import raspberry.scheduler.algorithm.astar.WeightedAstar;
-import raspberry.scheduler.algorithm.bNb.BNB2;
+import raspberry.scheduler.algorithm.bNb.BNB;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -198,7 +198,7 @@ public class TestBnb {
         outputBound = null;
         //System.out.printf("UPPERBOUND : %d", upperbound);
 
-        BNB2 bnb = new BNB2(graph,numProcessors, upperbound);
+        BNB bnb = new BNB(graph,numProcessors, upperbound);
         OutputSchedule output = bnb.findPath();
         System.out.printf("------------------------\n" +
                         "File: %s, Number of Processor: %d \nRUNNING TIME : %.2f seconds\n",

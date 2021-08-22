@@ -43,16 +43,13 @@ public class WeightedAstar extends Astar implements Algorithm {
                 ScheduleAStar newSchedule = new ScheduleAStar(
                         new ScheduledTask(1,node, 0),
                         getChildTable(rootTable, node)
+                        );
 
-                );
-
-                //ScheduleAStar newSchedule = new ScheduleAStar(0, null, i, 1, getChildTable(rootTable, i));
                 newSchedule.addWeightedHeuristic(
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
                                 h1(getChildTable(rootTable, node), newSchedule)
                         )));
-//                master.put(newSchedule, getChildTable(rootTable, i));
                 _pq.add(newSchedule);
             }
         }
@@ -67,10 +64,8 @@ public class WeightedAstar extends Astar implements Algorithm {
             if (cSchedule.getSize() == _numNode) {
                 break;
             }
-//            Hashtable<INode, Integer> cTable = master.get(cSchedule);
-//            master.remove(cSchedule);
-            Hashtable<INode, Integer> cTable = cSchedule._inDegreeTable;
 
+            Hashtable<INode, Integer> cTable = cSchedule._inDegreeTable;
             // Find the next empty processor. (
             int currentMaxPid = cSchedule.getMaxPid();
             int pidBound;
@@ -81,7 +76,6 @@ public class WeightedAstar extends Astar implements Algorithm {
             }
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
-                    //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
                     for (int j = 1; j <= pidBound; j++) {
                         int start = calculateEarliestStartTime(cSchedule, j, node);
                         Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
@@ -91,22 +85,20 @@ public class WeightedAstar extends Astar implements Algorithm {
                                         h(newSchedule),
                                         h1(newTable, newSchedule)
                                 )));
-//                        master.put(newSchedule, newTable);
                         _pq.add(newSchedule);
                     }
                 }
             }
 
+            // Trim PQ to fixed size.
             if (_pq.size() > 100000){
                 PriorityQueue<ScheduleAStar> newPQ = new PriorityQueue<ScheduleAStar>();
                 for (int i = 0 ; i< 100; i++){
                     newPQ.add( _pq.poll() );
                 }
-                System.out.println("TRIMMED");
                 _pq = newPQ;
             }
         }
-
         return new Solution(cSchedule, _numP);
     }
 }
