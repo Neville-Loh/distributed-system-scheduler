@@ -186,9 +186,16 @@ public class AstarParallel extends Astar {
                             h(newSchedule),
                             h1(newTable, newSchedule)
                     )));
-            Hashtable<ScheduleAStar, Hashtable<INode, Integer>> subSchedule = new Hashtable<ScheduleAStar, Hashtable<INode, Integer>>();
-            subSchedule.put(newSchedule, newTable);
-            _subSchedules.add(subSchedule);
+            if (newSchedule.getTotal() <= _upperBound){
+                ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
+                if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
+                    //Duplicate
+                }else{
+                    Hashtable<ScheduleAStar, Hashtable<INode, Integer>> subSchedule = new Hashtable<ScheduleAStar, Hashtable<INode, Integer>>();
+                    subSchedule.put(newSchedule, newTable);
+                    _subSchedules.add(subSchedule);
+                }
+            }
             latch.countDown();
         });
     }
