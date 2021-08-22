@@ -9,15 +9,15 @@ import raspberry.scheduler.graph.INode;
 import java.util.List;
 
 /**
- * 
+ * THis class is for checking the validity of the output schedule.
  * @author Young, Neville, Jonathon
  */
 public class OutputChecker {
     /**
      * Test if the output schedule violates any constraint according to
      * the dependency graph.
-     * @return true if output schedule does not violates any constraint
-     * @throws EdgeDoesNotExistException given edges doesn't not exists
+     * @return true if output schedule does not violate any constraint
+     * @throws EdgeDoesNotExistException given edges does not exist
      */
     public static boolean isValid(IGraph graph, OutputSchedule outputSchedule) throws EdgeDoesNotExistException {
 
