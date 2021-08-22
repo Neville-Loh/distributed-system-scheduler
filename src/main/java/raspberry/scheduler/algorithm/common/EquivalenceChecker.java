@@ -2,7 +2,9 @@ package raspberry.scheduler.algorithm.common;
 
 import raspberry.scheduler.algorithm.astar.Astar;
 import raspberry.scheduler.algorithm.astar.ScheduleAStar;
+import raspberry.scheduler.algorithm.util.OutputChecker;
 import raspberry.scheduler.graph.*;
+import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 import java.util.*;
 
@@ -19,7 +21,7 @@ public class EquivalenceChecker {
     }
 
 
-    public boolean weAreDoomed(ScheduleAStar schedule){
+    public boolean weAreDoomed(ScheduleAStar schedule) {
         //Require: Each task n ∈ V has a unique index 0 ≤ index(n) ≤ |V| − 1; in ascending index order tasks are also in
 //        a topological order
 //        Input: Partial schedule, including last scheduled task m at end of processor P
@@ -44,7 +46,11 @@ public class EquivalenceChecker {
                 && _graph.getIndex(m.getTask()) <
                 _graph.getIndex(callitahhoowwwhatdoicallit.get(i).getTask())){
 //                    INode task = callitahhoowwwhatdoicallit.get(i).getTask();
+
+            System.out.println("NOT SWAPPED:  " + schedule.toString());
+
             ScheduleAStar swapped = swap(schedule, m, callitahhoowwwhatdoicallit.get(i));
+            System.out.println(String.format("SWAPPED task %s with %s:  ", m, callitahhoowwwhatdoicallit.get(i)) + swapped.toString());
 
                 if (swapped.getScheduledTask(callitahhoowwwhatdoicallit
                         .get(justcallitlikesecondlastindex)
@@ -53,6 +59,13 @@ public class EquivalenceChecker {
                         && outgoingCommsOK(processorTaskList,swapped)){
                     _counter++;
                     System.out.println("counter is: " + _counter);
+                    try {
+                        if (!OutputChecker.isValid(_graph, new Solution(swapped, 10))) {
+                            System.out.println("We are Screwed!!!!!!!!!!!!!!!!!!!!!!!!!");
+                        }
+                    } catch (EdgeDoesNotExistException e){
+                        e.printStackTrace();
+                    }
                     return true;
                 }
                 i--;
@@ -141,24 +154,31 @@ public class EquivalenceChecker {
             prevTask.add(cSchedule.getScheduledTask());
             cSchedule = cSchedule.getParent();
         }
+        // --------------------------------------------------------
+//        Collections.reverse(prevTask);
+//
+//        for (ScheduledTask st : prevTask){
+//
+//
+//        }
 
-        //int earliestStartTime = calculateEarliestStartTime(cSchedule, numProcessor, task);
-        //                            Schedule subSchedule = cSchedule.createSubSchedule(
-        //                                    new ScheduledTask(numProcessor,task,earliestStartTime), _graph);
 
-        int earliestStartTime = Astar.calculateEarliestStartTime(cSchedule, taskToSwap.getProcessorID(), m.getTask());
+        //-------------------------------------------------
+
+
+        // calculating m new time
         int mProcessorID = m.getProcessorID();
+        int earliestStartTime = Astar.calculateEarliestStartTime(cSchedule, mProcessorID, m.getTask());
 
         // create new scheduled Task for m in at a new start Time
-        ScheduledTask scheduleM = new ScheduledTask( m.getProcessorID(),m.getTask(), m.getOriginalStartTime());
+        ScheduledTask scheduleM = new ScheduledTask( mProcessorID, m.getTask(), m.getOriginalStartTime());
         scheduleM.setStartTime(earliestStartTime);
 
 //        result = cSchedule.getParent().createSubSchedule(scheduleM, _graph);
-        if (cSchedule != null && cSchedule.getParent() != null) {
-            result = createSubSchedule(cSchedule.getParent(), scheduleM);
+        if (cSchedule != null) {
+            result = createSubSchedule(cSchedule, scheduleM);
         } else {
             Hashtable<INode, Integer> rootTable = this.getRootTable();
-
             result = new ScheduleAStar(
                     scheduleM,
                     getChildTable(rootTable, scheduleM.getTask())
@@ -169,6 +189,7 @@ public class EquivalenceChecker {
         for (ScheduledTask st : prevTask){
             if (st.getProcessorID() == mProcessorID){
                 // calculate start time
+                earliestStartTime = Astar.calculateEarliestStartTime(result, mProcessorID, st.getTask());
                 ScheduledTask scheduleST = new ScheduledTask( st.getProcessorID(),st.getTask(), st.getOriginalStartTime());
                 scheduleST.setStartTime(earliestStartTime);
 //                result = result.createSubSchedule(scheduleST,_graph);
@@ -181,6 +202,7 @@ public class EquivalenceChecker {
         }
 
         // scheduling
+        earliestStartTime = Astar.calculateEarliestStartTime(result, mProcessorID, taskToSwap.getTask());
         ScheduledTask scheduleST = new ScheduledTask( taskToSwap.getProcessorID(),taskToSwap.getTask(), taskToSwap.getOriginalStartTime());
         scheduleST.setStartTime(earliestStartTime);
 //        result = result.createSubSchedule(scheduleST,_graph);

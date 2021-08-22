@@ -1,4 +1,4 @@
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm.util;
 
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -6,6 +6,8 @@ import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,6 +15,7 @@ import java.util.List;
  * @author Young, Neville, Jonathon
  */
 public class OutputChecker {
+    static Collection<INode> stuff;
     /**
      * Test if the output schedule violates any constraint according to
      * the dependency graph.
@@ -21,13 +24,24 @@ public class OutputChecker {
      */
     public static boolean isValid(IGraph graph, OutputSchedule outputSchedule) throws EdgeDoesNotExistException {
 
+        int i = 0;
+        stuff = new ArrayList<>();
+        while (i < outputSchedule.getTotalProcessorNum()){
+            stuff.addAll(outputSchedule.getNodes(i));
+            i++;
+        }
+
         // check if there's any overlap and if all task are schedule
-        if (_isOverlap(graph, outputSchedule) || !allTasksPresent(graph, outputSchedule)) {
+//        if (_isOverlap(graph, outputSchedule) || !allTasksPresent(graph, outputSchedule)) {
+//            return false;
+//        }
+        if (_isOverlap(graph, outputSchedule)) {
             return false;
         }
 
+
         // check dependency violation
-        for (INode node : graph.getAllNodes()) {
+        for (INode node : stuff) {
             List<IEdge> ingoingEdges = graph.getIngoingEdges(node.getName());
             for (IEdge edge : ingoingEdges) {
                 INode parentNode = edge.getParent();
@@ -60,11 +74,11 @@ public class OutputChecker {
      * @return True if there are overlap
      */
     private static boolean _isOverlap(IGraph graph, OutputSchedule output) {
-        for (INode node1 : graph.getAllNodes()) {
+        for (INode node1 : stuff) {
             int startTime1 = output.getStartTime(node1);
             int endTime1 = output.getStartTime(node1) + node1.getValue();
             // check all other nodes to see if it is overlapping
-            for (INode node2 : graph.getAllNodes()) {
+            for (INode node2 : stuff) {
                 int startTime2 = output.getStartTime(node2);
                 // check same processor node for all other node that is not node 1
                 if (node1 != node2

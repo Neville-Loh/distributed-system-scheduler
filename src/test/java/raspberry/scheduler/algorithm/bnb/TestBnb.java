@@ -1,7 +1,7 @@
 package raspberry.scheduler.algorithm.bnb;
 
 import org.junit.Test;
-import raspberry.scheduler.algorithm.OutputChecker;
+import raspberry.scheduler.algorithm.util.OutputChecker;
 import raspberry.scheduler.algorithm.astar.WeightedAstar;
 import raspberry.scheduler.algorithm.bNb.BNB2;
 import raspberry.scheduler.algorithm.common.OutputSchedule;

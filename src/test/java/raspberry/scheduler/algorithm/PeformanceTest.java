@@ -3,6 +3,7 @@ package raspberry.scheduler.algorithm;
 import raspberry.scheduler.algorithm.astar.WeightedAstar;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.sma.MemoryBoundAStar;
+import raspberry.scheduler.algorithm.util.OutputChecker;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.io.GraphReader;
