@@ -18,8 +18,6 @@ public class ScheduleB implements Comparable<ScheduleB> {
     private int _size; // Size of the partial schedule. # of tasks scheduled.
 
     private ScheduledTask _scheduleTask;
-
-
     private int _overallFinishTime; // t: Total weight
     private int _maxPid; //The largest pid currently used to schedule. This ranges from 1 ~ n. (not 0 ~ n-1)
     private Hashtable<INode, Integer> _inDegreeTable;
@@ -51,10 +49,10 @@ public class ScheduleB implements Comparable<ScheduleB> {
         }
     }
 
-    public int getPid(){
-        return _scheduleTask.getProcessorID();
-    }
-
+    /**
+     * Add lower bound to this schedule.
+     * @param l : lower bound value.
+     */
     public void addLowerBound(int l) {
         if ( _parent == null){
             _lowerBound = _scheduleTask.getFinishTime();
@@ -84,7 +82,6 @@ public class ScheduleB implements Comparable<ScheduleB> {
      * @return Boolean : True : if its the same.
      * False: if its different.
      */
-//    @Override
     public boolean equals2(Object otherSchedule) {
         if (otherSchedule == this) {
             return true;
@@ -134,19 +131,10 @@ public class ScheduleB implements Comparable<ScheduleB> {
                     }
                 }
             }
-//            printPath( this.getPath() );
-//            printPath( oSchedule.getPath());
             return true;
         }
     }
 
-    public void printPath( Hashtable<INode, int[]> x){
-        String r ="";
-        for (INode i : x.keySet()){
-            r +=  "{Task:"+  i.getName() + "-pid:" + x.get(i)[2] + "-t:" + x.get(i)[0] + "}";
-        }
-        System.out.println(r);
-    }
 
     //Risky version of equals. Dont know if this actually outputs optimal path.
     public boolean equals3(Object otherSchedule) {
@@ -173,6 +161,10 @@ public class ScheduleB implements Comparable<ScheduleB> {
         }
     }
 
+    /**
+     * Get set of task for Equals() function
+     * @return Set of Integer Array : representing the schedule
+     */
     public Set<int[]> getTaskForEqual(){
         Set<int[]> tmp;
         if (_parent == null) {
@@ -241,15 +233,6 @@ public class ScheduleB implements Comparable<ScheduleB> {
         return _overallFinishTime;
     }
 
-//    /**
-//     * get Start Time the time this node start running.
-//     *
-//     * @return _startTime the time this node start running.
-//     */
-//    public int getStartTime() {
-//        return _scheduleTask.getStartTime();
-//    }
-
     /**
      * get finish time the time at this node finish running
      *
@@ -302,4 +285,7 @@ public class ScheduleB implements Comparable<ScheduleB> {
         return _inDegreeTable;
     }
 
+    public int getPid(){
+        return _scheduleTask.getProcessorID();
+    }
 }

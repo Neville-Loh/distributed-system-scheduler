@@ -29,21 +29,15 @@ public class Schedule {
     }
 
 
-
     public Schedule(Schedule parentSchedule, ScheduledTask scheduledTask){
         _parent = parentSchedule;
         _scheduledTask = scheduledTask;
         _size = parentSchedule.getSize() + 1;
-//
-//        if (pare)
-
-
     }
 
     public Schedule createSubschedule(ScheduledTask scheduledTask){
         return null;
     }
-
 
 
     /**

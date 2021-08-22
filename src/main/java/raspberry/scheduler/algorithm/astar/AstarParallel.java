@@ -30,6 +30,7 @@ public class AstarParallel extends Astar {
      *
      * @param graphToSolve  : graph to solve (graph represents the task and dependencies)
      * @param numProcessors : number of processor we can used to scheudle tasks.
+     * @param numCores : number of cores / threads
      */
     public AstarParallel(IGraph graphToSolve, int numProcessors, int numCores) {
         super(graphToSolve, numProcessors, Integer.MAX_VALUE);
@@ -37,6 +38,13 @@ public class AstarParallel extends Astar {
         _subSchedules = new ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>>();
     }
 
+    /**
+     *  Constuctor for A* with upper bound
+     * @param graphToSolve : graph to solve (graph represents the task and dependencies)
+     * @param numProcessors : number of processor we can used to scheudle tasks.
+     * @param upperbound : upper bound. (found from creating a valid solution)
+     * @param numCores : number of cores / threads
+     */
     public AstarParallel(IGraph graphToSolve, int numProcessors, int upperbound,int numCores) {
         super(graphToSolve, numProcessors,upperbound);
         initialiseThreadPool(numCores);
@@ -62,20 +70,13 @@ public class AstarParallel extends Astar {
      */
     @Override
     public OutputSchedule findPath() {
-        /*
-         * find the path
-         * "master" stores, schedule and its counterTable.
-         * "rootTable" is the table all counterTable is based of off.
-         * --> stores a node and number of incoming edges.
-         */
-        getH();
 
+        getH();
         Hashtable<ScheduleAStar, Hashtable<INode, Integer>> master = new Hashtable<ScheduleAStar, Hashtable<INode, Integer>>();
         Hashtable<INode, Integer> rootTable = this.getRootTable();
 
         for (INode node : rootTable.keySet()) {
             if (rootTable.get(node) == 0) {
-//                ScheduleAStar newSchedule = new ScheduleAStar(0, null, i, 1);
                 ScheduleAStar newSchedule = new ScheduleAStar(
                         new ScheduledTask(1,node, 0),
                         getChildTable(rootTable, node)
@@ -95,10 +96,9 @@ public class AstarParallel extends Astar {
 
         _observable.setIterations(0);
         _observable.setIsFinish(false);
-        //  System.out.println(_observable.getIterations());
+
         while (true) {
             _observable.increment();
-            //System.out.println(_observable.getIterations());
             cSchedule = _pq.poll();
             Solution cScheduleSolution = new Solution(cSchedule, _numP);
             _observable.setSolution(cScheduleSolution);
@@ -142,21 +142,17 @@ public class AstarParallel extends Astar {
 
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
-                    //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
                     for (int pid = 1; pid <= pidBound; pid++) {
                         createSubSchedules(cSchedule, pid, node, cTable, latch);
                     }
                 }
             }
             try {
-//                TimeUnit.MILLISECONDS.sleep(10);
-//                _threadPool.wait();
-//                _threadPool.awaitTermination(10,TimeUnit.MICROSECONDS);
                 latch.await();
             } catch(Exception e) {
-
+                System.out.println(e.getMessage());
             }
-//            _threadPool.awaitTermination();
+
             for (Hashtable<ScheduleAStar, Hashtable<INode, Integer>> subScheduleTables : _subSchedules) {
                 for (ScheduleAStar subSchedule : subScheduleTables.keySet()) {
                     master.put(subSchedule, subScheduleTables.get(subSchedule));
@@ -170,12 +166,19 @@ public class AstarParallel extends Astar {
         return new Solution(cSchedule, _numP);
     }
 
+    /**
+     * Submits a new job to a thread pool.
+     * @param cSchedule : parent schedule
+     * @param pid : processor id
+     * @param node : node/task to be scheduled
+     * @param cTable : indegree table
+     * @param latch : latch. (to check if the thread has finished its job)
+     */
     public void createSubSchedules(ScheduleAStar cSchedule, int pid, INode node, Hashtable<INode, Integer> cTable, CountDownLatch latch) {
         _threadPool.submit(() -> {
             int start = calculateEarliestStartTime(cSchedule, pid, node);
             Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
 
-//            ScheduleAStar newSchedule = new ScheduleAStar(start, cSchedule, node, j);
             ScheduleAStar newSchedule = new ScheduleAStar(
                     cSchedule,
                     new ScheduledTask(pid, node, start),
