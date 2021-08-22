@@ -217,10 +217,14 @@ public class EquivalenceChecker {
         ArrayList<ScheduledTask> newOrdering2 = new ArrayList<ScheduledTask>();
         Collections.reverse(newOrdering);
         boolean mIsAdded = false;
+        ScheduledTask prevScheduledTask = null;
         for (ScheduledTask st : newOrdering) {
             if (!mIsAdded) {
                 for (IEdge e : parentOfM) {
-                    if (e.getParent() == st.getTask() && !mIsAdded) {
+                    if ( e.getParent() == st.getTask() && !mIsAdded) {
+                        newOrdering2.add(m);
+                        mIsAdded = true;
+                    }else if ( st.getTask() == taskToSwap.getTask() && !mIsAdded ){
                         newOrdering2.add(m);
                         mIsAdded = true;
                     }
@@ -232,23 +236,30 @@ public class EquivalenceChecker {
             newOrdering2.add(m);
         }
 
-
-        if (newOrdering2.get(0).getTask().getName().equals(taskToSwap.getTask().getName())
-                && newOrdering2.get(newOrdering2.size()-1).getTask().getName().equals(m.getTask().getName())){
+        if (newOrdering2.get(0).getTask() == taskToSwap.getTask()
+                && newOrdering2.get(newOrdering2.size()-1).getTask() == m.getTask() ){
             ScheduledTask tmp2 = newOrdering.get(0);
             newOrdering2.set(0, newOrdering2.get(newOrdering2.size()-1));
             newOrdering2.set(newOrdering2.size()-1, tmp2);
         }
+        if (newOrdering2.size() >= 2){
+            if (newOrdering2.get( newOrdering2.size()-2).getTask() == taskToSwap.getTask()
+                    && newOrdering2.get( newOrdering2.size()-1 ).getTask() == m.getTask() ){
+                ScheduledTask tmp2 = newOrdering.get(newOrdering2.size()-2);
+                newOrdering2.set(newOrdering2.size()-2, newOrdering2.get(newOrdering2.size()-1));
+                newOrdering2.set(newOrdering2.size()-1, tmp2);
+            }
+        }
 
-        int indexM = 0;
-        int indexSwap = 0;
-        int counter = 0;
         if (prevTask.isEmpty()){
             newOrdering2 = new ArrayList<ScheduledTask>();
             newOrdering2.add( m );
             newOrdering2.add( taskToSwap );
         }
 
+        int indexM = 0;
+        int indexSwap = 0;
+        int counter = 0;
         for (ScheduledTask i:newOrdering2){
             if ( i == m ){
                 indexM = counter;
@@ -284,7 +295,6 @@ public class EquivalenceChecker {
                 result = createSubSchedule(result, scheduleST);
             }
         }
-
         if (indexM > indexSwap){
             System.out.println(String.format("SWAPPED task %s with %s:  \n", m, taskToSwap) + schedule.toString());
         }
@@ -293,6 +303,7 @@ public class EquivalenceChecker {
         }
         return result;
     }
+
 
 
 //    /**
@@ -329,6 +340,23 @@ public class EquivalenceChecker {
             // if after swap, scheduled Task start later (delay) -> not eq
             if (swappedTime > originalTime) {
                 return false;
+//                for (IEdge outEdge : _graph.getOutgoingEdges(scheduledTask.getTask())) {
+////                    INode childNode = outEdge.getChild();
+////                    System.out.println("\nchild scheduled task is :   " + childNode.toString());
+//////              4: T ← tf (nk) + c(ekc) B remote data arrival from nk
+////                    int T = scheduledTask.getFinishTime() + outEdge.getWeight();
+//////              5: if nc scheduled then
+////                    if (schedule.getScheduledTask(childNode) != null) {
+////                        ScheduledTask childScheduledTask = schedule.getScheduledTask(childNode);
+//////              6: if ts(nc) > T ∧ proc(nc) 6= P then B on same proc always OK
+////                        if (childScheduledTask.getStartTime() > T && childScheduledTask.getProcessorID() != scheduledTask.getProcessorID()) {
+////                            //              7: return false
+////                            return false;
+////                        } else {
+////                            return false;
+////                        }
+////                    }
+////                }
             }
         }
         return true;
@@ -380,7 +408,7 @@ public class EquivalenceChecker {
         int mOriginalTime = before.getScheduledTask(m.getTask()).getStartTime();
         int tOriginalTime = before.getScheduledTask(taskToSwap.getTask()).getStartTime();
 
-        if ((mSwappedTime == mOriginalTime) || tmSwappedTime ==tOriginalTime){
+        if ((mSwappedTime == mOriginalTime) && tmSwappedTime ==tOriginalTime){
             System.out.println("INCORRECT - M AND  HAVE THE SAME TIME");
             return false;
         }

@@ -152,6 +152,19 @@ public class TestAStar {
         OutputSchedule output = readAndFindPath("Nodes_10_Random.dot", 4);
         assertEquals(50, output.getFinishTime());
     }
+    @Test
+    public void testNodes16_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+        // read input graph and find path
+        OutputSchedule output = readAndFindPath("16_466.dot", 2);
+        assertEquals(624, output.getFinishTime());
+    }
+
+    @Test
+    public void testNodes16_5Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+        // read input graph and find path
+        OutputSchedule output = readAndFindPath("16_466.dot", 5);
+        assertEquals(466, output.getFinishTime());
+    }
 
     /**
      * Test performance of A* algorithm and correctness of output
