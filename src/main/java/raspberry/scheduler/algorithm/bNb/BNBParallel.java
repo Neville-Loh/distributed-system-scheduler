@@ -95,6 +95,10 @@ public class BNBParallel extends BNB {
         ScheduleB cSchedule;
         Hashtable<INode, Integer> cTable;
         while (true) {
+
+            if (_visited.size() > 5000000){
+                _visited.clear();
+            }
             _algoStats.increment();
 //            System.out.printf("Stack SIZE: %d\n", stack.size());
             if (stack.isEmpty()) {

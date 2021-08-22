@@ -71,6 +71,9 @@ public class BNB implements Algorithm {
         _algoStats.setIterations(0);
         _algoStats.setIsFinish(false);
         while (true) {
+            if (_visited.size() > 5000000){
+                _visited.clear();
+            }
 //            System.out.printf("Stack SIZE: %d\n", _scheduleStack.size());
             _algoStats.increment();
             if (_scheduleStack.isEmpty()) {
