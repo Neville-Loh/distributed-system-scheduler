@@ -10,6 +10,7 @@ import raspberry.scheduler.graph.INode;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class BNBParallel extends BNB2{
@@ -17,15 +18,14 @@ public class BNBParallel extends BNB2{
     private int _numCores;
     // thread pool that will deal with all the threads
     private ThreadPoolExecutor _threadPool = null;
-
     private List<Stack<ScheduleB>> stacks;
+    private Semaphore _lock;
 
     public BNBParallel(IGraph graphToSolve, int numProcessors, int bound, int numCores) {
         super(graphToSolve, numProcessors, bound);
         initialiseThreadPool(numCores);
         _numCores = numCores;
         // Stack - Keeps track of all available/scheduable tasks.
-
 
         stacks = new ArrayList<Stack<ScheduleB>>();
         for (int i=0; i<_numCores; i++){
@@ -42,6 +42,7 @@ public class BNBParallel extends BNB2{
         _numCores = numCores;
         // Allow numParallelCores - 1 extra threads to be made
         _threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numCores - 1);
+        _lock = new Semaphore(1);
     }
 
     @Override
@@ -103,12 +104,19 @@ public class BNBParallel extends BNB2{
 
             if ( cSchedule.getSize() == _numNode ) {
                 int totalFinishTime = cSchedule.getOverallFinishTime();
-                if (totalFinishTime <= _bound) {
-                    _bound = totalFinishTime;
-                    shortestPath = cSchedule;
-                    if( totalFinishTime < _bound ){ System.out.printf("\nNEW BOUND : %d", _bound); }
+                try{
+                    _lock.acquire();
+                    if (totalFinishTime <= _bound) {
+                        _bound = totalFinishTime;
+                        shortestPath = cSchedule;
+                        if( totalFinishTime < _bound ){ System.out.printf("\nNEW BOUND : %d", _bound); }
+                    }
+                    _lock.release();
+                    continue;
+                }catch (InterruptedException e){
+                    System.out.println(e);
+                    _lock.release();
                 }
-                continue;
             }
 
             int currentMaxPid = cSchedule.getMaxPid();
@@ -134,7 +142,7 @@ public class BNBParallel extends BNB2{
                 }
             }
         }
-        System.out.println(shortestPath);
+//        System.out.println(shortestPath);
         return;
     }
 
