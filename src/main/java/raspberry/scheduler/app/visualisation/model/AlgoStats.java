@@ -1,11 +1,14 @@
 package raspberry.scheduler.app.visualisation.model;
-import raspberry.scheduler.algorithm.Schedule;
-import raspberry.scheduler.algorithm.Solution;
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
+import raspberry.scheduler.algorithm.common.Schedule;
+import raspberry.scheduler.algorithm.common.ScheduledTask;
+import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.graph.Node;
 
 /**
  * AlgoObservable class receives the output data from the algorithm classes, such as iterations
  * and current schedule for live visualisation and stores it.
+ * @author: Alan, Young
  */
 public class AlgoStats {
 
@@ -26,7 +29,9 @@ public class AlgoStats {
      */
     private AlgoStats(){
         _isFinish = false;
-        _currentBestSchedule = new Solution(new Schedule(0,null,new Node("zero",0),0),0);
+        ScheduledTask st = new ScheduledTask(0,new Node ("zero", 0),0);
+        _currentBestSchedule = new Solution( new ScheduleAStar(st, null), 0);
+
     }
 
     /**

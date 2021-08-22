@@ -2,7 +2,8 @@ package raspberry.scheduler.cli.exception;
 
 /**
  * This class handles the special exceptions in the CLIParser class, not handled by
- * the other excpetions.
+ * the other exceptions.
+ * @author: Jonathon
  */
 public class ParserException extends Exception{
     public String _message;

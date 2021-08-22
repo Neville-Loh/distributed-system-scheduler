@@ -1,7 +1,7 @@
 package raspberry.scheduler.io;
 
 
-import raspberry.scheduler.algorithm.OutputSchedule;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;

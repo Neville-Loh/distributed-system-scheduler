@@ -60,3 +60,8 @@ buildNumber.properties
 .classpath
 .project
 /bin/
+.factorypath
+.settings/*
+
+#ignore output
+.+output.dot

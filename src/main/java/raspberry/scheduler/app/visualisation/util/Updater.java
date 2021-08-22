@@ -9,8 +9,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+
 import raspberry.scheduler.app.visualisation.model.AlgoStats;
-import raspberry.scheduler.algorithm.OutputSchedule;
+import raspberry.scheduler.algorithm.common.OutputSchedule;
+
+import raspberry.scheduler.app.visualisation.controller.MainController;
+
 import raspberry.scheduler.app.visualisation.model.GanttChart;
 import raspberry.scheduler.graph.INode;
 
@@ -23,6 +27,7 @@ import java.util.List;
 
 /**
  * This class polls and updates the live time statistics for the frontend components.
+ * @author: Alan, Young, Jonathon
  */
 public class Updater {
     // Initialisation of variables
