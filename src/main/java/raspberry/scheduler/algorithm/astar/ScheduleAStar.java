@@ -1,6 +1,7 @@
 package raspberry.scheduler.algorithm.astar;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import raspberry.scheduler.algorithm.common.Schedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
@@ -380,13 +381,63 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
     }
 
 
+//    @Override
+//    public String toString() {
+//        String r = "";
+//        for (String i : _scheduling.keySet()) {
+//            r += "{Task:" + i + "-pid:" + _scheduling.get(i).get(0) + "-t:" + _scheduling.get(i).get(1) + "}";
+//        }
+//        return r;
+//    }
+
+//    @Override
+//    public String toString() {
+//
+//        String r = "";
+//        ScheduleAStar s = this;
+//        while (s != null){
+//            r += "{Task:" + s.getScheduledTask().getTask()+
+//                    "-pid:" + s.getScheduledTask().getProcessorID()+ "-t:" +
+//            s.getScheduledTask().getStartTime()+ "} -> ";
+//            s = s.getParent();
+//        }
+//        return r;
+//    }
+    /**
+     * Display the name and the path of the current mbSchedule
+     * @return string
+     */
     @Override
     public String toString() {
-        String r = "";
-        for (String i : _scheduling.keySet()) {
-            r += "{Task:" + i + "-pid:" + _scheduling.get(i).get(0) + "-t:" + _scheduling.get(i).get(1) + "}";
+        ScheduleAStar cSchedule = this;
+        ArrayList<ScheduledTask> temp = new ArrayList<>();
+        Hashtable<Integer, ArrayList<ScheduledTask>> table = new Hashtable<>();
+        String result = "";
+        while (cSchedule != null) {
+
+            temp.add(cSchedule.getScheduledTask());
+            if (!table.contains(cSchedule.getScheduledTask().getProcessorID())){
+                ArrayList<ScheduledTask> s = new ArrayList<>();
+                s.add(cSchedule.getScheduledTask());
+                table.put(cSchedule.getScheduledTask().getProcessorID(),s );
+            } else {
+                table.get(cSchedule.getScheduledTask().getProcessorID()).add(cSchedule.getScheduledTask());
+            }
+            cSchedule = cSchedule.getParent();
         }
-        return r;
+        AtomicInteger len= new AtomicInteger();
+        table.forEach( (k,v) -> len.set(Integer.max(len.get(), v.size())));
+        temp.sort((st1, st2) ->{
+                if (st1.getProcessorID() == st2.getProcessorID()) {
+                    return Integer.compare(st1.getStartTime(), st2.getStartTime());
+                }
+            return Integer.compare(st1.getProcessorID(), st2.getProcessorID());
+        });
+        for (ScheduledTask s : temp) {
+            result += "{Task:"+ s.getTask().getName()+"-pid:"+s.getProcessorID()+"-t:"+s.getStartTime()+"}" + "\n";
+        }
+        //System.out.format("%32s%10d%16s", string1, int1, string2);
+        return result;
     }
 
     public int getTaskStartTime(String taskName) {

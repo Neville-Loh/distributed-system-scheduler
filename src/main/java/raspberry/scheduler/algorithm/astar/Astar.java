@@ -101,7 +101,14 @@ public class Astar implements Algorithm {
 //            System.out.printf("PQ SIZE: %d\n", _pq.size());
             _observable.increment();
             //System.out.println(_observable.getIterations());
+
+            if (_pq.isEmpty()){
+                System.out.println("We are doomed");
+                return null;
+            }
             cSchedule = _pq.poll();
+
+
 
             Solution cScheduleSolution = new Solution(cSchedule, _numP);
             _observable.setSolution(cScheduleSolution);

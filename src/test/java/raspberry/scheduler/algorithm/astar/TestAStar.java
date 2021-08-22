@@ -156,7 +156,7 @@ public class TestAStar {
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_11_OutTree.dot
-     * Expected total Time for schedule: 227
+     * ExpectSed total Time for schedule: 227
      * @throws FileNotFoundException file does not exist
      */
     @Test
