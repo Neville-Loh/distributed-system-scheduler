@@ -21,7 +21,7 @@ import java.io.IOException;
 /**
  * This class launches the front end visualisation.
  */
-public class App extends Application {
+public class VisualisationLauncher extends Application {
 
     private static CLIConfig _config;
     private static GraphReader _reader;
@@ -39,7 +39,7 @@ public class App extends Application {
             Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
-
+            primaryStage.setTitle("Raspberry Spritz Scheduler");
             primaryStage.setResizable(false);
             primaryStage.show();
             primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -65,7 +65,7 @@ public class App extends Application {
     private void startAlgo() {
         try {
             IGraph graph = _reader.read();
-            Astar astar = new Astar(graph, _config.get_numProcessors(), Integer.MAX_VALUE);
+            Astar astar = new Astar(graph, _config.getNumProcessors(), Integer.MAX_VALUE);
             OutputSchedule outputSchedule = astar.findPath();
             Writer writer = new Writer(_config.getOutputFile(), graph, outputSchedule);
             writer.write();

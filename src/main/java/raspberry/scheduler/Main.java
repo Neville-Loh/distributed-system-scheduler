@@ -27,7 +27,7 @@ public class Main {
             } else {
                 IGraph graph = reader.read();
                 if (COLLECT_STATS_ENABLE) {_startTime = System.nanoTime();}
-                Astar astar = new Astar(graph, CLIConfig.get_numProcessors(), Integer.MAX_VALUE);
+                Astar astar = new Astar(graph, CLIConfig.getNumProcessors(), Integer.MAX_VALUE);
                 OutputSchedule outputSchedule = astar.findPath();
                 if (COLLECT_STATS_ENABLE) {Logger.log(CLIConfig, _startTime, System.nanoTime());}
                 Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
@@ -41,7 +41,7 @@ public class Main {
 
     private static void startVisualisation(CLIConfig config, GraphReader reader) {
 //        new Thread(()-> {
-        App.main(config, reader);
+        VisualisationLauncher.main(config, reader);
 //        }).start();
     }
 }

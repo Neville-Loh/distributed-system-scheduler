@@ -1,12 +1,16 @@
 package raspberry.scheduler.app.visualisation.model;
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
+import raspberry.scheduler.algorithm.common.Schedule;
+import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
+import raspberry.scheduler.graph.Node;
 
 /**
  * AlgoObservable class receives the output data from the algorithm classes, such as iterations
  * and current schedule for live visualisation and stores it.
  * @author: Alan, Young
  */
-public class AlgoObservable{
+public class AlgoStats {
 
     //number of iterations the algorithms has passed through
     private int _iterations;
@@ -14,16 +18,20 @@ public class AlgoObservable{
     private boolean _isFinish;
     // the current output schedule
     private Solution _solution;
+    //current best schedule
+    private  Solution _currentBestSchedule;
 
     // checks for whether there is a single instance of the class running
-    private static AlgoObservable single_instance = null;
+    private static AlgoStats single_instance = null;
 
     /**
      * Default constructor for class
      */
-    private AlgoObservable(){
-        super();
+    private AlgoStats(){
         _isFinish = false;
+        ScheduledTask st = new ScheduledTask(0,new Node ("zero", 0),0);
+        _currentBestSchedule = new Solution( new ScheduleAStar(st, null), 0);
+
     }
 
     /**
@@ -79,6 +87,13 @@ public class AlgoObservable{
      */
     public void setSolution(Solution solution) {
         _solution = solution;
+        if ((_solution.getNumTasks() > _currentBestSchedule.getNumTasks()) || (_solution.getNumTasks() == _currentBestSchedule.getNumTasks() && _solution.getFinishTime() < _currentBestSchedule.getFinishTime())){
+            _currentBestSchedule = _solution;
+        }
+    }
+
+    public Solution getcurrentBestSchedule(){
+        return _currentBestSchedule;
     }
 
     /**
@@ -86,10 +101,10 @@ public class AlgoObservable{
      * existing instance
      * @return instance of the class
      */
-    public static AlgoObservable getInstance()
+    public static AlgoStats getInstance()
     {
         if (single_instance == null)
-            single_instance = new AlgoObservable();
+            single_instance = new AlgoStats();
 
         return single_instance;
     }

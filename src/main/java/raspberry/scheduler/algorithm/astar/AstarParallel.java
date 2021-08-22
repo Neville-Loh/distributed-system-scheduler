@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
-import raspberry.scheduler.app.visualisation.model.AlgoObservable;
+import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.*;
 
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -20,8 +20,8 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 public class AstarParallel extends Astar {
     // thread pool that will deal with all the threads
     private ThreadPoolExecutor _threadPool = null;
-
-    // concurrentlist of subschedule for threadpool to run
+    private AlgoStats _algoStats;
+    // concurren tlist of subschedule for threadpool to run
     private ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>> _subSchedules;
 
 
@@ -29,19 +29,20 @@ public class AstarParallel extends Astar {
      * Constructor for A*
      *
      * @param graphToSolve  : graph to solve (graph represents the task and dependencies)
-     * @param numProcessors : number of processor we can used to scheudle tasks.
+     * @param numProcessors : number of processor we can use to schedule tasks.
      * @param numCores : number of cores / threads
      */
     public AstarParallel(IGraph graphToSolve, int numProcessors, int numCores) {
         super(graphToSolve, numProcessors, Integer.MAX_VALUE);
         initialiseThreadPool(numCores);
         _subSchedules = new ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>>();
+        _algoStats = AlgoStats.getInstance();
     }
 
     /**
-     *  Constuctor for A* with upper bound
+     *  Constructor for A* with upper bound
      * @param graphToSolve : graph to solve (graph represents the task and dependencies)
-     * @param numProcessors : number of processor we can used to scheudle tasks.
+     * @param numProcessors : number of processor we can use to schedule tasks.
      * @param upperbound : upper bound. (found from creating a valid solution)
      * @param numCores : number of cores / threads
      */
@@ -49,6 +50,7 @@ public class AstarParallel extends Astar {
         super(graphToSolve, numProcessors,upperbound);
         initialiseThreadPool(numCores);
         _subSchedules = new ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>>();
+        _algoStats = AlgoStats.getInstance();
     }
 
 
@@ -94,14 +96,14 @@ public class AstarParallel extends Astar {
         ScheduleAStar cSchedule;
         int duplicate = 0; // Duplicate counter, Used for debugging purposes.
 
-        _observable.setIterations(0);
-        _observable.setIsFinish(false);
+        _algoStats.setIterations(0);
+        _algoStats.setIsFinish(false);
 
         while (true) {
-            _observable.increment();
+            _algoStats.increment();
             cSchedule = _pq.poll();
             Solution cScheduleSolution = new Solution(cSchedule, _numP);
-            _observable.setSolution(cScheduleSolution);
+            _algoStats.setSolution(cScheduleSolution);
             ArrayList<ScheduleAStar> listVisitedForSize = _visited.get(cSchedule.getHash());
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
                 duplicate++;
@@ -161,8 +163,8 @@ public class AstarParallel extends Astar {
             }
             _subSchedules.clear();
         }
-        _observable.setIsFinish(true);
-        _observable.setSolution(new Solution(cSchedule, _numP));
+        _algoStats.setIsFinish(true);
+        _algoStats.setSolution(new Solution(cSchedule, _numP));
         return new Solution(cSchedule, _numP);
     }
 

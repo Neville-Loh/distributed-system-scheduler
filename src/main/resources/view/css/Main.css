@@ -1,4 +1,5 @@
 <!-- CS colors -->
+
 .bg-color{
     -fx-background-color: #31393C;
 }
@@ -9,10 +10,7 @@
 .Pane-Vbox{
     -fx-background-color: #e5e5e5;
 }
-.text{
-    -fx-text-fill: #ffffff;
-    font-family: 'Mukta', sans-serif;
-}
+
 /* Button styling */
 .button{
     -fx-background-color: #6930C3;

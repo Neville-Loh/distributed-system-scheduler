@@ -75,8 +75,8 @@ public class TestCLI {
             _correctConfig.setNumProcessors(Integer.parseInt(testArgs[1]));
             CLIConfig testConfig = _parser.parser(testArgs);
 
-            String[] testConfigStr = {testConfig.getDotFile(), String.valueOf(testConfig.get_numProcessors())};
-            String[] correctConfigStr = {_correctConfig.getDotFile(), String.valueOf(_correctConfig.get_numProcessors())};
+            String[] testConfigStr = {testConfig.getDotFile(), String.valueOf(testConfig.getNumProcessors())};
+            String[] correctConfigStr = {_correctConfig.getDotFile(), String.valueOf(_correctConfig.getNumProcessors())};
             assertEquals(correctConfigStr, testConfigStr);
         } catch (ParserException e) {
             System.out.println(e.getMessage());
@@ -169,8 +169,8 @@ public class TestCLI {
             _correctConfig.setNumProcessors(Integer.parseInt(testArgs[1]));
             _correctConfig.setNumCores(Integer.parseInt(testArgs[3]));
             CLIConfig testConfig = _parser.parser(testArgs);
-            String[] testConfigStr = {testConfig.getDotFile(), String.valueOf(testConfig.get_numProcessors()), String.valueOf(testConfig.getNumCores())};
-            String[] correctConfigStr = {_correctConfig.getDotFile(), String.valueOf(_correctConfig.get_numProcessors()), String.valueOf(_correctConfig.getNumCores())};
+            String[] testConfigStr = {testConfig.getDotFile(), String.valueOf(testConfig.getNumProcessors()), String.valueOf(testConfig.getNumCores())};
+            String[] correctConfigStr = {_correctConfig.getDotFile(), String.valueOf(_correctConfig.getNumProcessors()), String.valueOf(_correctConfig.getNumCores())};
             assertEquals(correctConfigStr, testConfigStr);
         } catch (ParserException e) {
             System.out.println(e.getMessage());
