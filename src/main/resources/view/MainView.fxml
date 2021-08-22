@@ -86,7 +86,7 @@
                                        <font>
                                           <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
-                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="A*" textAlignment="RIGHT" textFill="#495057">
+                                    <Label alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="138.0" text="BNB" textAlignment="RIGHT" textFill="#495057">
                                        <font>
                                           <Font name="HoloLens MDL2 Assets" size="16.0" />
                                        </font></Label>
