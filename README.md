@@ -44,7 +44,11 @@ Java -jar target/scheduler.jar INPUT.dot P [OPTION]
 
 Notice users must have java version of at least `Java 1.8`.
 ### Optional Arguments
-`−o` OUTPUT output file is named OUTPUT (default is INPUT−output.dot )
+`−o` OUTPUT output file is named OUTPUT (default is INPUT−output.dot )  
+`−p N` use N cores for execution in parallel (default is sequential)
+`-v` visualise the serach
+
+
 
 
 
