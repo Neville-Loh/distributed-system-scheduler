@@ -112,6 +112,16 @@ public class EquivalenceChecker {
         cSchedule = schedule;
 
         ArrayList<ScheduledTask> prevTask = new ArrayList<>();
+        ArrayList<ScheduledTask> afterTask = new ArrayList<>();
+
+        while (cSchedule != null){
+            if ( cSchedule.getScheduledTask().getTask() == m.getTask()){
+                break;
+            }else{
+                afterTask.add(cSchedule.getScheduledTask());
+                cSchedule = cSchedule.getParent();
+            }
+        }
 
         while (cSchedule != null) {
             if (cSchedule.getScheduledTask().getTask().getName().equals(taskToSwap.getTask().getName())) {
@@ -231,6 +241,24 @@ public class EquivalenceChecker {
                 result = createSubSchedule(result, scheduleST);
             }
         }
+
+        Collections.reverse(afterTask);
+        for (ScheduledTask st : afterTask) {
+            int earliestStartTime = Astar.calculateEarliestStartTime(result, st.getProcessorID(), st.getTask());
+            ScheduledTask scheduleST = new ScheduledTask(st.getProcessorID(), st.getTask(), earliestStartTime);
+            //scheduleST.setStartTime(earliestStartTime);
+
+            if (result == null) {
+                result = new ScheduleAStar(
+                        scheduleST, null
+                );
+            } else {
+                result = createSubSchedule(result, scheduleST);
+            }
+        }
+
+
+
         if (indexM > indexSwap){
             System.out.println(String.format("SWAPPED task %s with %s:  \n", m, taskToSwap) + schedule.toString());
         }
