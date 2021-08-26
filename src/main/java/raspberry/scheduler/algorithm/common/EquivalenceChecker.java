@@ -341,6 +341,28 @@ public class EquivalenceChecker {
 //        if (){
 //
 //        }
+        ArrayList<ScheduledTask> beforeST = before.getAllTaskInProcessor(m.getProcessorID());
+        Collections.sort(beforeST,(st1, st2) -> Integer.compare(st1.getStartTime(),st2.getStartTime()));
+        ArrayList<ScheduledTask> afterST = after.getAllTaskInProcessor(m.getProcessorID());
+        Collections.sort(afterST,(st1, st2) -> Integer.compare(st1.getStartTime(),st2.getStartTime()));
+
+        System.out.println("beforeST = " + beforeST);
+        System.out.println("afterST = " + afterST);
+
+        for (int i = 0; i < beforeST.size(); i++){
+            INode beforeNode = beforeST.get(i).getTask();
+            INode afterNode = afterST.get(i).getTask();
+
+
+            if (beforeNode != m.getTask() && beforeNode != taskToSwap.getTask()){
+                if (beforeNode != afterNode){
+                    System.out.println("INCORRECT - the order is not the same");
+                    return false;
+                }
+            }
+        }
+
+
         return true;
 
     }
