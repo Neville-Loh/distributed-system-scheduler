@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import raspberry.scheduler.algorithm.common.Schedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
+import raspberry.scheduler.algorithm.util.TableGenerator;
 import raspberry.scheduler.graph.INode;
 
 
@@ -403,6 +404,50 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
 //        }
 //        return r;
 //    }
+//    /**
+//     * Display the name and the path of the current mbSchedule
+//     * @return string
+//     */
+//    @Override
+//    public String toString() {
+//        ScheduleAStar cSchedule = this;
+//        ArrayList<ScheduledTask> temp = new ArrayList<>();
+//        Hashtable<Integer, ArrayList<ScheduledTask>> table = new Hashtable<>();
+//        Hashtable<Integer, ArrayList<String>> stringTable = new Hashtable<>();
+//        String result = "";
+//        while (cSchedule != null) {
+//
+//            temp.add(cSchedule.getScheduledTask());
+//            if (!table.contains(cSchedule.getScheduledTask().getProcessorID())){
+//                ArrayList<ScheduledTask> s = new ArrayList<>();
+//                s.add(cSchedule.getScheduledTask());
+//                table.put(cSchedule.getScheduledTask().getProcessorID(),s );
+//            } else {
+//                table.get(cSchedule.getScheduledTask().getProcessorID()).add(cSchedule.getScheduledTask());
+//            }
+//            cSchedule = cSchedule.getParent();
+//        }
+//        temp.sort((st1, st2) ->{
+//                if (st1.getProcessorID() == st2.getProcessorID()) {
+//                    return Integer.compare(st1.getStartTime(), st2.getStartTime());
+//                }
+//            return Integer.compare(st1.getProcessorID(), st2.getProcessorID());
+//        });
+//
+//
+//
+//        for (ScheduledTask s : temp) {
+//            result += "{Task:"+ s.getTask().getName()+"-pid:"+s.getProcessorID()+"-t:"+s.getStartTime()+"}" + "\n";
+//        }
+//        //System.out.format("%32s%10d%16s", string1, int1, string2);
+//        return result;
+//    }
+
+    public int getTaskStartTime(String taskName) {
+        return _scheduling.get(taskName).get(1);
+    }
+
+
     /**
      * Display the name and the path of the current mbSchedule
      * @return string
@@ -410,13 +455,11 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
     @Override
     public String toString() {
         ScheduleAStar cSchedule = this;
-        ArrayList<ScheduledTask> temp = new ArrayList<>();
         Hashtable<Integer, ArrayList<ScheduledTask>> table = new Hashtable<>();
+        Hashtable<Integer, ArrayList<String>> stringTable = new Hashtable<>();
         String result = "";
         while (cSchedule != null) {
-
-            temp.add(cSchedule.getScheduledTask());
-            if (!table.contains(cSchedule.getScheduledTask().getProcessorID())){
+            if (!table.containsKey(cSchedule.getScheduledTask().getProcessorID())){
                 ArrayList<ScheduledTask> s = new ArrayList<>();
                 s.add(cSchedule.getScheduledTask());
                 table.put(cSchedule.getScheduledTask().getProcessorID(),s );
@@ -426,21 +469,43 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
             cSchedule = cSchedule.getParent();
         }
         AtomicInteger len= new AtomicInteger();
-        table.forEach( (k,v) -> len.set(Integer.max(len.get(), v.size())));
-        temp.sort((st1, st2) ->{
-                if (st1.getProcessorID() == st2.getProcessorID()) {
-                    return Integer.compare(st1.getStartTime(), st2.getStartTime());
-                }
-            return Integer.compare(st1.getProcessorID(), st2.getProcessorID());
-        });
-        for (ScheduledTask s : temp) {
-            result += "{Task:"+ s.getTask().getName()+"-pid:"+s.getProcessorID()+"-t:"+s.getStartTime()+"}" + "\n";
+        table.forEach( (k,v) -> len.set(Integer.max(len.intValue(), v.size())));
+        for (int pid : table.keySet()) {
+            ArrayList<ScheduledTask> stList = table.get(pid);
+            stList.sort(Comparator.comparingInt(ScheduledTask::getStartTime));
+            ArrayList<String> stringList =  new ArrayList<String>();
+            for (ScheduledTask s : stList){
+                int pad = 3 - String.valueOf(s.getStartTime()).length();
+                String padding = new String(new char[pad]).replace("\0", " ");
+                stringList.add("{Task:"+ s.getTask().getName()+"-pid:"
+                        +s.getProcessorID()+"-t:"+s.getStartTime()+"}" + padding);
+            }
+            int i = stList.size();
+            while (i < len.intValue()){
+                stringList.add("  ");
+                i++;
+            }
+            stringTable.put(pid, stringList);
         }
+
+        List<String> headersList = new ArrayList<>();
+        ArrayList<Integer> pids = Collections.list(table.keys());
+        Collections.sort(pids);
+        for (int pid : pids){
+            headersList.add(String.valueOf(pid));
+        }
+        List<List<String>> rowsList = new ArrayList<>();
+        for (int j = 0; j < len.intValue(); j++){
+            List<String> row = new ArrayList<>();
+            for (int pid : stringTable.keySet()){
+                row.add(stringTable.get(pid).get(j));
+            }
+            rowsList.add(row);
+        }
+        TableGenerator tableGenerator = new TableGenerator();
         //System.out.format("%32s%10d%16s", string1, int1, string2);
-        return result;
+        return tableGenerator.generateTable(headersList, rowsList);
     }
 
-    public int getTaskStartTime(String taskName) {
-        return _scheduling.get(taskName).get(1);
-    }
+
 }
