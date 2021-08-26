@@ -497,7 +497,7 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
         List<List<String>> rowsList = new ArrayList<>();
         for (int j = 0; j < len.intValue(); j++){
             List<String> row = new ArrayList<>();
-            for (int pid : stringTable.keySet()){
+            for (int pid : pids){
                 row.add(stringTable.get(pid).get(j));
             }
             rowsList.add(row);
