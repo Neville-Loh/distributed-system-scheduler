@@ -5,6 +5,7 @@ import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
+import raspberry.scheduler.graph.util.TopologicalOrder;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -208,11 +209,15 @@ public class Graph implements IGraph {
     private void setIndexTable(){
         _indexTable = new Hashtable<>();
         ArrayList<INode> visited = new ArrayList<>();
-        getTopologicalOrder();
-        Collections.reverse(_topologicalOrder);
+        //getTopologicalOrder();
+        //Collections.reverse(_topologicalOrder);
+        TopologicalOrder to = new TopologicalOrder(this);
+        to.computeOrder();
+        _topologicalOrder = to.getTopologicalOrder();
         for(int i = 0; i < _topologicalOrder.size(); i++){
             _indexTable.put(_topologicalOrder.get(i), i);
         }
+
 
     }
     private void getTopologicalOrder(){
@@ -240,5 +245,6 @@ public class Graph implements IGraph {
         for (INode i: _topologicalOrder){
             System.out.printf("%s_",i.getName());
         }
+        System.out.println(_indexTable);
     }
 }

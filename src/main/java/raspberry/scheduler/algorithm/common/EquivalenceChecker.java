@@ -81,6 +81,7 @@ public class EquivalenceChecker {
 //                }
                 return true;
             }
+            _graph.printTopo();
             System.out.println("\n------------- END CHECK\n");
             System.out.println("================================================================================");
             i--;
@@ -321,10 +322,10 @@ public class EquivalenceChecker {
         if (flag) {
             System.out.println("FLAG");
             for (ScheduledTask scheduledTask : scheduledTasks) {
-                System.out.printf("scheduledTask: " + scheduledTask.getName());
+                System.out.printf("scheduledTask: %s   stIndex: %d   ,",scheduledTask.getName() , _graph.getIndex(scheduledTask.getTask()));
                 for (IEdge outEdge : _graph.getOutgoingEdges(scheduledTask.getTask())) {
                     INode childNode = outEdge.getChild();
-                    System.out.printf(" Child Task:%s ", childNode.getName());
+                    System.out.printf(" Child Task:%s  childIndex:%d ", childNode.getName(),   _graph.getIndex(childNode));
                 }
                 System.out.println();
             }
