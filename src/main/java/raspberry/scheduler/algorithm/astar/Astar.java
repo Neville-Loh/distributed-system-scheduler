@@ -162,9 +162,9 @@ public class Astar implements Algorithm {
 
                         if (newSchedule.getTotal() <= _upperBound){
                             ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
-                            if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
-                                duplicate++;
-                            } else if (equivalenceChecker.weAreDoomed(newSchedule)) {
+//                            if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
+//                                duplicate++;
+                            if (equivalenceChecker.weAreDoomed(newSchedule)) {
                                 System.out.println("nevilles gay");
                             } else {
                                 _pq.add(newSchedule);

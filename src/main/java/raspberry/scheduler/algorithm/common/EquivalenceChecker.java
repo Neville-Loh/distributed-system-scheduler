@@ -42,10 +42,11 @@ public class EquivalenceChecker {
         }
         int secondlastindex = indexTable.size() - 1;
         i = secondlastindex;
-        System.out.println(indexTable.toString());
+        //System.out.println(indexTable.toString());
         while (i > 0
                 && _graph.getIndex(m.getTask()) <
                 _graph.getIndex(indexTable.get(i).getTask())) {
+            System.out.println("================================================================================");
             ScheduleAStar before = cSchedule;
             System.out.println("NOT SWAPPED:  " + cSchedule);
             cSchedule = swap2(cSchedule, m, indexTable.get(i));
@@ -63,11 +64,13 @@ public class EquivalenceChecker {
             for (int index = i; index <= secondlastindex; index ++){
                 inputList.add(indexTable.get(index));
             }
-
+            System.out.println("------------- OUT GOING COMS OK CHECK ");
             if (cSchedule.getScheduledTask(indexTable.get(secondlastindex).getTask())
                     .getFinishTime() <= TMax
                     && outgoingCommsOK(inputList, cSchedule, schedule)) {
                 _counter++;
+                System.out.println("\n------------- END CHECK\n");
+                System.out.println("================================================================================");
                 System.out.println("counter is: " + _counter);
 //                try {
 //                    if (!OutputChecker.isValid(_graph, new Solution(cSchedule, 10))) {
@@ -78,6 +81,8 @@ public class EquivalenceChecker {
 //                }
                 return true;
             }
+            System.out.println("\n------------- END CHECK\n");
+            System.out.println("================================================================================");
             i--;
 
         }
@@ -272,6 +277,7 @@ public class EquivalenceChecker {
 
 
     public boolean outgoingCommsOK(List<ScheduledTask> scheduledTasks, ScheduleAStar schedule, ScheduleAStar originalSchedule) {
+        boolean flag = false;
         //1: for all nk ∈ {ni. . . nl−1} do
         for (ScheduledTask scheduledTask : scheduledTasks) {
             // 2: if ts(nk) > t_originStartTime (nk) then B check only if nk starts later
@@ -282,6 +288,7 @@ public class EquivalenceChecker {
 //            System.out.println("original: " +originalSchedule);
             // if after swap, scheduled Task start later (delay) -> not eq
             if (swappedTime > originalTime) {
+                flag = true;
 //                return false;
                 for (IEdge outEdge : _graph.getOutgoingEdges(scheduledTask.getTask())) {
                     INode childNode = outEdge.getChild();
@@ -289,24 +296,40 @@ public class EquivalenceChecker {
                     int T = scheduledTask.getFinishTime() + outEdge.getWeight();
 //              5: if nc scheduled then
                     if (schedule.getScheduledTask(childNode) != null) {
-//                        ScheduledTask childScheduledTask = schedule.getScheduledTask(childNode);
-//                        System.out.println("Child task is " + childScheduledTask);
-////              6: if ts(nc) > T ∧ proc(nc) 6= P then B on same proc always OK
-//                        if (childScheduledTask.getStartTime() > T && childScheduledTask.getProcessorID() != scheduledTask.getProcessorID()) {
-//                            System.out.println("NOT OK");
-//                            return false;
-//                        }
-                        if (schedule.getScheduledTask(childNode).getStartTime()
-                            > originalSchedule.getScheduledTask(childNode).getStartTime()){
+                        ScheduledTask childScheduledTask = schedule.getScheduledTask(childNode);
+                        System.out.println("Child task is " + childScheduledTask);
+//              6: if ts(nc) > T ∧ proc(nc) 6= P then B on same proc always OK
+                        if (childScheduledTask.getStartTime() > T && childScheduledTask.getProcessorID() != scheduledTask.getProcessorID()) {
+                            System.out.println("Child Task: = " + childScheduledTask.getName()
+                                +" (Data arrive time T = " + T + " AND child start time = " + childScheduledTask.getStartTime() + ")");
+                            System.out.println("NOT OK");
                             return false;
                         }
+//                        if (schedule.getScheduledTask(childNode).getStartTime()
+//                            > originalSchedule.getScheduledTask(childNode).getStartTime()){
+//                            return false;
+//                        }
 
                     } else {
+                            System.out.println("child task " + childNode.getName() + " is not scheduled");
                             return false;
                     }
                 }
             }
         }
+
+        if (flag) {
+            System.out.println("FLAG");
+            for (ScheduledTask scheduledTask : scheduledTasks) {
+                System.out.printf("scheduledTask: " + scheduledTask.getName());
+                for (IEdge outEdge : _graph.getOutgoingEdges(scheduledTask.getTask())) {
+                    INode childNode = outEdge.getChild();
+                    System.out.printf(" Child Task:%s ", childNode.getName());
+                }
+                System.out.println();
+            }
+        }
+        System.out.println("\nOK schedule is deleted, :" + scheduledTasks);
         return true;
     }
 
@@ -352,16 +375,16 @@ public class EquivalenceChecker {
         }
 
         int mSwappedTime = after.getScheduledTask(m.getTask()).getStartTime();
-        int tmSwappedTime = after.getScheduledTask(taskToSwap.getTask()).getStartTime();
+        int tSwappedTime = after.getScheduledTask(taskToSwap.getTask()).getStartTime();
         int mOriginalTime = before.getScheduledTask(m.getTask()).getStartTime();
         int tOriginalTime = before.getScheduledTask(taskToSwap.getTask()).getStartTime();
 
-        if ((mSwappedTime == mOriginalTime) && tmSwappedTime ==tOriginalTime){
-            System.out.println("INCORRECT - M AND  HAVE THE SAME TIME");
+        if ((mSwappedTime == mOriginalTime) && tSwappedTime ==tOriginalTime){
+            System.out.println("INCORRECT - M AND SwappedTask HAVE THE SAME START TIME");
             return false;
         }
         // if m is later than task to be swapped,
-        if (mSwappedTime > tmSwappedTime){
+        if (mSwappedTime > tSwappedTime){
             System.out.println("INCORRECT - m is scheduled later than (Task to be Swap)");
             return false;
         }
@@ -373,9 +396,6 @@ public class EquivalenceChecker {
         Collections.sort(beforeST,(st1, st2) -> Integer.compare(st1.getStartTime(),st2.getStartTime()));
         ArrayList<ScheduledTask> afterST = after.getAllTaskInProcessor(m.getProcessorID());
         Collections.sort(afterST,(st1, st2) -> Integer.compare(st1.getStartTime(),st2.getStartTime()));
-
-        System.out.println("beforeST = " + beforeST);
-        System.out.println("afterST = " + afterST);
 
         for (int i = 0; i < beforeST.size(); i++){
             INode beforeNode = beforeST.get(i).getTask();
