@@ -2,15 +2,11 @@ package raspberry.scheduler.graph;
 
 import org.junit.Before;
 import org.junit.Test;
-import raspberry.scheduler.graph.Graph;
-import raspberry.scheduler.graph.IEdge;
-import raspberry.scheduler.graph.INode;
+import raspberry.scheduler.graph.adjacencylist.Graph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Hashtable;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

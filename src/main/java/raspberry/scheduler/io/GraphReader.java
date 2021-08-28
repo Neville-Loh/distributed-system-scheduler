@@ -3,7 +3,7 @@ package raspberry.scheduler.io;
 import com.paypal.digraph.parser.GraphEdge;
 import com.paypal.digraph.parser.GraphNode;
 import com.paypal.digraph.parser.GraphParser;
-import raspberry.scheduler.graph.Graph;
+import raspberry.scheduler.graph.adjacencylist.Graph;
 import raspberry.scheduler.graph.IGraph;
 
 import java.io.FileInputStream;

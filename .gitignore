@@ -64,4 +64,4 @@ buildNumber.properties
 .settings/*
 
 #ignore output
-.+output.dot
+*output.dot

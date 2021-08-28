@@ -135,5 +135,9 @@ public interface IGraph{
      * @return index of the node
      */
     public int getIndex(INode node);
+
+
+
+    public void printTopo();
 }
 

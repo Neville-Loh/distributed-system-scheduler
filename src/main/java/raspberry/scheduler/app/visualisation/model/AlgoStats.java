@@ -3,7 +3,7 @@ import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.algorithm.common.Schedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
-import raspberry.scheduler.graph.Node;
+import raspberry.scheduler.graph.adjacencylist.Node;
 
 /**
  * AlgoObservable class receives the output data from the algorithm classes, such as iterations
@@ -29,7 +29,7 @@ public class AlgoStats {
      */
     private AlgoStats(){
         _isFinish = false;
-        ScheduledTask st = new ScheduledTask(0,new Node ("zero", 0),0);
+        ScheduledTask st = new ScheduledTask(0,new Node("zero", 0),0);
         _currentBestSchedule = new Solution( new ScheduleAStar(st, null), 0);
 
     }

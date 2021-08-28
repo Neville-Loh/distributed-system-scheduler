@@ -1,0 +1,27 @@
+digraph "16_4" {
+	1	 [Weight=6];
+	6	 [Weight=10];
+	1 -> 6	 [Weight=12];
+	7	 [Weight=6];
+	1 -> 7	 [Weight=20];
+	17	 [Weight=3];
+	1 -> 17	 [Weight=10];
+	2	 [Weight=3];
+	16	 [Weight=2];
+	2 -> 16	 [Weight=12];
+	3	 [Weight=8];
+	5	 [Weight=2];
+	3 -> 5	 [Weight=14];
+	12	 [Weight=3];
+	3 -> 12	 [Weight=12];
+	4	 [Weight=8];
+	10	 [Weight=8];
+	7 -> 10	 [Weight=6];
+	8	 [Weight=7];
+	8 -> 16	 [Weight=6];
+	9	 [Weight=3];
+	11	 [Weight=9];
+	13	 [Weight=8];
+	14	 [Weight=6];
+	15	 [Weight=6];
+}

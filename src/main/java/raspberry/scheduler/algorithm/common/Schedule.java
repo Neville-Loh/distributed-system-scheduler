@@ -4,6 +4,7 @@ package raspberry.scheduler.algorithm.common;
 import raspberry.scheduler.algorithm.sma.MBSchedule;
 import raspberry.scheduler.graph.INode;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -86,10 +87,6 @@ public class Schedule {
         this._size = _size;
     }
 
-    public ScheduledTask getScheduledTask() {
-        return _scheduledTask;
-    }
-
     public void setScheduledTask(ScheduledTask _scheduledTask) {
         this._scheduledTask = _scheduledTask;
     }
@@ -101,4 +98,56 @@ public class Schedule {
     public void setMaxPid(int _maxPid) {
         this._maxPid = _maxPid;
     }
+
+
+    /* ============================================================
+     *  Duplicate schedule detection
+     * 
+     * ============================================================
+     */
+    /**
+     * Return the last scheduled task in schedule
+     * @return last scheduled task
+     */
+    public ScheduledTask getScheduledTask() {
+        return _scheduledTask;
+    }
+
+    /**
+     *  Return the scheduled task if the task is scheduled
+     *  else return null
+     * @param task the task that is scheduled
+     * @return the scheduled task
+     */
+    public ScheduledTask getScheduledTask(INode task ){
+        Schedule cSchedule = this;
+        while (cSchedule != null){
+            if (cSchedule.getScheduledTask().getTask() == task){
+                return cSchedule.getScheduledTask();
+            }
+            cSchedule = cSchedule.getParent();
+        }
+        return null;
+    }
+
+
+    /**
+     * todo: new method, please test @see dup-detection
+     * @param processorID
+     * @return
+     */
+    public ArrayList<ScheduledTask> getAllTaskInProcessor(int processorID) {
+        Schedule cSchedule = this;
+        ArrayList<ScheduledTask> result = new ArrayList<>();
+        while (cSchedule != null){
+            if (cSchedule.getScheduledTask().getProcessorID() == processorID){
+                result.add(cSchedule.getScheduledTask());
+            }
+            cSchedule = cSchedule.getParent();
+        }
+
+        return result;
+    }
+
+
 }

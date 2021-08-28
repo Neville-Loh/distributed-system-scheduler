@@ -7,8 +7,8 @@ import raspberry.scheduler.algorithm.bNb.ScheduleB;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
-import raspberry.scheduler.graph.Graph;
 import raspberry.scheduler.graph.INode;
+import raspberry.scheduler.graph.adjacencylist.Graph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 import java.util.Hashtable;

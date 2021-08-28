@@ -5,6 +5,7 @@ import java.util.List;
 
 import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.algorithm.Algorithm;
+import raspberry.scheduler.algorithm.common.EquivalenceChecker;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
@@ -19,7 +20,7 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  */
 public class Astar implements Algorithm {
 
-    private IGraph _graph;
+    private static IGraph _graph;
     int _numP;
     int _numNode;
     int _maxCriticalPath;
@@ -28,6 +29,8 @@ public class Astar implements Algorithm {
     Hashtable<Integer, ArrayList<ScheduleAStar>> _visited;
     private AlgoStats _algoStats;
     int _upperBound;
+
+    EquivalenceChecker equivalenceChecker;
 
     /**
      * Constructor for A*
@@ -43,6 +46,7 @@ public class Astar implements Algorithm {
         _numNode = _graph.getNumNodes();
         _algoStats = AlgoStats.getInstance();
         _upperBound = upperBound;
+        equivalenceChecker = new EquivalenceChecker(_graph, numProcessors);
     }
 
     public Astar(IGraph graphToSolve, int numProcessors) {
@@ -80,10 +84,21 @@ public class Astar implements Algorithm {
 
         ScheduleAStar cSchedule;
         int duplicate = 0; // Duplicate counter, Used for debugging purposes.
+        int duplicate2 = 0; // Duplicate counter, Used for debugging purposes.
+
         _algoStats.setIterations(0);
         _algoStats.setIsFinish(false);
+      //  System.out.println(_observable.getIterations());
         while (true) {
+            //System.out.printf("PQ SIZE: %d\n", _pq.size());
             _algoStats.increment();
+            //System.out.println(_observable.getIterations());
+
+            if (_pq.isEmpty()){
+                System.out.println("Schedule is not found");
+                return null;
+            }
+
             cSchedule = _pq.poll();
 
             Solution cScheduleSolution = new Solution(cSchedule, _numP);
@@ -118,10 +133,7 @@ public class Astar implements Algorithm {
                 if (cTable.get(node) == 0) {
                     for (int pid = 1; pid <= pidBound; pid++) {
                         int start = calculateEarliestStartTime(cSchedule, pid, node);
-
-
                         Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
-
                         ScheduleAStar newSchedule = new ScheduleAStar(
                                 cSchedule,
                                 new ScheduledTask(pid, node, start),
@@ -137,7 +149,9 @@ public class Astar implements Algorithm {
                             ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
                             if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
                                 duplicate++;
-                            }else{
+                            } else if (equivalenceChecker.checkDuplicateBySwap(newSchedule)) {
+                                duplicate2++;
+                            } else {
                                 _pq.add(newSchedule);
                             }
                         }
@@ -145,8 +159,13 @@ public class Astar implements Algorithm {
                 }
             }
         }
+
+        System.out.printf("PQ SIZE: %d\n", _pq.size());
+        System.out.printf("\nDUPLCIATE : %d\n", duplicate);
+        System.out.printf("\nNEW DUPLCIATE : %d\n", duplicate2);
         _algoStats.setIsFinish(true);
         _algoStats.setSolution(new Solution(cSchedule,_numP));
+
         return new Solution(cSchedule, _numP);
     }
 
@@ -197,7 +216,7 @@ public class Astar implements Algorithm {
      * @param nodeToBeSchedule : node/task to be scheduled.
      * @return Integer : representing the earliest time. (start time)
      */
-    public int calculateEarliestStartTime(ScheduleAStar parentSchedule, int processorId, INode nodeToBeSchedule) {
+    public static int calculateEarliestStartTime(ScheduleAStar parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
         // Find last finish time for current processor id.
         ScheduleAStar last_processorId_use = null; //last time processor with "processorId" was used.

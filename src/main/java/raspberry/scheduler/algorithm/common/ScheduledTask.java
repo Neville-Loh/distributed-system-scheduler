@@ -38,33 +38,38 @@ public class ScheduledTask {
         return _startTime;
     }
 
+
     public int getFinishTime() {
         return _startTime + _task.getValue();
     }
 
+    public String getName() {
+        return _task.getName();
+    }
 
     @Override
     public String toString(){
         return _task + "" + _processorID;
     }
+    
 
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj.getClass() != this.getClass()) {
-            return false;
-        }
-        final ScheduledTask other = (ScheduledTask) obj;
-        return (this.getTask().getName()+ this.getProcessorID()).equals(
-                other.getTask().getName() + other.getProcessorID()
-        );
-    }
-
-    @Override
-    public int hashCode() {
-        return (_task.getName()+_processorID).hashCode();
-    }
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (obj == null) {
+//            return false;
+//        }
+//        if (obj.getClass() != this.getClass()) {
+//            return false;
+//        }
+//        final ScheduledTask other = (ScheduledTask) obj;
+//        return (this.getTask().getName()+ this.getProcessorID()).equals(
+//                other.getTask().getName() + other.getProcessorID()
+//        );
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return (_task.getName()+_processorID).hashCode();
+//    }
 }

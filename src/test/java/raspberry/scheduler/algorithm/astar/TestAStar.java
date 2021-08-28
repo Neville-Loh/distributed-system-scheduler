@@ -152,11 +152,24 @@ public class TestAStar {
         OutputSchedule output = readAndFindPath("Nodes_10_Random.dot", 4);
         assertEquals(50, output.getFinishTime());
     }
+    @Test
+    public void testNodes16_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+        // read input graph and find path
+        OutputSchedule output = readAndFindPath("16_466.dot", 2);
+        assertEquals(624, output.getFinishTime());
+    }
+
+    @Test
+    public void testNodes16_5Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+        // read input graph and find path
+        OutputSchedule output = readAndFindPath("16_466.dot", 5);
+        assertEquals(466, output.getFinishTime());
+    }
 
     /**
      * Test performance of A* algorithm and correctness of output
      * Name: Nodes_11_OutTree.dot
-     * Expected total Time for schedule: 227
+     * ExpectSed total Time for schedule: 227
      * @throws FileNotFoundException file does not exist
      */
     @Test
@@ -186,14 +199,14 @@ public class TestAStar {
 
         // run and time a* algorithm (seeker weighted a* routine)
         long startTime = System.nanoTime();
-//        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
-//        OutputSchedule outputBound = wA.findPath();
-//        int upperbound = outputBound.getFinishTime();
-//        wA = null;
-//        outputBound = null;
+        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
+        OutputSchedule outputBound = wA.findPath();
+        int upperbound = outputBound.getFinishTime();
+        wA = null;
+        outputBound = null;
 
         // run a star
-        Astar astar = new Astar(graph,numProcessors,Integer.MAX_VALUE);
+        Astar astar = new Astar(graph,numProcessors, upperbound);
         OutputSchedule output = astar.findPath();
 
         System.out.printf("------------------------\n" +
