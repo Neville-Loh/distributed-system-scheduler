@@ -1,9 +1,8 @@
 package raspberry.scheduler.algorithm.bNb;
 
 import raspberry.scheduler.algorithm.Algorithm;
-import raspberry.scheduler.algorithm.common.OutputSchedule;
-import raspberry.scheduler.algorithm.common.Solution;
-import raspberry.scheduler.algorithm.common.ScheduledTask;
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
+import raspberry.scheduler.algorithm.common.*;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.IEdge;
@@ -26,6 +25,7 @@ public class BNB implements Algorithm {
     Stack<ScheduleB> _scheduleStack;
     Hashtable<Integer, ArrayList<ScheduleB>> _visited;
     private AlgoStats _algoStats;
+    private FixOrderChecker _fixOrderChecker;
 
     /**
      * BNB algorithm constructor. with bound
@@ -40,6 +40,7 @@ public class BNB implements Algorithm {
         _numNode = _graph.getNumNodes();
         _algoStats = AlgoStats.getInstance();
         _bound = bound;
+        _fixOrderChecker = new FixOrderChecker(_graph);
     }
 
     @Override
@@ -108,13 +109,41 @@ public class BNB implements Algorithm {
                 pidBound = currentMaxPid + 1;
             }
 
+
+            ArrayList<INode> freeNodes = new ArrayList<INode>();
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
-                    for (int j = 1; j <= pidBound; j++) {
-                        int start = calculateCost(cSchedule, j, node);
-                        ScheduleB newSchedule = new ScheduleB(cSchedule,new ScheduledTask(j,node,start),getChildTable(cTable,node));
+                    freeNodes.add(node);
+                }
+            }
+
+            if ( _fixOrderChecker.check(freeNodes, cSchedule) &&
+                    _fixOrderChecker.getFixOrder(freeNodes,cSchedule) != null){
+
+                INode node = _fixOrderChecker.getFixOrder(freeNodes,cSchedule).get(0);
+                for (int pid = 1; pid <= pidBound; pid++) {
+                    int start = calculateCost(cSchedule, pid, node);
+                    ScheduleB newSchedule = new ScheduleB(cSchedule,
+                            new ScheduledTask(pid,node,start),
+                            getChildTable(cTable,node));
+                    newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                    _algoStats.setSolution(new Solution(newSchedule, _numP));
+
+                    if ( canPrune( newSchedule , false)){
+                        continue;
+                    }
+                    _scheduleStack.push(newSchedule);
+                }
+            } else {
+                for (INode node : freeNodes) {
+                    for (int pid = 1; pid <= pidBound; pid++) {
+                        int start = calculateCost(cSchedule, pid, node);
+                        ScheduleB newSchedule = new ScheduleB(cSchedule,
+                                new ScheduledTask(pid,node,start),
+                                getChildTable(cTable,node));
                         newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
                         _algoStats.setSolution(new Solution(newSchedule, _numP));
+
                         if ( canPrune( newSchedule , false)){
                             continue;
                         }
@@ -124,7 +153,7 @@ public class BNB implements Algorithm {
             }
         }
         if (shortestPath == null){
-//            System.out.println("==== WTF IS WRONG WITH U");
+//            System.out.println("FAILED TO FIND THE SHORTEST PATH");
         }
 //        Helper.printPath(shortestPath);
         _algoStats.setIsFinish(true);

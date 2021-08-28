@@ -15,8 +15,6 @@ import raspberry.scheduler.graph.INode;
  */
 public class ScheduleB extends Schedule implements Comparable<ScheduleB> {
 
-    private int _size; // Size of the partial schedule. # of tasks scheduled.
-
     private int _overallFinishTime; // t: Total weight
     private int _maxPid; //The largest pid currently used to schedule. This ranges from 1 ~ n. (not 0 ~ n-1)
     private Hashtable<INode, Integer> _inDegreeTable;
@@ -28,7 +26,6 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB> {
     public ScheduleB( ScheduledTask scheduleTask, Hashtable<INode,Integer> inDegreeTable){
         super( scheduleTask );
         _inDegreeTable = inDegreeTable;
-        _size = 1;
         _maxPid = scheduleTask.getProcessorID();
         _overallFinishTime = scheduleTask.getFinishTime();
     }
@@ -45,7 +42,6 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB> {
         } else {
             _maxPid = parent.getMaxPid();
         }
-        _size = parent.getSize() + 1;
         _overallFinishTime = Math.max( parent._overallFinishTime, scheduleTask.getFinishTime() );
     }
 
@@ -220,7 +216,7 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB> {
             value = prime * value + (scheduling.get(i)[0]);
             value = prime * value + (i.getName().hashCode()); //Might be fine just doing i.hasCode()
         }
-        value = prime * value + (_size);
+        value = prime * value + getSize();
         return value;
     }
 
@@ -264,14 +260,7 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB> {
         return (ScheduleB) super.getParent();
     }
 
-    /**
-     * get size Size of the partial schedule. # of tasks scheduled.
-     *
-     * @return _size Size of the partial schedule. # of tasks scheduled.
-     */
-    public int getSize() {
-        return _size;
-    }
+
 
     public int getLowerBound(){
         return _lowerBound;
