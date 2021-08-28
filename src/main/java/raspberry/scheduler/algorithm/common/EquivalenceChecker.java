@@ -146,7 +146,6 @@ public class EquivalenceChecker {
             }
             cSchedule = cSchedule.getParent();
         }
-        Collections.reverse(prevTask);
 
         INode swapNode = taskToSwap.getTask();
         List<IEdge> childOfSwap = _graph.getOutgoingEdges(swapNode);
@@ -155,7 +154,9 @@ public class EquivalenceChecker {
         List<IEdge> parentOfM = _graph.getIngoingEdges(mNode);
 
         ArrayList<ScheduledTask> newOrdering = new ArrayList<ScheduledTask>();
+
         Collections.reverse(prevTask);
+
         boolean swapIsAdded = false;
         for (ScheduledTask st : prevTask) {
             if (!swapIsAdded) {
@@ -172,17 +173,14 @@ public class EquivalenceChecker {
             newOrdering.add(taskToSwap);
         }
 
+
         ArrayList<ScheduledTask> newOrdering2 = new ArrayList<ScheduledTask>();
         Collections.reverse(newOrdering);
         boolean mIsAdded = false;
-        ScheduledTask prevScheduledTask = null;
         for (ScheduledTask st : newOrdering) {
             if (!mIsAdded) {
                 for (IEdge e : parentOfM) {
                     if ( e.getParent() == st.getTask() && !mIsAdded) {
-                        newOrdering2.add(m);
-                        mIsAdded = true;
-                    }else if ( st.getTask() == taskToSwap.getTask() && !mIsAdded ){
                         newOrdering2.add(m);
                         mIsAdded = true;
                     }
@@ -193,21 +191,8 @@ public class EquivalenceChecker {
         if (!mIsAdded) {
             newOrdering2.add(m);
         }
+        Collections.reverse(newOrdering2);
 
-        if (newOrdering2.get(0).getTask() == taskToSwap.getTask()
-                && newOrdering2.get(newOrdering2.size()-1).getTask() == m.getTask() ){
-            ScheduledTask tmp2 = newOrdering.get(0);
-            newOrdering2.set(0, newOrdering2.get(newOrdering2.size()-1));
-            newOrdering2.set(newOrdering2.size()-1, tmp2);
-        }
-        if (newOrdering2.size() >= 2){
-            if (newOrdering2.get( newOrdering2.size()-2).getTask() == taskToSwap.getTask()
-                    && newOrdering2.get( newOrdering2.size()-1 ).getTask() == m.getTask() ){
-                ScheduledTask tmp2 = newOrdering.get(newOrdering2.size()-2);
-                newOrdering2.set(newOrdering2.size()-2, newOrdering2.get(newOrdering2.size()-1));
-                newOrdering2.set(newOrdering2.size()-1, tmp2);
-            }
-        }
 
         if (prevTask.isEmpty()){
             newOrdering2 = new ArrayList<ScheduledTask>();
@@ -227,7 +212,7 @@ public class EquivalenceChecker {
             counter ++;
         }
 
-        Collections.reverse(prevTask);
+        Collections.reverse((newOrdering));
         if ( indexM > indexSwap ){
             System.out.printf("\nindex m: %d, swap: %d \n", indexM,indexSwap);
             System.out.println(tmp);
