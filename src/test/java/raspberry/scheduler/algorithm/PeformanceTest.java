@@ -33,14 +33,12 @@ public class PeformanceTest {
         assertEquals(466, output.getFinishTime());
     }
 
-    @Test
    public void testNodesBIG_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
        // read input graph and find path
        OutputSchedule output = readAndFindPath("big.dot", 2);
        assertEquals(92, output.getFinishTime());
    }
 
-   @Test
    public void testNodesBIG_4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
        // read input graph and find path
        OutputSchedule output = readAndFindPath("big.dot", 5);
