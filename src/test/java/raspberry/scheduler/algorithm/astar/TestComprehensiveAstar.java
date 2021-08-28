@@ -15,7 +15,7 @@ import static org.junit.Assert.fail;
 
 public class TestComprehensiveAstar {
     private String INPUT_PATH = "src/test/resources/input/dotfiles/";
-    private final int TIME_LIMIT = 5000;  //time limit in ms
+    private final int TIME_LIMIT = 35000;  //time limit in ms
 
     /**
      * Helper method to read the file and run a star

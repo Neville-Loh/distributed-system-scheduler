@@ -81,11 +81,11 @@ public class Astar implements Algorithm {
                         getChildTable(rootTable, node)
                 );
 
-                newSchedule.addHeuristic(0
-//                        Collections.max(Arrays.asList(
-//                                h(newSchedule),
-//                                h1(getChildTable(rootTable, node), newSchedule)
-//                        ))
+                newSchedule.addHeuristic(
+                        Collections.max(Arrays.asList(
+                                h(newSchedule),
+                                h1(getChildTable(rootTable, node), newSchedule)
+                        ))
                 );
 
                 _pq.add(newSchedule);
@@ -147,7 +147,8 @@ public class Astar implements Algorithm {
                 }
             }
 
-            if (FIX_ORDER_ENABLE && _fixOrderChecker.check(freeNodes, cSchedule)){
+            if (FIX_ORDER_ENABLE && _fixOrderChecker.check(freeNodes, cSchedule) &&
+                    _fixOrderChecker.getFixOrder(freeNodes,cSchedule) != null){
                 INode node = _fixOrderChecker.getFixOrder(freeNodes,cSchedule).get(0);
 
                 fixOrderCount++;
@@ -159,11 +160,11 @@ public class Astar implements Algorithm {
                             new ScheduledTask(pid, node, start),
                             newTable);
 
-                    newSchedule.addHeuristic(0
-//                            Collections.max(Arrays.asList(
-//                                    h(newSchedule),
-//                                    h1(newTable, newSchedule)
-//                            ))
+                    newSchedule.addHeuristic(
+                            Collections.max(Arrays.asList(
+                                    h(newSchedule),
+                                    h1(newTable, newSchedule)
+                            ))
                     );
                     _pq.add(newSchedule);
 //                    if (!ENABLE_UPPERBOUND || newSchedule.getTotal() <= _upperBound) {
@@ -187,11 +188,11 @@ public class Astar implements Algorithm {
                                 new ScheduledTask(pid, node, start),
                                 newTable);
 
-                        newSchedule.addHeuristic(0
-//                                Collections.max(Arrays.asList(
-//                                        h(newSchedule),
-//                                        h1(newTable, newSchedule)
-//                                ))
+                        newSchedule.addHeuristic(
+                                Collections.max(Arrays.asList(
+                                        h(newSchedule),
+                                        h1(newTable, newSchedule)
+                                ))
                         );
 
                         if (!UPPERBOUND_ENABLE || newSchedule.getTotal() <= _upperBound) {

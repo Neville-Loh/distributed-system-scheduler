@@ -1,5 +1,7 @@
 package raspberry.scheduler.algorithm;
 
+import org.junit.Test;
+import raspberry.scheduler.algorithm.astar.Astar;
 import raspberry.scheduler.algorithm.astar.WeightedAstar;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.sma.MemoryBoundAStar;
@@ -31,13 +33,14 @@ public class PeformanceTest {
         assertEquals(466, output.getFinishTime());
     }
 
- 
+    @Test
    public void testNodesBIG_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
        // read input graph and find path
        OutputSchedule output = readAndFindPath("big.dot", 2);
        assertEquals(92, output.getFinishTime());
    }
 
+   @Test
    public void testNodesBIG_4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
        // read input graph and find path
        OutputSchedule output = readAndFindPath("big.dot", 5);
@@ -60,22 +63,45 @@ public class PeformanceTest {
     private OutputSchedule readAndFindPath(String filename, int numProcessors) throws
             FileNotFoundException, EdgeDoesNotExistException {
 
-        // read graph
+//        // read graph
+//        GraphReader reader = new GraphReader(INPUT_PATH+ filename);
+//        IGraph graph = reader.read();
+//
+//        // run and time a* algorithm
+//        long startTime = System.nanoTime();
+//        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
+//        OutputSchedule outputBound = wA.findPath();
+//        wA = null;
+//        int upperbound = outputBound.getFinishTime();
+//        outputBound = null;
+//        System.out.printf("UPPERBOUND : %d", upperbound);
+//
+//        //Astar astar = new Astar(graph,numProcessors,upperbound);
+//        MemoryBoundAStar astar = new MemoryBoundAStar(graph,numProcessors,3000);
+//        OutputSchedule output = astar.findPath();
+//        System.out.printf("------------------------\n" +
+//                        "File: %s, Number of Processor: %d \nRUNNING TIME : %.2f seconds\n",
+//                filename, numProcessors, (System.nanoTime() - startTime) / 1000000000.0);
+//
+//        // check if output violate any dependency
+//        if (!OutputChecker.isValid(graph,output)){
+//            fail("Schedule is not valid");
+//        }
         GraphReader reader = new GraphReader(INPUT_PATH+ filename);
         IGraph graph = reader.read();
 
-        // run and time a* algorithm
+        // run and time a* algorithm (seeker weighted a* routine)
         long startTime = System.nanoTime();
         WeightedAstar wA = new WeightedAstar(graph,numProcessors);
         OutputSchedule outputBound = wA.findPath();
-        wA = null;
         int upperbound = outputBound.getFinishTime();
+        wA = null;
         outputBound = null;
-        System.out.printf("UPPERBOUND : %d", upperbound);
 
-        //Astar astar = new Astar(graph,numProcessors,upperbound);
-        MemoryBoundAStar astar = new MemoryBoundAStar(graph,numProcessors,3000);
+        // run a star
+        Astar astar = new Astar(graph,numProcessors, upperbound);
         OutputSchedule output = astar.findPath();
+
         System.out.printf("------------------------\n" +
                         "File: %s, Number of Processor: %d \nRUNNING TIME : %.2f seconds\n",
                 filename, numProcessors, (System.nanoTime() - startTime) / 1000000000.0);

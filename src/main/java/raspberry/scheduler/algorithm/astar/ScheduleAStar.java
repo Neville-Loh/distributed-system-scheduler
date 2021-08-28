@@ -388,7 +388,12 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
             ArrayList<String> stringList = new ArrayList<String>();
             for (ScheduledTask s : stList) {
                 int pad = 3 - String.valueOf(s.getStartTime()).length();
-                String padding = new String(new char[pad]).replace("\0", " ");
+                String padding;
+                if (pad < 1){
+                    padding = "";
+                } else {
+                    padding = new String(new char[pad]).replace("\0", " ");
+                }
                 stringList.add("{Task:" + s.getTask().getName() + "-pid:"
                         + s.getProcessorID() + "-t:" + s.getStartTime() + "}" + padding);
             }

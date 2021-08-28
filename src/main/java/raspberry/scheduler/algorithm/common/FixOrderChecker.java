@@ -21,7 +21,7 @@ public class FixOrderChecker {
 
 
     public boolean check(List<INode> freeNodes, ScheduleAStar schedule){
-        System.out.println("========================================================================================");
+//        System.out.println("========================================================================================");
         // if nf has at most one parent and at most one child
         for (INode node : freeNodes){
             int numOfParent = _graph.getIngoingEdges(node).size();
@@ -50,7 +50,7 @@ public class FixOrderChecker {
                 }
             }
         }
-        
+
         // if nf has a parent, |parents(nf )| = 1, then all other parents of tasks in free(s)
         // are allocated to the same processor Pp:
         int firstFoundPID = -1;
@@ -66,10 +66,10 @@ public class FixOrderChecker {
 
             }
         }
-        System.out.println(schedule);
-        System.out.println(_graph);
-        System.out.println("Free node: " + getFixOrder(freeNodes, schedule));
-        System.out.println("========================================================================================");
+//        System.out.println(schedule);
+//        System.out.println(_graph);
+//        System.out.println("Free node: " + getFixOrder(freeNodes, schedule));
+//        System.out.println("========================================================================================");
         return true;
     }
 
@@ -84,6 +84,15 @@ public class FixOrderChecker {
             } else{
                 return Integer.compare(drt1,drt2);
             }});
+
+        for (int i = 1; i < freeNodes.size(); i++ ){
+            INode n1 = freeNodes.get(i-1);
+            INode n2 = freeNodes.get(i);
+            if (outGoingEdgeCost(n2)> outGoingEdgeCost(n1)){
+                //System.out.println("fuck it");
+                return null;
+            }
+        }
         return freeNodes;
     }
 
