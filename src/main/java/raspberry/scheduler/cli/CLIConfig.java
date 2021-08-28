@@ -49,7 +49,7 @@ public class CLIConfig {
      * Returns the number of processes set
      * @return _numProcessors - an int that gives the number of processors set
      */
-    public int get_numProcessors() {
+    public int getNumProcessors() {
         return _numProcessors;
     }
 

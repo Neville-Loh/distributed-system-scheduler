@@ -24,13 +24,6 @@ public class TestGraph {
      */
     @Before
     public void GraphTestSetUp() {
-//        Hashtable<String, INode> nodes = new Hashtable<String, INode>();
-//        Hashtable<String, List<IEdge>> inDegreeAdjacencyList =
-//                new Hashtable<String, List<IEdge>>();
-//        Hashtable<String, List<IEdge>> outDegreeAdjacencyList =
-//                new Hashtable<String, List<IEdge>>();
-//        Hashtable<String,Integer> criticalPathWeightTable =
-//                new Hashtable<String, Integer>();
         _testGraph = new Graph("testGraph");
         _testGraph.addNode("1", 12);
         _testGraph.addNode("2", 11);

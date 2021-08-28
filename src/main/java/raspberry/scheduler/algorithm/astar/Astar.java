@@ -3,12 +3,12 @@ package raspberry.scheduler.algorithm.astar;
 import java.util.*;
 import java.util.List;
 
+import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.algorithm.Algorithm;
 import raspberry.scheduler.algorithm.common.EquivalenceChecker;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
-import raspberry.scheduler.app.visualisation.model.AlgoObservable;
 import raspberry.scheduler.graph.*;
 
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -27,9 +27,8 @@ public class Astar implements Algorithm {
     PriorityQueue<ScheduleAStar> _pq;
     Hashtable<String, Integer> _heuristic = new Hashtable<String, Integer>();
     Hashtable<Integer, ArrayList<ScheduleAStar>> _visited;
-
+    private AlgoStats _algoStats;
     int _upperBound;
-    protected AlgoObservable _observable;
 
     EquivalenceChecker equivalenceChecker;
 
@@ -45,8 +44,8 @@ public class Astar implements Algorithm {
         _visited = new Hashtable<Integer, ArrayList<ScheduleAStar>>();
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
+        _algoStats = AlgoStats.getInstance();
         _upperBound = upperBound;
-        _observable = AlgoObservable.getInstance();
         equivalenceChecker = new EquivalenceChecker(_graph, numProcessors);
     }
 
@@ -60,23 +59,14 @@ public class Astar implements Algorithm {
      */
     @Override
     public OutputSchedule findPath() {
-        /*
-         * find the path
-         * "master" stores, schedule and its counterTable.
-         * "rootTable" is the table all counterTable is based of off.
-         * --> stores a node and number of incoming edges.
-         */
-        getH();
 
-//        Hashtable<Schedule, Hashtable<INode, Integer>> master = new Hashtable<Schedule, Hashtable<INode, Integer>>();
+        getH(); //Computes critical path
+
         Hashtable<INode, Integer> rootTable = this.getRootTable();
 
         for (INode node : rootTable.keySet()) {
             if (rootTable.get(node) == 0) {
 
-//                ScheduleAStar newSchedule = new ScheduleAStar(
-//                        0, null, node, 1, getChildTable(rootTable, node));
-//
                 ScheduleAStar newSchedule = new ScheduleAStar(
                         new ScheduledTask(1,node, 0),
                         getChildTable(rootTable, node)
@@ -87,7 +77,7 @@ public class Astar implements Algorithm {
                                 h(newSchedule),
                                 h1(getChildTable(rootTable, node), newSchedule)
                         )));
-//                master.put(newSchedule, getChildTable(rootTable, i));
+
                 _pq.add(newSchedule);
             }
         }
@@ -95,27 +85,25 @@ public class Astar implements Algorithm {
         ScheduleAStar cSchedule;
         int duplicate = 0; // Duplicate counter, Used for debugging purposes.
         int duplicate2 = 0; // Duplicate counter, Used for debugging purposes.
-        _observable.setIterations(0);
-        _observable.setIsFinish(false);
+
+        _algoStats.setIterations(0);
+        _algoStats.setIsFinish(false);
       //  System.out.println(_observable.getIterations());
         while (true) {
             //System.out.printf("PQ SIZE: %d\n", _pq.size());
-            _observable.increment();
+            _algoStats.increment();
             //System.out.println(_observable.getIterations());
 
             if (_pq.isEmpty()){
                 System.out.println("Schedule is not found");
                 return null;
             }
+
             cSchedule = _pq.poll();
 
-
-
             Solution cScheduleSolution = new Solution(cSchedule, _numP);
-            _observable.setSolution(cScheduleSolution);
-
+            _algoStats.setSolution(cScheduleSolution);
             ArrayList<ScheduleAStar> listVisitedForSize = _visited.get(cSchedule.getHash());
-
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
                 duplicate++;
                 continue;
@@ -131,8 +119,7 @@ public class Astar implements Algorithm {
             if (cSchedule.getSize() == _numNode) {
                 break;
             }
-//            Hashtable<INode, Integer> cTable = master.get(cSchedule);
-//            master.remove(cSchedule);
+
             Hashtable<INode, Integer> cTable = cSchedule._inDegreeTable;
             // Find the next empty processor. (
             int currentMaxPid = cSchedule.getMaxPid();
@@ -168,18 +155,16 @@ public class Astar implements Algorithm {
                                 _pq.add(newSchedule);
                             }
                         }
-
-
                     }
                 }
             }
         }
+
         System.out.printf("PQ SIZE: %d\n", _pq.size());
         System.out.printf("\nDUPLCIATE : %d\n", duplicate);
         System.out.printf("\nNEW DUPLCIATE : %d\n", duplicate2);
-
-        _observable.setIsFinish(true);
-        _observable.setSolution(new Solution(cSchedule,_numP));
+        _algoStats.setIsFinish(true);
+        _algoStats.setSolution(new Solution(cSchedule,_numP));
 
         return new Solution(cSchedule, _numP);
     }

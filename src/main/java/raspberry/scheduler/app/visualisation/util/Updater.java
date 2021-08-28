@@ -9,9 +9,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+
+import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
-import raspberry.scheduler.app.visualisation.model.AlgoObservable;
+
 import raspberry.scheduler.app.visualisation.controller.MainController;
+
 import raspberry.scheduler.app.visualisation.model.GanttChart;
 import raspberry.scheduler.graph.INode;
 
@@ -28,7 +31,7 @@ import java.util.List;
  */
 public class Updater {
     // Initialisation of variables
-    private Label _timeElapsed, _iterations;
+    private Label _timeElapsed, _iterations, _statusText;
     private VBox _statusBox;
     private Tile _memTile;
     private Tile _CPUChart;
@@ -37,11 +40,10 @@ public class Updater {
     private double _currentTime;
     private double _startTime;
     private DateFormat _timeFormat = new SimpleDateFormat("mm:ss:SSS");
-    private AlgoObservable _observable;
-    private MainController mainController;
-    private GanttChart _ganttChart;
+    private AlgoStats _algoStats;
+    private GanttChart _ganttChart, _currentBestSchedule;
     private ProcessorColors _assignedColors;
-    private static final Image doneTick = new Image("/icons/doneTick.png");
+    private static final Image _doneTick = new Image("/icons/doneTick.png");
 
     /**
      * Default constructor for class
@@ -53,14 +55,16 @@ public class Updater {
      * @param statusBox Status symbol (spinning circle during execution/ tick for completion)
      * @param assignedColors Assigned colors for the processors in the Gantt chart
      */
-    public Updater(Label timeElapsed, Label iterations, Tile memTile, Tile CPUChart, GanttChart ganttChart, VBox statusBox, ProcessorColors assignedColors) {
+    public Updater(Label timeElapsed, Label iterations,Label statusText, Tile memTile, Tile CPUChart, GanttChart ganttChart,GanttChart currentBest, VBox statusBox, ProcessorColors assignedColors) {
         _timeElapsed = timeElapsed;
         _iterations = iterations;
         _statusBox = statusBox;
+        _statusText = statusText;
         _memTile = memTile;
         _CPUChart = CPUChart;
         _ganttChart = ganttChart;
-        _observable = AlgoObservable.getInstance();
+        _currentBestSchedule = currentBest;
+        _algoStats = AlgoStats.getInstance();
         _assignedColors = assignedColors;
         // Begin polling and record time
         startTimer();
@@ -86,6 +90,9 @@ public class Updater {
         if (_isRunning) {
             _currentTime = System.currentTimeMillis();
             _timeElapsed.setText(_timeFormat.format(_currentTime - _startTime));
+            if (_algoStats.getIsFinish()) {
+                stopTimer();
+            }
         }
     }
 
@@ -93,15 +100,16 @@ public class Updater {
      * Halts the timer when the algorithm has been completed.
      */
     public void stopTimer() {
+        updateGanttChart();
+        updateCurrentBest();
         _isRunning = false;
-        // _polling.stop();
         _timer.stop();
-
         //clear progress indicator and add done image
         _statusBox.getChildren().clear();
         ImageView imv = new ImageView();
-        imv.setImage(doneTick);
+        imv.setImage(_doneTick);
         _statusBox.getChildren().add(imv);
+        _statusText.setText("Done");
     }
 
     /**
@@ -115,15 +123,15 @@ public class Updater {
             updateMemTile();
             updateIterations();
             updateCPUChart();
-            updateGanttChart();
-            if (_observable.getIsFinish()) {
-                stopTimer();
+            try {
+                updateGanttChart();
+                updateCurrentBest();
+            }catch(NullPointerException e){
+
             }
+
         }));
         _polling.setCycleCount(_timer.INDEFINITE);
-        if (_observable.getIsFinish() == true) {
-            _polling.stop();
-        }
         _polling.play();
     }
 
@@ -141,7 +149,7 @@ public class Updater {
      * Updates the number of iterations the algorithm has passed through.
      */
     private void updateIterations() {
-        String iteration = String.valueOf(_observable.getIterations());
+        String iteration = String.valueOf(_algoStats.getIterations());
         _iterations.setText(iteration);
     }
 
@@ -157,13 +165,13 @@ public class Updater {
     }
 
     /**
-     * Updates the Gantt chart.
+     * Updates the current schedule Gantt chart to display the current schedule
      */
     private void updateGanttChart() {
 
         if (_isRunning) {
-                OutputSchedule solution = _observable.getSolution();
-                int numP = _observable.getSolution().getTotalProcessorNum();
+                OutputSchedule solution = _algoStats.getSolution();
+                int numP = _algoStats.getSolution().getTotalProcessorNum();
                 List<String> processors = new ArrayList<String>();
                 for (int i = 1; i <= numP; i++) {
                     processors.add(String.valueOf(i));
@@ -176,13 +184,40 @@ public class Updater {
                         int startTime = solution.getStartTime(node);
                         int compTime = node.getValue();
                         String nodeName = node.getName();
-                        String color = _assignedColors.getProcessorColor(Integer.parseInt(processor) - 1);
+                        String color = _assignedColors.getProcessorCurrentColor(Integer.parseInt(processor) - 1);
                         series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "-fx-background-color:" + color + ";", nodeName)));
 
 
                     }
                     _ganttChart.getData().add(series);
                 }
+        }
+    }
+    /**
+     * Updates the current best schedule Gantt chart to display the current best optimal schedule
+     */
+    private void updateCurrentBest(){
+        if(_isRunning){
+            OutputSchedule solution = _algoStats.getcurrentBestSchedule();
+            int numP = _algoStats.getSolution().getTotalProcessorNum();
+            List<String> processors = new ArrayList<String>();
+            for(int i = 1; i <=numP; i++){
+                processors.add(String.valueOf(i));
+            }
+            _currentBestSchedule.getData().clear();
+            for(String processor: processors){
+                XYChart.Series series = new XYChart.Series();
+                List<INode> nodesList = solution.getNodes(Integer.parseInt(processor));
+                for(INode node : nodesList){
+                    int startTime = solution.getStartTime(node);
+                    int compTime = node.getValue();
+                    String nodeName = node.getName();
+                    String color = _assignedColors.getProcessorBestColor(Integer.parseInt(processor) - 1);
+                    series.getData().add(new XYChart.Data(startTime, processor, new GanttChart.Attributes(compTime, "-fx-background-color:" + color + ";", nodeName)));
+                }
+                _currentBestSchedule.getData().add(series);
+            }
+
         }
     }
 

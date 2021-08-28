@@ -77,12 +77,12 @@ public class TestComprehensiveAstar {
         return output.getFinishTime();
     }
 
-    @Test(timeout = TIME_LIMIT)
-    public void test16_1_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
-        // read input graph and find path
-        assertEquals(69,
-                readAndFindFinishTime("16_1.dot", 8));
-    }
+//    @Test(timeout = TIME_LIMIT)
+//    public void test16_1_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+//        // read input graph and find path
+//        assertEquals(69,
+//                readAndFindFinishTime("16_1.dot", 8));
+//    }
 
     @Test(timeout = TIME_LIMIT)
     public void test16_2_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {

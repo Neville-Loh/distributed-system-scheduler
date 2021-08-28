@@ -10,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import raspberry.scheduler.algorithm.astar.Astar;
+import raspberry.scheduler.algorithm.bNb.BNB;
+import raspberry.scheduler.algorithm.bNb.BNBParallel;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.cli.CLIConfig;
 import raspberry.scheduler.graph.IGraph;
@@ -21,7 +23,7 @@ import java.io.IOException;
 /**
  * This class launches the front end visualisation.
  */
-public class App extends Application {
+public class VisualisationLauncher extends Application {
 
     private static CLIConfig _config;
     private static GraphReader _reader;
@@ -39,7 +41,7 @@ public class App extends Application {
             Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
-
+            primaryStage.setTitle("Raspberry Spritz Scheduler");
             primaryStage.setResizable(false);
             primaryStage.show();
             primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -51,7 +53,11 @@ public class App extends Application {
             });
 
             new Thread(() -> {
+                if(_config.getNumCores()>1) {
+                    startParallelAlgo();
+                } else {
                     startAlgo();
+                }
             }).start();
     }
 
@@ -65,7 +71,22 @@ public class App extends Application {
     private void startAlgo() {
         try {
             IGraph graph = _reader.read();
-            Astar astar = new Astar(graph, _config.get_numProcessors(), Integer.MAX_VALUE);
+            BNB astar = new BNB(graph, _config.getNumProcessors(), Integer.MAX_VALUE);
+            OutputSchedule outputSchedule = astar.findPath();
+            Writer writer = new Writer(_config.getOutputFile(), graph, outputSchedule);
+            writer.write();
+        } catch(IOException e){
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
+    }
+    /**
+     * Read the graph and start the algorithm
+     */
+    private void startParallelAlgo() {
+        try {
+            IGraph graph = _reader.read();
+            BNBParallel astar = new BNBParallel(graph, _config.getNumProcessors(), Integer.MAX_VALUE, _config.getNumCores());
             OutputSchedule outputSchedule = astar.findPath();
             Writer writer = new Writer(_config.getOutputFile(), graph, outputSchedule);
             writer.write();

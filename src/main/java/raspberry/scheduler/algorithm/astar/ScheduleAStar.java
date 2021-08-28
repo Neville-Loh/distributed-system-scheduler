@@ -17,15 +17,6 @@ import raspberry.scheduler.graph.INode;
  */
 public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar> {
 
-    //private ScheduleAStar _parent; // Parent Schedule
-    //private int _size; // Size of the partial schedule. # of tasks scheduled.
-
-//    private INode _node;
-//    private int _startTime; //the time this node start running.
-//    private int _finishTime; //the time at this node finish running
-//    private int _pid;  //Processor Id
-
-
     private int _h; // h: Heuristic weight
     private int _total; // t: Total weight
 
@@ -35,6 +26,11 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
     private int _maxPid; //The largest pid currently used to schedule
     public Hashtable<INode, Integer> _inDegreeTable;
 
+    /**
+     * Constructor for ScheduleAstar.
+     * @param scheduledTask : scheduledtask
+     * @param inDegreeTable : Indegree table ( Represents node and number of parent still not scheduled )
+     */
     public ScheduleAStar(ScheduledTask scheduledTask, Hashtable<INode, Integer> inDegreeTable) {
         super(scheduledTask);
         _inDegreeTable = inDegreeTable;
@@ -113,6 +109,10 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
         _total = super.getScheduledTask().getFinishTime() + _h;
     }
 
+    /**
+     * Weighted Heuristic for Weighted A*
+     * @param h
+     */
     public void addWeightedHeuristic(int h) {
         _h = h * h;
         _total = super.getScheduledTask().getFinishTime() + _h;
@@ -131,11 +131,6 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
         return _total > schedule.getTotal() ? 1 : _total < schedule.getTotal() ? -1 : 0;
     }
 
-//    @Override
-//    public int compareTo(Schedule schedule) {
-//        return _h > schedule.getH() ? 1 : _h < schedule.getH() ? -1 : 0;
-//    }
-
     /**
      * Check if two Schedule instance is the same. (this is for detecting duplicate scheduling)
      *
@@ -143,7 +138,6 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
      * @return Boolean : True : if its the same.
      * False: if its different.
      */
-//    @Override
     public boolean equals2(Object otherSchedule) {
         if (otherSchedule == this) {
             return true;
@@ -157,7 +151,7 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
                 return false;
             } else {
                 // Group by pid. Compare match
-                Hashtable<String, List<Integer>> _scheduling2 = schedule.getScheduling();
+                Hashtable<String, List<Integer>> scheduling2 = schedule.getScheduling();
 
                 Hashtable<Integer, Hashtable<String, Integer>> hash4scheduling = new Hashtable<Integer, Hashtable<String, Integer>>();
                 Hashtable<Integer, Hashtable<String, Integer>> hash4scheduling2 = new Hashtable<Integer, Hashtable<String, Integer>>();
@@ -170,13 +164,13 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
                     tmp.put(s, _scheduling.get(s).get(1));
                     hash4scheduling.put(_scheduling.get(s).get(0), tmp);
                 }
-                for (String s : _scheduling2.keySet()) {
-                    Hashtable<String, Integer> tmp = hash4scheduling2.get(_scheduling2.get(s).get(0)); //get(0) gets pid
+                for (String s : scheduling2.keySet()) {
+                    Hashtable<String, Integer> tmp = hash4scheduling2.get(scheduling2.get(s).get(0)); //get(0) gets pid
                     if (tmp == null) {
                         tmp = new Hashtable<String, Integer>();
                     }
-                    tmp.put(s, _scheduling2.get(s).get(1));
-                    hash4scheduling2.put(_scheduling2.get(s).get(0), tmp);
+                    tmp.put(s, scheduling2.get(s).get(1));
+                    hash4scheduling2.put(scheduling2.get(s).get(0), tmp);
                 }
                 for (Hashtable<String, Integer> i : hash4scheduling.values()) {
                     Boolean foundMatch = false;
@@ -196,6 +190,11 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
     }
 
     //Risky version of equals. Dont know if this actually outputs optimal path.
+    /**
+     * Check if two Schedule instance is the same. (this is for detecting duplicate scheduling)
+     * @param otherSchedule : Schedule we are comparing against.
+     * @return true if its the same. false if it is not the same schedule.
+     */
     public boolean equals3(Object otherSchedule) {
         if (otherSchedule == this) {
             return true;
@@ -250,7 +249,6 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
     /*
     Getter and Setters
      */
-
     /**
      * get Heuristic weight
      *
@@ -320,16 +318,6 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
     }
 
 
-    // /**
-    //  * get size Size of the partial schedule. # of tasks scheduled.
-    //  *
-    //  * @return _size Size of the partial schedule. # of tasks scheduled.
-    //  */
-    // public int getSize() {
-    //     return _size;
-    // }
-
-
     /**
      * get _scheduling the partial schedule
      *
@@ -358,90 +346,14 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
         return _maxPid;
     }
 
-
-//    /**
-//     * get upper bound which Represents the worst case for BNB
-//     *
-//     * @return _upperBound Represents the worst case for BNB
-//     */
-//    public int getUpperBound() {
-//        return _upperBound;
-//    }
-//
-//    /**
-//     * get upper bound which Represents the base case for BNB
-//     *
-//     * @return _lowerBound Represents the base case for BNB
-//     */
-//    public int getLowerBound() {
-//        return _total;
-//    }
-
+    /**
+     * get size of the scheduled.
+     * @return integer : representing the number of task that has already been scheduled
+     */
     public int getSize() {
         return super.getSize();
     }
 
-
-//    @Override
-//    public String toString() {
-//        String r = "";
-//        for (String i : _scheduling.keySet()) {
-//            r += "{Task:" + i + "-pid:" + _scheduling.get(i).get(0) + "-t:" + _scheduling.get(i).get(1) + "}";
-//        }
-//        return r;
-//    }
-
-//    @Override
-//    public String toString() {
-//
-//        String r = "";
-//        ScheduleAStar s = this;
-//        while (s != null){
-//            r += "{Task:" + s.getScheduledTask().getTask()+
-//                    "-pid:" + s.getScheduledTask().getProcessorID()+ "-t:" +
-//            s.getScheduledTask().getStartTime()+ "} -> ";
-//            s = s.getParent();
-//        }
-//        return r;
-//    }
-//    /**
-//     * Display the name and the path of the current mbSchedule
-//     * @return string
-//     */
-//    @Override
-//    public String toString() {
-//        ScheduleAStar cSchedule = this;
-//        ArrayList<ScheduledTask> temp = new ArrayList<>();
-//        Hashtable<Integer, ArrayList<ScheduledTask>> table = new Hashtable<>();
-//        Hashtable<Integer, ArrayList<String>> stringTable = new Hashtable<>();
-//        String result = "";
-//        while (cSchedule != null) {
-//
-//            temp.add(cSchedule.getScheduledTask());
-//            if (!table.contains(cSchedule.getScheduledTask().getProcessorID())){
-//                ArrayList<ScheduledTask> s = new ArrayList<>();
-//                s.add(cSchedule.getScheduledTask());
-//                table.put(cSchedule.getScheduledTask().getProcessorID(),s );
-//            } else {
-//                table.get(cSchedule.getScheduledTask().getProcessorID()).add(cSchedule.getScheduledTask());
-//            }
-//            cSchedule = cSchedule.getParent();
-//        }
-//        temp.sort((st1, st2) ->{
-//                if (st1.getProcessorID() == st2.getProcessorID()) {
-//                    return Integer.compare(st1.getStartTime(), st2.getStartTime());
-//                }
-//            return Integer.compare(st1.getProcessorID(), st2.getProcessorID());
-//        });
-//
-//
-//
-//        for (ScheduledTask s : temp) {
-//            result += "{Task:"+ s.getTask().getName()+"-pid:"+s.getProcessorID()+"-t:"+s.getStartTime()+"}" + "\n";
-//        }
-//        //System.out.format("%32s%10d%16s", string1, int1, string2);
-//        return result;
-//    }
 
     public int getTaskStartTime(String taskName) {
         return _scheduling.get(taskName).get(1);
@@ -459,29 +371,29 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
         Hashtable<Integer, ArrayList<String>> stringTable = new Hashtable<>();
         String result = "";
         while (cSchedule != null) {
-            if (!table.containsKey(cSchedule.getScheduledTask().getProcessorID())){
+            if (!table.containsKey(cSchedule.getScheduledTask().getProcessorID())) {
                 ArrayList<ScheduledTask> s = new ArrayList<>();
                 s.add(cSchedule.getScheduledTask());
-                table.put(cSchedule.getScheduledTask().getProcessorID(),s );
+                table.put(cSchedule.getScheduledTask().getProcessorID(), s);
             } else {
                 table.get(cSchedule.getScheduledTask().getProcessorID()).add(cSchedule.getScheduledTask());
             }
             cSchedule = cSchedule.getParent();
         }
-        AtomicInteger len= new AtomicInteger();
-        table.forEach( (k,v) -> len.set(Integer.max(len.intValue(), v.size())));
+        AtomicInteger len = new AtomicInteger();
+        table.forEach((k, v) -> len.set(Integer.max(len.intValue(), v.size())));
         for (int pid : table.keySet()) {
             ArrayList<ScheduledTask> stList = table.get(pid);
             stList.sort(Comparator.comparingInt(ScheduledTask::getStartTime));
-            ArrayList<String> stringList =  new ArrayList<String>();
-            for (ScheduledTask s : stList){
+            ArrayList<String> stringList = new ArrayList<String>();
+            for (ScheduledTask s : stList) {
                 int pad = 3 - String.valueOf(s.getStartTime()).length();
                 String padding = new String(new char[pad]).replace("\0", " ");
-                stringList.add("{Task:"+ s.getTask().getName()+"-pid:"
-                        +s.getProcessorID()+"-t:"+s.getStartTime()+"}" + padding);
+                stringList.add("{Task:" + s.getTask().getName() + "-pid:"
+                        + s.getProcessorID() + "-t:" + s.getStartTime() + "}" + padding);
             }
             int i = stList.size();
-            while (i < len.intValue()){
+            while (i < len.intValue()) {
                 stringList.add("  ");
                 i++;
             }
@@ -491,13 +403,13 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
         List<String> headersList = new ArrayList<>();
         ArrayList<Integer> pids = Collections.list(table.keys());
         Collections.sort(pids);
-        for (int pid : pids){
+        for (int pid : pids) {
             headersList.add(String.valueOf(pid));
         }
         List<List<String>> rowsList = new ArrayList<>();
-        for (int j = 0; j < len.intValue(); j++){
+        for (int j = 0; j < len.intValue(); j++) {
             List<String> row = new ArrayList<>();
-            for (int pid : pids){
+            for (int pid : pids) {
                 row.add(stringTable.get(pid).get(j));
             }
             rowsList.add(row);
@@ -506,6 +418,4 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
         //System.out.format("%32s%10d%16s", string1, int1, string2);
         return tableGenerator.generateTable(headersList, rowsList);
     }
-
-
 }

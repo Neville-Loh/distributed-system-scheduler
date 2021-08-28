@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
-import raspberry.scheduler.app.visualisation.model.AlgoObservable;
+import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.*;
 
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -20,8 +20,8 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 public class AstarParallel extends Astar {
     // thread pool that will deal with all the threads
     private ThreadPoolExecutor _threadPool = null;
-
-    // concurrentlist of subschedule for threadpool to run
+    private AlgoStats _algoStats;
+    // concurren tlist of subschedule for threadpool to run
     private ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>> _subSchedules;
 
 
@@ -29,18 +29,28 @@ public class AstarParallel extends Astar {
      * Constructor for A*
      *
      * @param graphToSolve  : graph to solve (graph represents the task and dependencies)
-     * @param numProcessors : number of processor we can used to scheudle tasks.
+     * @param numProcessors : number of processor we can use to schedule tasks.
+     * @param numCores : number of cores / threads
      */
     public AstarParallel(IGraph graphToSolve, int numProcessors, int numCores) {
         super(graphToSolve, numProcessors, Integer.MAX_VALUE);
         initialiseThreadPool(numCores);
         _subSchedules = new ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>>();
+        _algoStats = AlgoStats.getInstance();
     }
 
+    /**
+     *  Constructor for A* with upper bound
+     * @param graphToSolve : graph to solve (graph represents the task and dependencies)
+     * @param numProcessors : number of processor we can use to schedule tasks.
+     * @param upperbound : upper bound. (found from creating a valid solution)
+     * @param numCores : number of cores / threads
+     */
     public AstarParallel(IGraph graphToSolve, int numProcessors, int upperbound,int numCores) {
         super(graphToSolve, numProcessors,upperbound);
         initialiseThreadPool(numCores);
         _subSchedules = new ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>>();
+        _algoStats = AlgoStats.getInstance();
     }
 
 
@@ -62,20 +72,13 @@ public class AstarParallel extends Astar {
      */
     @Override
     public OutputSchedule findPath() {
-        /*
-         * find the path
-         * "master" stores, schedule and its counterTable.
-         * "rootTable" is the table all counterTable is based of off.
-         * --> stores a node and number of incoming edges.
-         */
-        getH();
 
+        getH();
         Hashtable<ScheduleAStar, Hashtable<INode, Integer>> master = new Hashtable<ScheduleAStar, Hashtable<INode, Integer>>();
         Hashtable<INode, Integer> rootTable = this.getRootTable();
 
         for (INode node : rootTable.keySet()) {
             if (rootTable.get(node) == 0) {
-//                ScheduleAStar newSchedule = new ScheduleAStar(0, null, i, 1);
                 ScheduleAStar newSchedule = new ScheduleAStar(
                         new ScheduledTask(1,node, 0),
                         getChildTable(rootTable, node)
@@ -93,15 +96,14 @@ public class AstarParallel extends Astar {
         ScheduleAStar cSchedule;
         int duplicate = 0; // Duplicate counter, Used for debugging purposes.
 
-        _observable.setIterations(0);
-        _observable.setIsFinish(false);
-        //  System.out.println(_observable.getIterations());
+        _algoStats.setIterations(0);
+        _algoStats.setIsFinish(false);
+
         while (true) {
-            _observable.increment();
-            //System.out.println(_observable.getIterations());
+            _algoStats.increment();
             cSchedule = _pq.poll();
             Solution cScheduleSolution = new Solution(cSchedule, _numP);
-            _observable.setSolution(cScheduleSolution);
+            _algoStats.setSolution(cScheduleSolution);
             ArrayList<ScheduleAStar> listVisitedForSize = _visited.get(cSchedule.getHash());
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
                 duplicate++;
@@ -142,21 +144,17 @@ public class AstarParallel extends Astar {
 
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
-                    //TODO : Make it so that if there is multiple empty processor, use the lowest value p_id.
                     for (int pid = 1; pid <= pidBound; pid++) {
                         createSubSchedules(cSchedule, pid, node, cTable, latch);
                     }
                 }
             }
             try {
-//                TimeUnit.MILLISECONDS.sleep(10);
-//                _threadPool.wait();
-//                _threadPool.awaitTermination(10,TimeUnit.MICROSECONDS);
                 latch.await();
             } catch(Exception e) {
-
+                System.out.println(e.getMessage());
             }
-//            _threadPool.awaitTermination();
+
             for (Hashtable<ScheduleAStar, Hashtable<INode, Integer>> subScheduleTables : _subSchedules) {
                 for (ScheduleAStar subSchedule : subScheduleTables.keySet()) {
                     master.put(subSchedule, subScheduleTables.get(subSchedule));
@@ -165,17 +163,24 @@ public class AstarParallel extends Astar {
             }
             _subSchedules.clear();
         }
-        _observable.setIsFinish(true);
-        _observable.setSolution(new Solution(cSchedule, _numP));
+        _algoStats.setIsFinish(true);
+        _algoStats.setSolution(new Solution(cSchedule, _numP));
         return new Solution(cSchedule, _numP);
     }
 
+    /**
+     * Submits a new job to a thread pool.
+     * @param cSchedule : parent schedule
+     * @param pid : processor id
+     * @param node : node/task to be scheduled
+     * @param cTable : indegree table
+     * @param latch : latch. (to check if the thread has finished its job)
+     */
     public void createSubSchedules(ScheduleAStar cSchedule, int pid, INode node, Hashtable<INode, Integer> cTable, CountDownLatch latch) {
         _threadPool.submit(() -> {
             int start = calculateEarliestStartTime(cSchedule, pid, node);
             Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
 
-//            ScheduleAStar newSchedule = new ScheduleAStar(start, cSchedule, node, j);
             ScheduleAStar newSchedule = new ScheduleAStar(
                     cSchedule,
                     new ScheduledTask(pid, node, start),
@@ -186,9 +191,16 @@ public class AstarParallel extends Astar {
                             h(newSchedule),
                             h1(newTable, newSchedule)
                     )));
-            Hashtable<ScheduleAStar, Hashtable<INode, Integer>> subSchedule = new Hashtable<ScheduleAStar, Hashtable<INode, Integer>>();
-            subSchedule.put(newSchedule, newTable);
-            _subSchedules.add(subSchedule);
+            if (newSchedule.getTotal() <= _upperBound){
+                ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
+                if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
+                    //Duplicate
+                }else{
+                    Hashtable<ScheduleAStar, Hashtable<INode, Integer>> subSchedule = new Hashtable<ScheduleAStar, Hashtable<INode, Integer>>();
+                    subSchedule.put(newSchedule, newTable);
+                    _subSchedules.add(subSchedule);
+                }
+            }
             latch.countDown();
         });
     }

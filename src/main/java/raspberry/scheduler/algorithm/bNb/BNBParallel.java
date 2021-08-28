@@ -3,34 +3,37 @@ package raspberry.scheduler.algorithm.bNb;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
-import raspberry.scheduler.algorithm.util.Helper;
+import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 
-public class BNBParallel extends BNB2{
+public class BNBParallel extends BNB {
 
     private int _numCores;
     // thread pool that will deal with all the threads
     private ThreadPoolExecutor _threadPool = null;
-
     private List<Stack<ScheduleB>> stacks;
+    private Semaphore _lock;
+    private AlgoStats _algoStats;
 
     public BNBParallel(IGraph graphToSolve, int numProcessors, int bound, int numCores) {
         super(graphToSolve, numProcessors, bound);
         initialiseThreadPool(numCores);
         _numCores = numCores;
+        _lock = new Semaphore(1);
+
         // Stack - Keeps track of all available/scheduable tasks.
-
-
         stacks = new ArrayList<Stack<ScheduleB>>();
         for (int i=0; i<_numCores; i++){
             stacks.add( new Stack<ScheduleB>() );
         }
+        _algoStats = AlgoStats.getInstance();
     }
 
     /**
@@ -46,13 +49,15 @@ public class BNBParallel extends BNB2{
 
     @Override
     public OutputSchedule findPath(){
+        _algoStats.setIterations(0);
+        _algoStats.setIsFinish(false);
         _visited = new Hashtable<Integer, ArrayList<ScheduleB>>();
         Hashtable<INode, Integer> rootTable = getRootTable();
         getH();
 
         Stack<ScheduleB> rootSchedules = getRootSchedules();
-        System.out.printf( "\n NUMCORE : %d, StackSize: %d \n" , _numCores, rootSchedules.size());
         if (rootSchedules.isEmpty()){
+            _algoStats.setSolution(new Solution(shortestPath, _numP));
             return new Solution(shortestPath, _numP);
         }else{
             Collections.reverse(rootSchedules);
@@ -60,10 +65,6 @@ public class BNBParallel extends BNB2{
             for (int i=0; i< sizeOfrootSchedules; i++){
                 stacks.get( i % _numCores).push( rootSchedules.pop() );
             }
-        }
-        System.out.println("");
-        for (Stack<ScheduleB> i : stacks){
-            System.out.printf("%d_", i.size());
         }
 
         CountDownLatch latch = new CountDownLatch( _numCores - 1 );
@@ -78,19 +79,30 @@ public class BNBParallel extends BNB2{
             System.out.println(e.getMessage());
         }
         if (shortestPath == null){
-            System.out.println("==== WTF IS WRONG WITH U");
+            System.out.println("- Algorithm failed to find solution -");
         }
+        _algoStats.setSolution(new Solution(shortestPath, _numP));
+        _algoStats.setIsFinish(true);
+        _threadPool.shutdownNow();
         return new Solution(shortestPath, _numP);
     }
 
-
+    /**
+     * This is the task that each thread will run.
+     * @param stack : A stack, which each thread will use to do DFS with bound.
+     */
     public void task(Stack<ScheduleB> stack){
         ScheduleB cSchedule;
         Hashtable<INode, Integer> cTable;
         while (true) {
+
+            if (_visited.size() > 5000000){
+                _visited.clear();
+            }
+            _algoStats.increment();
 //            System.out.printf("Stack SIZE: %d\n", stack.size());
             if (stack.isEmpty()) {
-                System.out.println("-- BOUND_DFS FINISHED --");
+//                System.out.println("-- BOUND_DFS FINISHED --");
                 break;
             }
 
@@ -103,12 +115,21 @@ public class BNBParallel extends BNB2{
 
             if ( cSchedule.getSize() == _numNode ) {
                 int totalFinishTime = cSchedule.getOverallFinishTime();
-                if (totalFinishTime <= _bound) {
-                    _bound = totalFinishTime;
-                    shortestPath = cSchedule;
-                    if( totalFinishTime < _bound ){ System.out.printf("\nNEW BOUND : %d", _bound); }
+                try{
+                    _lock.acquire();
+                    if (totalFinishTime <= _bound) {
+                        _bound = totalFinishTime;
+                        shortestPath = cSchedule;
+                        if( totalFinishTime < _bound ){
+//                            System.out.printf("\nNEW BOUND : %d", _bound);
+                        }
+                    }
+                    _lock.release();
+                    continue;
+                }catch (InterruptedException e){
+                    System.out.println(e);
+                    _lock.release();
                 }
-                continue;
             }
 
             int currentMaxPid = cSchedule.getMaxPid();
@@ -125,6 +146,7 @@ public class BNBParallel extends BNB2{
                         int start = calculateCost(cSchedule, j, node);
                         ScheduleB newSchedule = new ScheduleB(cSchedule,new ScheduledTask(j,node,start),getChildTable(cTable,node));
                         newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                        _algoStats.setSolution(new Solution(newSchedule, _numP));
 
                         if ( canPrune( newSchedule , false)){
                             continue;
@@ -134,11 +156,13 @@ public class BNBParallel extends BNB2{
                 }
             }
         }
-        System.out.println(shortestPath);
         return;
     }
 
-    // Get "ncore" amount of root schedules
+    /**
+     * Get "ncore" amount of root schedule.
+     * @return : Stack of Schedules
+     */
     public Stack<ScheduleB> getRootSchedules(){
 
         Stack<ScheduleB> rootSchedules = new Stack<ScheduleB>();
@@ -159,26 +183,24 @@ public class BNBParallel extends BNB2{
         ScheduleB cSchedule;
         Hashtable<INode, Integer> cTable;
         while ( rootSchedules.size() < _numCores ) {
-//            System.out.printf("Stack SIZE: %d\n", _scheduleStack.size());
             if (rootSchedules.isEmpty()) {
-                System.out.println("-- BOUND_DFS FINISHED --");
+//                System.out.println("-- BOUND_DFS FINISHED --");
                 break;
             }
 
             cSchedule = rootSchedules.pop();
-
             if ( canPrune( cSchedule, true )){
                 continue;
             }
-
             cTable = cSchedule.getIndegreeTable();
-
             if ( cSchedule.getSize() == _numNode ) {
                 int totalFinishTime = cSchedule.getOverallFinishTime();
                 if (totalFinishTime <= _bound) {
                     _bound = totalFinishTime;
                     shortestPath = cSchedule;
-                    if( totalFinishTime < _bound){ System.out.printf("\nBOUND : %d", _bound); }
+                    if( totalFinishTime < _bound){
+//                        System.out.printf("\nBOUND : %d", _bound);
+                    }
                 }
                 continue;
             }
@@ -209,6 +231,11 @@ public class BNBParallel extends BNB2{
         return rootSchedules;
     }
 
+    /**
+     * Submit a new task to thread pool.
+     * @param stack : stack, each thread uses to do DFS with bound.
+     * @param latch : latch to check if a thead has finished doing its job.
+     */
     public void assignNewTask( Stack<ScheduleB> stack , CountDownLatch latch) {
         _threadPool.submit(() -> {
             task( stack );
@@ -216,7 +243,12 @@ public class BNBParallel extends BNB2{
         });
     }
 
-    // This implementation deals with "ConcurrentModificationException" error
+    /**
+     * This implementation deals with concurrency issues.
+     * @param scheduleList : list of visited schedule. (with same getHash() value)
+     * @param cSchedule    : schedule that we are trying to find if duplicate exists of not.
+     * @return
+     */
     @Override
     public Boolean isIrrelevantDuplicate(ArrayList<ScheduleB> scheduleList, ScheduleB cSchedule) {
         ArrayList<ScheduleB> copyScheduleList = new ArrayList<ScheduleB>(scheduleList);

@@ -29,7 +29,7 @@ public class Logger {
         String[] _dataLines = new String[]{
                 java.time.LocalDateTime.now().toString(),
                 CLIConfig.getDotFile(),
-                Integer.toString(CLIConfig.get_numProcessors()),
+                Integer.toString(CLIConfig.getNumProcessors()),
                 Double.toString((currentTime - startTime)/1000000000.0)};
         fileOutput(_dataLines);
     }

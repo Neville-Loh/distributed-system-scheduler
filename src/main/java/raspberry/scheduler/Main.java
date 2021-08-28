@@ -1,7 +1,8 @@
 package raspberry.scheduler;
 
 import raspberry.scheduler.algorithm.astar.Astar;
-import raspberry.scheduler.algorithm.bNb.BNB2;
+import raspberry.scheduler.algorithm.bNb.BNB;
+import raspberry.scheduler.algorithm.bNb.BNBParallel;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.cli.CLIConfig;
 import raspberry.scheduler.cli.CLIParser;
@@ -15,7 +16,7 @@ import raspberry.scheduler.app.*;
 import java.io.IOException;
 
 public class Main {
-    public static final boolean COLLECT_STATS_ENABLE = true;
+    public static final boolean COLLECT_STATS_ENABLE = false;
     private static double _startTime;
     public static void main(String[] inputs) throws NumberFormatException {
         try {
@@ -28,11 +29,19 @@ public class Main {
             } else {
                 IGraph graph = reader.read();
                 if (COLLECT_STATS_ENABLE) {_startTime = System.nanoTime();}
-                Astar astar = new Astar(graph, CLIConfig.get_numProcessors(), Integer.MAX_VALUE);
-                OutputSchedule outputSchedule = astar.findPath();
-                if (COLLECT_STATS_ENABLE) {Logger.log(CLIConfig, _startTime, System.nanoTime());}
-                Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
-                writer.write();
+                if (CLIConfig.getNumCores()>1) {
+                    BNBParallel bnb = new BNBParallel(graph, CLIConfig.getNumProcessors(), Integer.MAX_VALUE,CLIConfig.getNumCores());
+                    OutputSchedule outputSchedule = bnb.findPath();
+                    if (COLLECT_STATS_ENABLE) {Logger.log(CLIConfig, _startTime, System.nanoTime());}
+                    Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
+                    writer.write();
+                } else {
+                    BNB bnb = new BNB(graph, CLIConfig.getNumProcessors(), Integer.MAX_VALUE);
+                    OutputSchedule outputSchedule = bnb.findPath();
+                    if (COLLECT_STATS_ENABLE) {Logger.log(CLIConfig, _startTime, System.nanoTime());}
+                    Writer writer = new Writer(CLIConfig.getOutputFile(), graph, outputSchedule);
+                    writer.write();
+                }
             }
         } catch (IOException | ParserException e) {
             System.out.println(e.getMessage());
@@ -42,7 +51,7 @@ public class Main {
 
     private static void startVisualisation(CLIConfig config, GraphReader reader) {
 //        new Thread(()-> {
-        App.main(config, reader);
+        VisualisationLauncher.main(config, reader);
 //        }).start();
     }
 }

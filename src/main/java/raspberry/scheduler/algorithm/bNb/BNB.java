@@ -5,6 +5,7 @@ import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.util.Helper;
+import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
@@ -12,10 +13,9 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 import java.util.*;
 
-public class BNB2 implements Algorithm {
+public class BNB implements Algorithm {
 
     IGraph _graph;
-
     int _numP;
     int _bound;
     int _numNode;
@@ -25,6 +25,7 @@ public class BNB2 implements Algorithm {
     Hashtable<String, Integer> _heuristicTable;
     Stack<ScheduleB> _scheduleStack;
     Hashtable<Integer, ArrayList<ScheduleB>> _visited;
+    private AlgoStats _algoStats;
 
     /**
      * BNB algorithm constructor. with bound
@@ -33,10 +34,11 @@ public class BNB2 implements Algorithm {
      * @param numProcessors : number of processors allowed to use for scheduling.
      * @param bound : value representing the upperbound
      */
-    public BNB2(IGraph graphToSolve, int numProcessors, int bound) {
+    public BNB(IGraph graphToSolve, int numProcessors, int bound) {
         _graph = graphToSolve;
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
+        _algoStats = AlgoStats.getInstance();
         _bound = bound;
     }
 
@@ -66,10 +68,16 @@ public class BNB2 implements Algorithm {
 
         ScheduleB cSchedule;
         Hashtable<INode, Integer> cTable;
+        _algoStats.setIterations(0);
+        _algoStats.setIsFinish(false);
         while (true) {
+            if (_visited.size() > 5000000){
+                _visited.clear();
+            }
 //            System.out.printf("Stack SIZE: %d\n", _scheduleStack.size());
+            _algoStats.increment();
             if (_scheduleStack.isEmpty()) {
-                System.out.println("-- BOUND_DFS FINISHED --");
+//                System.out.println("-- BOUND_DFS FINISHED --");
                 break;
             }
 
@@ -85,7 +93,9 @@ public class BNB2 implements Algorithm {
                 if (totalFinishTime <= _bound) {
                     _bound = totalFinishTime;
                     shortestPath = cSchedule;
-                    if( totalFinishTime < _bound){ System.out.printf("\nBOUND : %d", _bound); }
+                    if( totalFinishTime < _bound){
+//                        System.out.printf("\nBOUND : %d", _bound);
+                    }
                 }
                 continue;
             }
@@ -104,7 +114,7 @@ public class BNB2 implements Algorithm {
                         int start = calculateCost(cSchedule, j, node);
                         ScheduleB newSchedule = new ScheduleB(cSchedule,new ScheduledTask(j,node,start),getChildTable(cTable,node));
                         newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
-
+                        _algoStats.setSolution(new Solution(newSchedule, _numP));
                         if ( canPrune( newSchedule , false)){
                             continue;
                         }
@@ -114,9 +124,11 @@ public class BNB2 implements Algorithm {
             }
         }
         if (shortestPath == null){
-            System.out.println("==== WTF IS WRONG WITH U");
+//            System.out.println("==== WTF IS WRONG WITH U");
         }
-        Helper.printPath(shortestPath);
+//        Helper.printPath(shortestPath);
+        _algoStats.setIsFinish(true);
+        _algoStats.setSolution(new Solution(shortestPath,_numP));
         return new Solution(shortestPath, _numP);
     }
 
@@ -170,11 +182,24 @@ public class BNB2 implements Algorithm {
         return finished_time_of_last_parent;
     }
 
+    /**
+     * Finds lowerbound using the critical path heuristic table.
+     * @param schedule : schedule we want to find the heuristic cost for.
+     * @return Integer : representing the heuristic cost.
+     */
     public int lowerBound_1(ScheduleB schedule){
         return _heuristicTable.get(schedule.getNode().getName()) + schedule.getFinishTime();
     }
 
 
+    /**
+     * Check if schedule can be pruned
+     * @param cSchedule : schedule we want to check
+     * @param visiting True : if the schedule is being visited.
+     *                 False : otherwise
+     * @return True : if it can be pruned
+     *         False : if it cant be pruned
+     */
     public boolean canPrune(ScheduleB cSchedule, Boolean visiting){
         if (cSchedule.getLowerBound() > _bound){ //I think we can do ">=" and not just ">"
             return true;
@@ -294,5 +319,4 @@ public class BNB2 implements Algorithm {
         }
         return max;
     }
-
 }
