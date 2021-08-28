@@ -11,16 +11,17 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * 
+ * Partial output checker,
+ *
  * @author Young, Neville, Jonathon
  */
-public class OutputChecker {
+public class PartialOutputChecker {
     static Collection<INode> stuff;
     /**
      * Test if the output schedule violates any constraint according to
      * the dependency graph.
-     * @return true if output schedule does not violates any constraint
-     * @throws EdgeDoesNotExistException given edges doesn't not exists
+     * @return true if output schedule does not violate any constraint
+     * @throws EdgeDoesNotExistException given edges doesn't exists
      */
     public static boolean isValid(IGraph graph, OutputSchedule outputSchedule) throws EdgeDoesNotExistException {
 

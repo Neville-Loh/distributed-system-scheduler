@@ -99,12 +99,12 @@ public class Astar implements Algorithm {
         _observable.setIsFinish(false);
       //  System.out.println(_observable.getIterations());
         while (true) {
-//            System.out.printf("PQ SIZE: %d\n", _pq.size());
+            //System.out.printf("PQ SIZE: %d\n", _pq.size());
             _observable.increment();
             //System.out.println(_observable.getIterations());
 
             if (_pq.isEmpty()){
-                System.out.println("We are doomed");
+                System.out.println("Schedule is not found");
                 return null;
             }
             cSchedule = _pq.poll();
@@ -146,10 +146,7 @@ public class Astar implements Algorithm {
                 if (cTable.get(node) == 0) {
                     for (int pid = 1; pid <= pidBound; pid++) {
                         int start = calculateEarliestStartTime(cSchedule, pid, node);
-
-
                         Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
-
                         ScheduleAStar newSchedule = new ScheduleAStar(
                                 cSchedule,
                                 new ScheduledTask(pid, node, start),
@@ -165,8 +162,7 @@ public class Astar implements Algorithm {
                             ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
                             if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
                                 duplicate++;
-                            } else if (equivalenceChecker.weAreDoomed(newSchedule)) {
-                                //System.out.println("nevilles gay");
+                            } else if (equivalenceChecker.checkDuplicateBySwap(newSchedule)) {
                                 duplicate2++;
                             } else {
                                 _pq.add(newSchedule);
