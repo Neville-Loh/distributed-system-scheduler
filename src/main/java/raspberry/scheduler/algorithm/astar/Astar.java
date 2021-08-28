@@ -3,12 +3,9 @@ package raspberry.scheduler.algorithm.astar;
 import java.util.*;
 import java.util.List;
 
+import raspberry.scheduler.algorithm.common.*;
 import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.algorithm.Algorithm;
-import raspberry.scheduler.algorithm.common.EquivalenceChecker;
-import raspberry.scheduler.algorithm.common.OutputSchedule;
-import raspberry.scheduler.algorithm.common.ScheduledTask;
-import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.graph.*;
 
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -30,7 +27,16 @@ public class Astar implements Algorithm {
     private AlgoStats _algoStats;
     int _upperBound;
 
-    EquivalenceChecker equivalenceChecker;
+    private EquivalenceChecker _equivalenceChecker;
+    private FixOrderChecker _fixOrderChecker;
+
+    // debug and optimization
+    private int duplicate = 0; // Duplicate counter, Used for debugging purposes.
+    private int duplicateBySwap = 0; // Duplicate counter, Used for debugging purposes.
+    private int fixOrderCount = 0; // Duplicate counter, Used for debugging purposes.
+    private final boolean DUPLICATE_ENABLE = true;
+    private final boolean UPPERBOUND_ENABLE = true;
+    private final boolean FIX_ORDER_ENABLE = true;
 
     /**
      * Constructor for A*
@@ -46,7 +52,10 @@ public class Astar implements Algorithm {
         _numNode = _graph.getNumNodes();
         _algoStats = AlgoStats.getInstance();
         _upperBound = upperBound;
-        equivalenceChecker = new EquivalenceChecker(_graph, numProcessors);
+
+        // checker
+        _equivalenceChecker = new EquivalenceChecker(_graph, numProcessors);
+        _fixOrderChecker = new FixOrderChecker(_graph);
     }
 
     public Astar(IGraph graphToSolve, int numProcessors) {
@@ -76,16 +85,14 @@ public class Astar implements Algorithm {
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
                                 h1(getChildTable(rootTable, node), newSchedule)
-                        )));
+                        ))
+                );
 
                 _pq.add(newSchedule);
             }
         }
 
         ScheduleAStar cSchedule;
-        int duplicate = 0; // Duplicate counter, Used for debugging purposes.
-        int duplicate2 = 0; // Duplicate counter, Used for debugging purposes.
-
         _algoStats.setIterations(0);
         _algoStats.setIsFinish(false);
       //  System.out.println(_observable.getIterations());
@@ -100,6 +107,9 @@ public class Astar implements Algorithm {
             }
 
             cSchedule = _pq.poll();
+
+
+
 
             Solution cScheduleSolution = new Solution(cSchedule, _numP);
             _algoStats.setSolution(cScheduleSolution);
@@ -129,8 +139,47 @@ public class Astar implements Algorithm {
             } else {
                 pidBound = currentMaxPid + 1;
             }
+
+            ArrayList<INode> freeNodes = new ArrayList<INode>();
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
+                    freeNodes.add(node);
+                }
+            }
+
+            if (FIX_ORDER_ENABLE && _fixOrderChecker.check(freeNodes, cSchedule) &&
+                    _fixOrderChecker.getFixOrder(freeNodes,cSchedule) != null){
+                INode node = _fixOrderChecker.getFixOrder(freeNodes,cSchedule).get(0);
+
+                fixOrderCount++;
+                for (int pid = 1; pid <= pidBound; pid++) {
+                    int start = calculateEarliestStartTime(cSchedule, pid, node);
+                    Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
+                    ScheduleAStar newSchedule = new ScheduleAStar(
+                            cSchedule,
+                            new ScheduledTask(pid, node, start),
+                            newTable);
+
+                    newSchedule.addHeuristic(
+                            Collections.max(Arrays.asList(
+                                    h(newSchedule),
+                                    h1(newTable, newSchedule)
+                            ))
+                    );
+                    _pq.add(newSchedule);
+//                    if (!ENABLE_UPPERBOUND || newSchedule.getTotal() <= _upperBound) {
+//                        ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
+//                        if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
+//                            duplicate++;
+//                        } else if (_equivalenceChecker.checkDuplicateBySwap(newSchedule)) {
+//                            duplicateBySwap++;
+//                        } else {
+//                            _pq.add(newSchedule);
+//                        }
+//                    }
+                }
+            } else {
+                for (INode node : freeNodes) {
                     for (int pid = 1; pid <= pidBound; pid++) {
                         int start = calculateEarliestStartTime(cSchedule, pid, node);
                         Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
@@ -143,14 +192,15 @@ public class Astar implements Algorithm {
                                 Collections.max(Arrays.asList(
                                         h(newSchedule),
                                         h1(newTable, newSchedule)
-                                )));
+                                ))
+                        );
 
-                        if (newSchedule.getTotal() <= _upperBound){
+                        if (!UPPERBOUND_ENABLE || newSchedule.getTotal() <= _upperBound) {
                             ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
                             if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
                                 duplicate++;
-                            } else if (equivalenceChecker.checkDuplicateBySwap(newSchedule)) {
-                                duplicate2++;
+                            } else if (DUPLICATE_ENABLE && _equivalenceChecker.checkDuplicateBySwap(newSchedule)) {
+                                duplicateBySwap++;
                             } else {
                                 _pq.add(newSchedule);
                             }
@@ -162,12 +212,75 @@ public class Astar implements Algorithm {
 
         System.out.printf("PQ SIZE: %d\n", _pq.size());
         System.out.printf("\nDUPLCIATE : %d\n", duplicate);
-        System.out.printf("\nNEW DUPLCIATE : %d\n", duplicate2);
+        System.out.printf("\nNEW DUPLCIATE : %d\n", duplicateBySwap);
+        System.out.printf("FIX TASK ORDER Count: %d\n", fixOrderCount);
         _algoStats.setIsFinish(true);
         _algoStats.setSolution(new Solution(cSchedule,_numP));
 
+        System.out.println(cSchedule);
         return new Solution(cSchedule, _numP);
     }
+
+//    private List<ScheduleAStar> getFixOrderSchedule(
+//            ArrayList<INode> freeNodes, ScheduleAStar cSchedule, int pidBound) {
+//
+//        List<ScheduleAStar> result = new ArrayList<ScheduleAStar>();
+//        Hashtable<INode, Integer> cTable = cSchedule._inDegreeTable;
+//        List<INode> nodesInOrder = _fixOrderChecker.getFixOrder(freeNodes, cSchedule);
+//        for (INode node : nodesInOrder){
+//            for (int pid = 1; pid <= pidBound; pid++) {
+//                int start = calculateEarliestStartTime(cSchedule, pid, node);
+//                Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
+//                ScheduleAStar newSchedule = new ScheduleAStar(
+//                        cSchedule,
+//                        new ScheduledTask(pid, node, start),
+//                        newTable);
+//
+//                newSchedule.addHeuristic(
+//                        Collections.max(Arrays.asList(
+//                                h(newSchedule),
+//                                h1(newTable, newSchedule)
+//                        )));
+//
+//            }
+//        }
+//
+//        return null;
+//
+//    }
+//
+//    private ScheduleAStar createSubSchedule(ScheduleAStar cSchedule, int pid, INode node){
+//        int start = calculateEarliestStartTime(cSchedule, pid, node);
+//        Hashtable<INode, Integer> cTable = cSchedule._inDegreeTable;
+//        Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
+//        ScheduleAStar newSchedule = new ScheduleAStar(
+//                cSchedule,
+//                new ScheduledTask(pid, node, start),
+//                newTable);
+//
+//        newSchedule.addHeuristic(
+//                Collections.max(Arrays.asList(
+//                        h(newSchedule),
+//                        h1(newTable, newSchedule)
+//                )));
+//
+//        return newSchedule;
+//
+//    }
+//
+//    private List<ScheduleAStar> getFixOrderScheduleRecursive(
+//            ArrayList<INode> freeNodes, ScheduleAStar cSchedule, int pidBound){
+//        List<ScheduleAStar> result = new ArrayList<ScheduleAStar>();
+//        if (freeNodes.size() == 1){
+//            for (int pid = 1; pid <= pidBound; pid++) {
+//                result.add(createSubSchedule(cSchedule, pid, freeNodes.get(0)));
+//            }
+//            return result;
+//        } else {
+//
+//        }
+//        return null;
+//    }
 
     /**
      * For each task that was scheduled last in the processor.
@@ -349,6 +462,7 @@ public class Astar implements Algorithm {
      * False : if reopening needs to happend for this schedule.
      */
     public Boolean isIrrelevantDuplicate(ArrayList<ScheduleAStar> scheduleList, ScheduleAStar cSchedule) {
+        if (!DUPLICATE_ENABLE) return false;
         for (ScheduleAStar s : scheduleList) {
             if ( s.equals2(cSchedule) ){
                 if ( s.getTotal() > cSchedule.getTotal()) {
