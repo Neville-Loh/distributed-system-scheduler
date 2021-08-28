@@ -165,6 +165,22 @@ public class FastTestAStar {
         assertEquals(227, output.getFinishTime());
     }
 
+    @Test
+    public void test2p_Stencil_Nodes_10_CCR_197_WeightType_Randomwith_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+        // read input graph and find path
+        // read input graph and find path
+        OutputSchedule output = readAndFindPath("dotfiles/2p_Stencil_Nodes_10_CCR_1.97_WeightType_Random.dot", 2);
+        assertEquals(57, output.getFinishTime());
+    }
+
+    @Test
+    public void test4p_Stencil_Nodes_10_CCR_197_WeightType_Randomwith_4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+        // read input graph and find path
+        OutputSchedule output = readAndFindPath("dotfiles/4p_Stencil_Nodes_10_CCR_1.97_WeightType_Random.dot", 4);
+        assertEquals(57, output.getFinishTime());
+    }
+
+
     /**
      * Helper method to read the file and run a star
      * with specified number of processor.

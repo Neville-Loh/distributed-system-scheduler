@@ -220,6 +220,10 @@ public class Graph implements IGraph {
 
 
     }
+
+    /**
+     * @deprecated
+     */
     private void getTopologicalOrder(){
         _topologicalOrder = new ArrayList<INode>();
         for ( INode i : _nodes.values()){
@@ -228,6 +232,9 @@ public class Graph implements IGraph {
         printTopo();
     }
 
+    /**
+     * @deprecated
+     */
     private void getTopoligicalOrderRecursive(INode i){
         if ( _outDegreeAdjacencyList.get(i) == null || _outDegreeAdjacencyList.get(i).isEmpty() ){
             //
