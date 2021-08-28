@@ -59,6 +59,7 @@ public class EquivalenceChecker {
                 System.out.println("NOT SWAPPED:  " + before);
                 System.out.println(String.format("SWAPPED task %s with %s:  ", m, indexTable.get(i)) + cSchedule.toString());
                 System.out.println(("WRONG"));
+                return false;
             }
 //            Object temp = cSchedule.getScheduledTask(indexTable
 //                    .get(secondlastindex)

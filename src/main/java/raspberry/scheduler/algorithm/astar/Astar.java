@@ -94,6 +94,7 @@ public class Astar implements Algorithm {
 
         ScheduleAStar cSchedule;
         int duplicate = 0; // Duplicate counter, Used for debugging purposes.
+        int duplicate2 = 0; // Duplicate counter, Used for debugging purposes.
         _observable.setIterations(0);
         _observable.setIsFinish(false);
       //  System.out.println(_observable.getIterations());
@@ -116,7 +117,7 @@ public class Astar implements Algorithm {
             ArrayList<ScheduleAStar> listVisitedForSize = _visited.get(cSchedule.getHash());
 
             if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
-                //duplicate++;
+                duplicate++;
                 continue;
             } else {
                 if (listVisitedForSize == null) {
@@ -162,11 +163,11 @@ public class Astar implements Algorithm {
 
                         if (newSchedule.getTotal() <= _upperBound){
                             ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
-//                            if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
-//                                duplicate++;
-                            if (equivalenceChecker.weAreDoomed(newSchedule)) {
-                                //System.out.println("nevilles gay");
+                            if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
                                 duplicate++;
+                            } else if (equivalenceChecker.weAreDoomed(newSchedule)) {
+                                //System.out.println("nevilles gay");
+                                duplicate2++;
                             } else {
                                 _pq.add(newSchedule);
                             }
@@ -179,6 +180,7 @@ public class Astar implements Algorithm {
         }
         System.out.printf("PQ SIZE: %d\n", _pq.size());
         System.out.printf("\nDUPLCIATE : %d\n", duplicate);
+        System.out.printf("\nNEW DUPLCIATE : %d\n", duplicate2);
 
         _observable.setIsFinish(true);
         _observable.setSolution(new Solution(cSchedule,_numP));
