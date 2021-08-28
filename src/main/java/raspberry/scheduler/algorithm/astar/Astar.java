@@ -34,6 +34,9 @@ public class Astar implements Algorithm {
     private int duplicate = 0; // Duplicate counter, Used for debugging purposes.
     private int duplicateBySwap = 0; // Duplicate counter, Used for debugging purposes.
     private int fixOrderCount = 0; // Duplicate counter, Used for debugging purposes.
+    private final boolean DUPLICATE_ENABLE = true;
+    private final boolean UPPERBOUND_ENABLE = true;
+    private final boolean FIX_ORDER_ENABLE = true;
 
     /**
      * Constructor for A*
@@ -78,11 +81,12 @@ public class Astar implements Algorithm {
                         getChildTable(rootTable, node)
                 );
 
-                newSchedule.addHeuristic(
-                        Collections.max(Arrays.asList(
-                                h(newSchedule),
-                                h1(getChildTable(rootTable, node), newSchedule)
-                        )));
+                newSchedule.addHeuristic(0
+//                        Collections.max(Arrays.asList(
+//                                h(newSchedule),
+//                                h1(getChildTable(rootTable, node), newSchedule)
+//                        ))
+                );
 
                 _pq.add(newSchedule);
             }
@@ -143,7 +147,7 @@ public class Astar implements Algorithm {
                 }
             }
 
-            if (_fixOrderChecker.check(freeNodes, cSchedule)){
+            if (FIX_ORDER_ENABLE && _fixOrderChecker.check(freeNodes, cSchedule)){
                 INode node = _fixOrderChecker.getFixOrder(freeNodes,cSchedule).get(0);
 
                 fixOrderCount++;
@@ -155,13 +159,14 @@ public class Astar implements Algorithm {
                             new ScheduledTask(pid, node, start),
                             newTable);
 
-                    newSchedule.addHeuristic(
-                            Collections.max(Arrays.asList(
-                                    h(newSchedule),
-                                    h1(newTable, newSchedule)
-                            )));
+                    newSchedule.addHeuristic(0
+//                            Collections.max(Arrays.asList(
+//                                    h(newSchedule),
+//                                    h1(newTable, newSchedule)
+//                            ))
+                    );
                     _pq.add(newSchedule);
-//                    if (newSchedule.getTotal() <= _upperBound) {
+//                    if (!ENABLE_UPPERBOUND || newSchedule.getTotal() <= _upperBound) {
 //                        ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
 //                        if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
 //                            duplicate++;
@@ -182,17 +187,18 @@ public class Astar implements Algorithm {
                                 new ScheduledTask(pid, node, start),
                                 newTable);
 
-                        newSchedule.addHeuristic(
-                                Collections.max(Arrays.asList(
-                                        h(newSchedule),
-                                        h1(newTable, newSchedule)
-                                )));
+                        newSchedule.addHeuristic(0
+//                                Collections.max(Arrays.asList(
+//                                        h(newSchedule),
+//                                        h1(newTable, newSchedule)
+//                                ))
+                        );
 
-                        if (newSchedule.getTotal() <= _upperBound) {
+                        if (!UPPERBOUND_ENABLE || newSchedule.getTotal() <= _upperBound) {
                             ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
                             if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
                                 duplicate++;
-                            } else if (_equivalenceChecker.checkDuplicateBySwap(newSchedule)) {
+                            } else if (DUPLICATE_ENABLE && _equivalenceChecker.checkDuplicateBySwap(newSchedule)) {
                                 duplicateBySwap++;
                             } else {
                                 _pq.add(newSchedule);
@@ -210,6 +216,7 @@ public class Astar implements Algorithm {
         _algoStats.setIsFinish(true);
         _algoStats.setSolution(new Solution(cSchedule,_numP));
 
+        System.out.println(cSchedule);
         return new Solution(cSchedule, _numP);
     }
 
@@ -454,6 +461,7 @@ public class Astar implements Algorithm {
      * False : if reopening needs to happend for this schedule.
      */
     public Boolean isIrrelevantDuplicate(ArrayList<ScheduleAStar> scheduleList, ScheduleAStar cSchedule) {
+        if (!DUPLICATE_ENABLE) return false;
         for (ScheduleAStar s : scheduleList) {
             if ( s.equals2(cSchedule) ){
                 if ( s.getTotal() > cSchedule.getTotal()) {

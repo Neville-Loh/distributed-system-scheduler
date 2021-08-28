@@ -50,8 +50,7 @@ public class FixOrderChecker {
                 }
             }
         }
-
-
+        
         // if nf has a parent, |parents(nf )| = 1, then all other parents of tasks in free(s)
         // are allocated to the same processor Pp:
         int firstFoundPID = -1;
