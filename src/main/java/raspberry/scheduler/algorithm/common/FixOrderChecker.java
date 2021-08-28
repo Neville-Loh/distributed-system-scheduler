@@ -21,6 +21,7 @@ public class FixOrderChecker {
 
 
     public boolean check(List<INode> freeNodes, ScheduleAStar schedule){
+        System.out.println("========================================================================================");
         // if nf has at most one parent and at most one child
         for (INode node : freeNodes){
             int numOfParent = _graph.getIngoingEdges(node).size();
@@ -66,7 +67,10 @@ public class FixOrderChecker {
 
             }
         }
-
+        System.out.println(schedule);
+        System.out.println(_graph);
+        System.out.println("Free node: " + getFixOrder(freeNodes, schedule));
+        System.out.println("========================================================================================");
         return true;
     }
 
@@ -92,7 +96,7 @@ public class FixOrderChecker {
             return 0;
         }
 
-        // if the task has parent
+        // if the task has a parent
         int dataReadyTime = Integer.MIN_VALUE;
         for (IEdge edge : _graph.getIngoingEdges(task)){
             INode parent = edge.getParent();
