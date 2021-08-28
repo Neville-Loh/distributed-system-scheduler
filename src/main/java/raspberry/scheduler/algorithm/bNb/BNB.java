@@ -56,8 +56,8 @@ public class BNB implements Algorithm {
 
         for (INode i : rootTable.keySet()) {
             if (rootTable.get(i) == 0) {
-                ScheduleB newSchedule = new ScheduleB(
-                        null, new ScheduledTask(1, i,0),getChildTable(rootTable, i));
+                ScheduleB newSchedule = new ScheduleB(new ScheduledTask(1, i,0),
+                        getChildTable(rootTable, i));
                 newSchedule.addLowerBound( Math.max(lowerBound_1(newSchedule), _maxCriticalPath) );
                 if ( newSchedule.getLowerBound() > _bound ){
                     continue;

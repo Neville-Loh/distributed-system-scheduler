@@ -99,6 +99,9 @@ public class Schedule {
         this._maxPid = _maxPid;
     }
 
+    public int getPid(){return _scheduledTask.getProcessorID();}
+    public int getFinishTime(){return _scheduledTask.getFinishTime();}
+
 
     /* ============================================================
      *  Duplicate schedule detection
