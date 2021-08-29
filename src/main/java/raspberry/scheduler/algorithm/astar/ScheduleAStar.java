@@ -355,6 +355,9 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
         return super.getSize();
     }
 
+    public Hashtable<INode, Integer> getInDegreeTable(){
+        return _inDegreeTable;
+    }
 
     public int getTaskStartTime(String taskName) {
         return _scheduling.get(taskName).get(1);
@@ -459,4 +462,7 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
     public Spliterator<ScheduleAStar> spliterator() {
         return Iterable.super.spliterator();
     }
+
+
+
 }
