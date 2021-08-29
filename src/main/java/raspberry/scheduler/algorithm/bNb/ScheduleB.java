@@ -57,7 +57,8 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
      */
     public void addLowerBound(int l) {
         if ( getParent() == null){
-            _lowerBound = super.getScheduledTask().getFinishTime();
+            _lowerBound = l; //Pretty sure this is better
+//            _lowerBound = super.getScheduledTask().getFinishTime(); //old code
         }else{
             _lowerBound = Math.max( getParent().getLowerBound(), l);
         }
