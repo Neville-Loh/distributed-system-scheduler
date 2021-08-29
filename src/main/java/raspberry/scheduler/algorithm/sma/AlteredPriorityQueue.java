@@ -63,7 +63,7 @@ import java.util.function.Consumer;
  * It can remove an item in the priorityQueue in O( log(n) )
  * @author Neville, Takahiro
  */
-public class PriorityQueueAlpha<E> extends AbstractQueue<E>
+public class AlteredPriorityQueue<E> extends AbstractQueue<E>
         implements java.io.Serializable {
 
     private static final long serialVersionUID = -7720805057305804111L;
@@ -104,7 +104,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
      * capacity (11) that orders its elements according to their
      * {@linkplain Comparable natural ordering}.
      */
-    public PriorityQueueAlpha() {
+    public AlteredPriorityQueue() {
         this(DEFAULT_INITIAL_CAPACITY, null);
     }
 
@@ -117,7 +117,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is less
      *         than 1
      */
-    public PriorityQueueAlpha(int initialCapacity) {
+    public AlteredPriorityQueue(int initialCapacity) {
         this(initialCapacity, null);
     }
 
@@ -130,7 +130,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
      *         natural ordering} of the elements will be used.
      * @since 1.8
      */
-    public PriorityQueueAlpha(Comparator<? super E> comparator) {
+    public AlteredPriorityQueue(Comparator<? super E> comparator) {
         this(DEFAULT_INITIAL_CAPACITY, comparator);
     }
 
@@ -145,8 +145,8 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
      * @throws IllegalArgumentException if {@code initialCapacity} is
      *         less than 1
      */
-    public PriorityQueueAlpha(int initialCapacity,
-                         Comparator<? super E> comparator) {
+    public AlteredPriorityQueue(int initialCapacity,
+                                Comparator<? super E> comparator) {
         // Note: This restriction of at least one is not actually needed,
         // but continues for 1.5 compatibility
         if (initialCapacity < 1)
@@ -172,14 +172,14 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
      *         of its elements are null
      */
     @SuppressWarnings("unchecked")
-    public PriorityQueueAlpha(Collection<? extends E> c) {
+    public AlteredPriorityQueue(Collection<? extends E> c) {
         if (c instanceof SortedSet<?>) {
             SortedSet<? extends E> ss = (SortedSet<? extends E>) c;
             this.comparator = (Comparator<? super E>) ss.comparator();
             initElementsFromCollection(ss);
         }
-        else if (c instanceof  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<?>) {
-             raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<? extends E> pq = ( raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<? extends E>) c;
+        else if (c instanceof AlteredPriorityQueue<?>) {
+             AlteredPriorityQueue<? extends E> pq = (AlteredPriorityQueue<? extends E>) c;
             this.comparator = (Comparator<? super E>) pq.comparator();
             initFromPriorityQueue(pq);
         }
@@ -204,7 +204,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
      *         of its elements are null
      */
     @SuppressWarnings("unchecked")
-    public PriorityQueueAlpha( raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<? extends E> c) {
+    public AlteredPriorityQueue(AlteredPriorityQueue<? extends E> c) {
         this.comparator = (Comparator<? super E>) c.comparator();
         initFromPriorityQueue(c);
     }
@@ -223,13 +223,13 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
      *         of its elements are null
      */
     @SuppressWarnings("unchecked")
-    public PriorityQueueAlpha(SortedSet<? extends E> c) {
+    public AlteredPriorityQueue(SortedSet<? extends E> c) {
         this.comparator = (Comparator<? super E>) c.comparator();
         initElementsFromCollection(c);
     }
 
-    private void initFromPriorityQueue( raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<? extends E> c) {
-        if (c.getClass() ==  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.class) {
+    private void initFromPriorityQueue( AlteredPriorityQueue<? extends E> c) {
+        if (c.getClass() ==  AlteredPriorityQueue.class) {
             this.queue = c.toArray();
             this.size = c.size();
         } else {
@@ -540,7 +540,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
             if (expectedModCount != modCount)
                 throw new ConcurrentModificationException();
             if (lastRet != -1) {
-                E moved = raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.this.removeAt(lastRet);
+                E moved = AlteredPriorityQueue.this.removeAt(lastRet);
                 lastRet = -1;
                 if (moved == null)
                     cursor--;
@@ -550,7 +550,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
                     forgetMeNot.add(moved);
                 }
             } else if (lastRetElt != null) {
-                raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.this.removeEq(lastRetElt);
+                AlteredPriorityQueue.this.removeEq(lastRetElt);
                 lastRetElt = null;
             } else {
                 throw new IllegalStateException();
@@ -822,7 +822,7 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
      * @since 1.8
      */
     public final Spliterator<E> spliterator() {
-        return new  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.PriorityQueueSpliterator<E>(this, 0, -1, 0);
+        return new  AlteredPriorityQueue.PriorityQueueSpliterator<E>(this, 0, -1, 0);
     }
 
     static final class PriorityQueueSpliterator<E> implements Spliterator<E> {
@@ -830,13 +830,13 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
          * This is very similar to ArrayList Spliterator, except for
          * extra null checks.
          */
-        private final  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<E> pq;
+        private final AlteredPriorityQueue<E> pq;
         private int index;            // current index, modified on advance/split
         private int fence;            // -1 until first use
         private int expectedModCount; // initialized when fence set
 
         /** Creates new spliterator covering the given range */
-        PriorityQueueSpliterator(raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<E> pq, int origin, int fence,
+        PriorityQueueSpliterator(AlteredPriorityQueue<E> pq, int origin, int fence,
                                  int expectedModCount) {
             this.pq = pq;
             this.index = origin;
@@ -853,17 +853,17 @@ public class PriorityQueueAlpha<E> extends AbstractQueue<E>
             return hi;
         }
 
-        public  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.PriorityQueueSpliterator<E> trySplit() {
+        public  AlteredPriorityQueue.PriorityQueueSpliterator<E> trySplit() {
             int hi = getFence(), lo = index, mid = (lo + hi) >>> 1;
             return (lo >= mid) ? null :
-                    new  raspberry.scheduler.algorithm.sma.PriorityQueueAlpha.PriorityQueueSpliterator<E>(pq, lo, index = mid,
+                    new  AlteredPriorityQueue.PriorityQueueSpliterator<E>(pq, lo, index = mid,
                             expectedModCount);
         }
 
         @SuppressWarnings("unchecked")
         public void forEachRemaining(Consumer<? super E> action) {
             int i, hi, mc; // hoist accesses and checks from loop
-             raspberry.scheduler.algorithm.sma.PriorityQueueAlpha<E> q; Object[] a;
+             AlteredPriorityQueue<E> q; Object[] a;
             if (action == null)
                 throw new NullPointerException();
             if ((q = pq) != null && (a = q.queue) != null) {

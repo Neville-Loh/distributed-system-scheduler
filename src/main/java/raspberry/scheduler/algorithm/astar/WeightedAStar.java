@@ -1,22 +1,18 @@
 package raspberry.scheduler.algorithm.astar;
 
 import java.util.*;
-import java.util.List;
 
-import raspberry.scheduler.algorithm.Algorithm;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.graph.*;
-
-import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 /**
  * Implementation of A star algorithm.
  *
  * @author Takahiro
  */
-public class WeightedAstar extends Astar implements Algorithm {
+public class WeightedAStar extends AStar {
 
     /**
      * Constructor for A*
@@ -24,7 +20,7 @@ public class WeightedAstar extends Astar implements Algorithm {
      * @param graphToSolve  : graph to solve (graph represents the task and dependencies)
      * @param numProcessors : number of processor we can used to scheudle tasks.
      */
-    public WeightedAstar(IGraph graphToSolve, int numProcessors) {
+    public WeightedAStar(IGraph graphToSolve, int numProcessors) {
         super(graphToSolve, numProcessors, Integer.MAX_VALUE);
     }
 

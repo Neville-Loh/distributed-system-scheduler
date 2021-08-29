@@ -1,8 +1,7 @@
 package raspberry.scheduler.algorithm.bnb;
 
 import org.junit.Test;
-import raspberry.scheduler.algorithm.OutputChecker;
-import raspberry.scheduler.algorithm.bNb.BNBParallel;
+import raspberry.scheduler.algorithm.common.OutputChecker;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;

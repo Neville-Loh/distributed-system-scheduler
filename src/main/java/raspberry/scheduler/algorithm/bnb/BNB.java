@@ -1,18 +1,15 @@
-package raspberry.scheduler.algorithm.bNb;
+package raspberry.scheduler.algorithm.bnb;
 
 import raspberry.scheduler.algorithm.Algorithm;
-import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.algorithm.common.*;
-import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
-import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 import java.util.*;
 
-public class BNB implements Algorithm {
+public class BNB extends Algorithm {
 
     IGraph _graph;
     int _numP;
@@ -29,6 +26,7 @@ public class BNB implements Algorithm {
     private EquivalenceChecker _equivalenceChecker;
 
     public BNB(IGraph graphToSolve){
+        super(graphToSolve);
         _graph = graphToSolve;
     }
 
@@ -40,6 +38,7 @@ public class BNB implements Algorithm {
      * @param bound : value representing the upperbound
      */
     public BNB(IGraph graphToSolve, int numProcessors, int bound) {
+        super(graphToSolve);
         _graph = graphToSolve;
         _numP = numProcessors;
         _numNode = _graph.getNumNodes();
@@ -165,56 +164,6 @@ public class BNB implements Algorithm {
         _algoStats.setIsFinish(true);
         _algoStats.setSolution(new Solution(shortestPath,_numP));
         return new Solution(shortestPath, _numP);
-    }
-
-    /**
-     * Computes the earliest time we can schedule a task in a specific processor.
-     *
-     * @param parentSchedule   : parent schedule of this partial schedule.
-     * @param processorId      : the specific processor we want to scheude task into.
-     * @param nodeToBeSchedule : node/task to be scheduled.
-     * @return Integer : representing the earliest time. (start time)
-     */
-    public int calculateEarliestStartTime(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
-        // Find last finish parent node
-        // Find last finish time for current processor id.
-        ScheduleB last_processorId_use = null; //last time processor with "processorId" was used.
-        ScheduleB cParentSchedule = (ScheduleB)parentSchedule;
-
-        while (cParentSchedule != null) {
-            if (cParentSchedule.getPid() == processorId) {
-                last_processorId_use = cParentSchedule;
-                break;
-            }
-            cParentSchedule = cParentSchedule.getParent();
-        }
-
-        //last time parent was used. Needs to check for all processor.
-        int finished_time_of_last_parent = 0;
-        if (last_processorId_use != null) {
-            finished_time_of_last_parent = last_processorId_use.getFinishTime();
-        }
-
-        cParentSchedule =  (ScheduleB)parentSchedule;
-        while (cParentSchedule != null) {
-            // for edges in current parent scheduled node
-            INode last_scheduled_node = cParentSchedule.getNode();
-            for (IEdge edge : _graph.getOutgoingEdges(last_scheduled_node.getName())) {
-                if (edge.getChild() == nodeToBeSchedule && cParentSchedule.getPid() != processorId) {
-                    try {
-                        int communicationWeight = _graph.getEdgeWeight(cParentSchedule.getNode(), nodeToBeSchedule);
-                        //  finished_time_of_last_parent  <
-                        if (finished_time_of_last_parent < (cParentSchedule.getFinishTime() + communicationWeight)) {
-                            finished_time_of_last_parent = cParentSchedule.getFinishTime() + communicationWeight;
-                        }
-                    } catch (EdgeDoesNotExistException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-            }
-            cParentSchedule = cParentSchedule.getParent();
-        }
-        return finished_time_of_last_parent;
     }
 
     /**

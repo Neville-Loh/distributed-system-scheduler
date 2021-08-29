@@ -1,7 +1,6 @@
 package raspberry.scheduler.algorithm.astar;
 
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.*;
 
 import raspberry.scheduler.algorithm.common.OutputSchedule;
@@ -10,14 +9,12 @@ import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.*;
 
-import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
-
 /**
  * Implementation of A star with parallelization
  *
  * @author Alan, Young
  */
-public class AstarParallel extends Astar {
+public class AStarParallel extends AStar {
     // thread pool that will deal with all the threads
     private ThreadPoolExecutor _threadPool = null;
     private AlgoStats _algoStats;
@@ -32,7 +29,7 @@ public class AstarParallel extends Astar {
      * @param numProcessors : number of processor we can use to schedule tasks.
      * @param numCores : number of cores / threads
      */
-    public AstarParallel(IGraph graphToSolve, int numProcessors, int numCores) {
+    public AStarParallel(IGraph graphToSolve, int numProcessors, int numCores) {
         super(graphToSolve, numProcessors, Integer.MAX_VALUE);
         initialiseThreadPool(numCores);
         _subSchedules = new ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>>();
@@ -46,7 +43,7 @@ public class AstarParallel extends Astar {
      * @param upperbound : upper bound. (found from creating a valid solution)
      * @param numCores : number of cores / threads
      */
-    public AstarParallel(IGraph graphToSolve, int numProcessors, int upperbound,int numCores) {
+    public AStarParallel(IGraph graphToSolve, int numProcessors, int upperbound, int numCores) {
         super(graphToSolve, numProcessors,upperbound);
         initialiseThreadPool(numCores);
         _subSchedules = new ConcurrentLinkedQueue<Hashtable<ScheduleAStar, Hashtable<INode, Integer>>>();

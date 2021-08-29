@@ -1,12 +1,7 @@
 package raspberry.scheduler.algorithm.common;
 
-import raspberry.scheduler.algorithm.Algorithm;
-import raspberry.scheduler.algorithm.astar.Astar;
-import raspberry.scheduler.algorithm.astar.ScheduleAStar;
-import raspberry.scheduler.algorithm.bNb.BNB;
-import raspberry.scheduler.algorithm.bNb.ScheduleB;
+import raspberry.scheduler.algorithm.astar.AStar;
 import raspberry.scheduler.graph.*;
-import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 
 import java.util.*;
 
@@ -41,9 +36,9 @@ public class EquivalenceChecker {
      * @param schedule schedule to be checked
      * @return true if it's a duplicate, false if otherwise
      */
-    public boolean checkDuplicateBySwap(ScheduleAStar schedule) {
+    public boolean checkDuplicateBySwap(Schedule schedule) {
         // declaration
-        ScheduleAStar cSchedule = schedule;
+        Schedule cSchedule = schedule;
         ScheduledTask m = schedule.getScheduledTask();
         int TMax = m.getFinishTime();
 
@@ -62,65 +57,10 @@ public class EquivalenceChecker {
                 && _graph.getIndex(m.getTask()) <
                 _graph.getIndex(indexTable.get(i).getTask())) {
             print("================================================================================");
-            ScheduleAStar before = cSchedule;
+            Schedule before = cSchedule;
 
             print("NOT SWAPPED:  " + cSchedule);
-            cSchedule = swap2(cSchedule, m, indexTable.get(i));
-            print(String.format("SWAPPED task %s with %s:  ", m, indexTable.get(i)) + cSchedule.toString());
-
-            if (!isCorrectlySwapped(before, cSchedule, m, indexTable.get(i))) {
-                System.out.println("NOT SWAPPED:  " + before);
-                System.out.println(String.format("SWAPPED task %s with %s:  ", m, indexTable.get(i)) + cSchedule.toString());
-                System.out.println(("WRONG"));
-                return false;
-            }
-            // task in the same processor from task to swap to send to last index
-            ArrayList<ScheduledTask> inputList = new ArrayList<>();
-            for (int index = i; index <= secondLastIndex; index ++){
-                inputList.add(indexTable.get(index));
-            }
-            print("------------- OUT GOING COMS OK CHECK ");
-            if (cSchedule.getScheduledTask(indexTable.get(secondLastIndex).getTask())
-                    .getFinishTime() <= TMax
-                    && outgoingCommsOK(inputList, cSchedule, schedule)) {
-                _counter++;
-                print("\n------------- END CHECK\n");
-                print("================================================================================");
-                print("counter is: " + _counter);
-                return true;
-            }
-            print("\n------------- END CHECK\n");
-            print("================================================================================");
-            i--;
-        }
-        return false;
-    }
-
-    public boolean checkDuplicateBySwap(ScheduleB schedule) {
-        // declaration
-        ScheduleB cSchedule = schedule;
-        ScheduledTask m = schedule.getScheduledTask();
-        int TMax = m.getFinishTime();
-
-        ArrayList<ScheduledTask> processorTaskList = schedule.getAllTaskInProcessor(m.getProcessorID());
-        // sort by accenting start time
-        processorTaskList.sort(Comparator.comparingInt(ScheduledTask::getStartTime));
-        Hashtable<Integer, ScheduledTask> indexTable = new Hashtable<Integer, ScheduledTask>();
-        int i = 1;
-        while (i < processorTaskList.size() + 1) {
-            indexTable.put(i, processorTaskList.get(i - 1));
-            i++;
-        }
-        int secondLastIndex = indexTable.size() - 1;
-        i = secondLastIndex;
-        while (i > 0
-                && _graph.getIndex(m.getTask()) <
-                _graph.getIndex(indexTable.get(i).getTask())) {
-            print("================================================================================");
-            ScheduleB before = cSchedule;
-
-            print("NOT SWAPPED:  " + cSchedule);
-            cSchedule = swap2(cSchedule, m, indexTable.get(i));
+            cSchedule = swap(cSchedule, m, indexTable.get(i));
             print(String.format("SWAPPED task %s with %s:  ", m, indexTable.get(i)) + cSchedule.toString());
 
             if (!isCorrectlySwapped(before, cSchedule, m, indexTable.get(i))) {
@@ -152,13 +92,22 @@ public class EquivalenceChecker {
     }
 
 
-    private ScheduleB swap2(ScheduleB schedule, ScheduledTask m, ScheduledTask taskToSwap) {
-        ScheduleB cSchedule = schedule;
-        ScheduleB result;
-
+    /**
+     * swaps two neighbours task in the same processor
+     * the dependency of the graph is recalculated and the affected tasks are scheduled with the
+     * earliest start time with the same linked list order
+     * @param schedule original schedule before swap
+     * @param m scheduled task to be swapped up
+     * @param taskToSwap scheduled task to be swapped down
+     * @return new schedule after swap
+     */
+    private Schedule swap(Schedule schedule, ScheduledTask m, ScheduledTask taskToSwap) {
+        Schedule cSchedule = schedule;
+        Schedule result;
         ArrayList<ScheduledTask> prevTask = new ArrayList<>();
         ArrayList<ScheduledTask> afterTask = new ArrayList<>();
 
+       // loop until m is found
         while (cSchedule != null){
             if ( cSchedule.getScheduledTask().getTask() == m.getTask()){
                 break;
@@ -168,6 +117,7 @@ public class EquivalenceChecker {
             }
         }
 
+        //loop until taskToSwap is found
         while (cSchedule != null) {
             if (cSchedule.getScheduledTask().getTask() == taskToSwap.getTask()) {
                 cSchedule = cSchedule.getParent();
@@ -182,12 +132,9 @@ public class EquivalenceChecker {
 
         INode swapNode = taskToSwap.getTask();
         List<IEdge> childOfSwap = _graph.getOutgoingEdges(swapNode);
-
         INode mNode = m.getTask();
         List<IEdge> parentOfM = _graph.getIngoingEdges(mNode);
-
         ArrayList<ScheduledTask> newOrdering = new ArrayList<ScheduledTask>();
-
         Collections.reverse(prevTask);
 
         boolean swapIsAdded = false;
@@ -233,11 +180,11 @@ public class EquivalenceChecker {
 
         result = cSchedule;
         for (ScheduledTask st : newOrdering2) {
-            int earliestStartTime = callCalculateEarliestStartTime(result, st.getProcessorID(), st.getTask(),schedule);
+            int earliestStartTime = callCalculateEarliestStartTime(result, st.getProcessorID(), st.getTask());
             ScheduledTask scheduleST = new ScheduledTask(st.getProcessorID(), st.getTask(), earliestStartTime);
             if (result == null) {
-                result = new ScheduleB(
-                        scheduleST, null
+                result = new Schedule(
+                        scheduleST
                 );
             } else {
                 result = createSubSchedule(result, scheduleST);
@@ -246,122 +193,11 @@ public class EquivalenceChecker {
 
         Collections.reverse(afterTask);
         for (ScheduledTask st : afterTask) {
-            int earliestStartTime = callCalculateEarliestStartTime(result, st.getProcessorID(), st.getTask(),schedule);
+            int earliestStartTime = callCalculateEarliestStartTime(result, st.getProcessorID(), st.getTask());
             ScheduledTask scheduleST = new ScheduledTask(st.getProcessorID(), st.getTask(), earliestStartTime);
             if (result == null) {
-                result = new ScheduleB(
-                        scheduleST, null
-                );
-            } else {
-                result = createSubSchedule(result, scheduleST);
-            }
-        }
-
-        if (result == null){
-            print("NULL");
-        }
-        return result;
-    }
-
-    private ScheduleAStar swap2(ScheduleAStar schedule, ScheduledTask m, ScheduledTask taskToSwap) {
-        ScheduleAStar cSchedule = schedule;
-        ScheduleAStar result;
-
-        ArrayList<ScheduledTask> prevTask = new ArrayList<>();
-        ArrayList<ScheduledTask> afterTask = new ArrayList<>();
-
-        while (cSchedule != null){
-            if ( cSchedule.getScheduledTask().getTask() == m.getTask()){
-                break;
-            }else{
-                afterTask.add(cSchedule.getScheduledTask());
-                cSchedule = cSchedule.getParent();
-            }
-        }
-
-        while (cSchedule != null) {
-            if (cSchedule.getScheduledTask().getTask() == taskToSwap.getTask()) {
-                cSchedule = cSchedule.getParent();
-                break;
-            }
-            if ( !(cSchedule.getScheduledTask().getTask() == m.getTask())
-                    && !(cSchedule.getScheduledTask().getTask() == taskToSwap.getTask())) {
-                prevTask.add(cSchedule.getScheduledTask());
-            }
-            cSchedule = cSchedule.getParent();
-        }
-
-        INode swapNode = taskToSwap.getTask();
-        List<IEdge> childOfSwap = _graph.getOutgoingEdges(swapNode);
-
-        INode mNode = m.getTask();
-        List<IEdge> parentOfM = _graph.getIngoingEdges(mNode);
-
-        ArrayList<ScheduledTask> newOrdering = new ArrayList<ScheduledTask>();
-
-        Collections.reverse(prevTask);
-
-        boolean swapIsAdded = false;
-        for (ScheduledTask st : prevTask) {
-            if (!swapIsAdded) {
-                for (IEdge e : childOfSwap) {
-                    if (e.getChild() == st.getTask() && !swapIsAdded ) {
-                        newOrdering.add(taskToSwap);
-                        swapIsAdded = true;
-                    }
-                }
-            }
-            newOrdering.add(st);
-        }
-        if (!swapIsAdded) {
-            newOrdering.add(taskToSwap);
-        }
-
-        ArrayList<ScheduledTask> newOrdering2 = new ArrayList<ScheduledTask>();
-        Collections.reverse(newOrdering);
-        boolean mIsAdded = false;
-        for (ScheduledTask st : newOrdering) {
-            if (!mIsAdded) {
-                for (IEdge e : parentOfM) {
-                    if ( e.getParent() == st.getTask() && !mIsAdded) {
-                        newOrdering2.add(m);
-                        mIsAdded = true;
-                    }
-                }
-            }
-            newOrdering2.add(st);
-        }
-        if (!mIsAdded) {
-            newOrdering2.add(m);
-        }
-        Collections.reverse(newOrdering2);
-
-        if (prevTask.isEmpty()){
-            newOrdering2 = new ArrayList<ScheduledTask>();
-            newOrdering2.add( m );
-            newOrdering2.add( taskToSwap );
-        }
-
-        result = cSchedule;
-        for (ScheduledTask st : newOrdering2) {
-            int earliestStartTime = callCalculateEarliestStartTime(result, st.getProcessorID(), st.getTask(),schedule);
-            ScheduledTask scheduleST = new ScheduledTask(st.getProcessorID(), st.getTask(), earliestStartTime);
-            if (result == null) {
-                result = new ScheduleAStar(
-                        scheduleST, null
-                );
-            } else {
-                result = createSubSchedule(result, scheduleST);
-            }
-        }
-
-        Collections.reverse(afterTask);
-        for (ScheduledTask st : afterTask) {
-            int earliestStartTime = callCalculateEarliestStartTime(result, st.getProcessorID(), st.getTask(),schedule);
-            ScheduledTask scheduleST = new ScheduledTask(st.getProcessorID(), st.getTask(), earliestStartTime);
-            if (result == null) {
-                result = new ScheduleAStar(
-                        scheduleST, null
+                result = new Schedule(
+                        scheduleST
                 );
             } else {
                 result = createSubSchedule(result, scheduleST);
@@ -477,20 +313,11 @@ public class EquivalenceChecker {
      * @param scheduledTask a schedule task to be in the next schedule
      * @return a new sub schedule with the task
      */
-    private ScheduleAStar createSubSchedule(ScheduleAStar schedule, ScheduledTask scheduledTask) {
-        return new ScheduleAStar(
+    private Schedule createSubSchedule(Schedule schedule, ScheduledTask scheduledTask) {
+        return new Schedule(
                 schedule,
-                scheduledTask,
-                null);
+                scheduledTask);
     }
-
-    private ScheduleB createSubSchedule(ScheduleB schedule, ScheduledTask scheduledTask) {
-        return new ScheduleB(
-                schedule,
-                scheduledTask,
-                null);
-    }
-
 
     /**
      * Check method
@@ -558,16 +385,7 @@ public class EquivalenceChecker {
 
 
     //DUPLICATE CODE : NEEDS REFACTOR
-    public int callCalculateEarliestStartTime(Schedule parentSchedule, int processorId, INode nodeToBeSchedule,Schedule schedule) {
-        Algorithm algo = null;
-        if (schedule instanceof ScheduleAStar){
-            algo = new Astar(_graph);
-        }else if (schedule instanceof ScheduleB){
-            algo = new BNB(_graph);
-        }else{
-            System.out.println(parentSchedule);
-            System.out.println("callCalculateEarliestStartTime is not working");
-        }
-        return algo.calculateEarliestStartTime(parentSchedule,processorId,nodeToBeSchedule);
+    public int callCalculateEarliestStartTime(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
+        return new AStar(_graph).calculateEarliestStartTime(parentSchedule,processorId,nodeToBeSchedule);
     }
 }

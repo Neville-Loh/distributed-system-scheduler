@@ -1,22 +1,21 @@
 
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm.sma;
 import org.junit.Before;
 import org.junit.Test;
-import raspberry.scheduler.algorithm.sma.PriorityQueueAlpha;
 
 import static org.junit.Assert.*;
 
 
 public class TestPriorityQueue {
-    private PriorityQueueAlpha<Integer> _pq;
+    private AlteredPriorityQueue<Integer> _pq;
 
     @Before
     public void setup(){
         _pq = populatePQ();
     }
 
-    private PriorityQueueAlpha<Integer> populatePQ(){
-        PriorityQueueAlpha<Integer> pq = new PriorityQueueAlpha<Integer>();
+    private AlteredPriorityQueue<Integer> populatePQ(){
+        AlteredPriorityQueue<Integer> pq = new AlteredPriorityQueue<Integer>();
         pq.add(1);
         pq.add(2);
         pq.add(3);
@@ -44,7 +43,7 @@ public class TestPriorityQueue {
 
     @Test
     public void testRemove(){
-        _pq = new PriorityQueueAlpha<>();
+        _pq = new AlteredPriorityQueue<>();
         _pq.add(3);
         _pq.add(2);
         _pq.add(1);
@@ -60,7 +59,7 @@ public class TestPriorityQueue {
 
     @Test
     public void testRemoveAndAdd(){
-        _pq = new PriorityQueueAlpha<>();
+        _pq = new AlteredPriorityQueue<>();
         _pq.add(3);
         _pq.add(2);
         _pq.add(1);
@@ -83,7 +82,7 @@ public class TestPriorityQueue {
 
     @Test
     public void testContain(){
-        PriorityQueueAlpha<String> pq = new PriorityQueueAlpha<>();
+        AlteredPriorityQueue<String> pq = new AlteredPriorityQueue<>();
         pq.add("c");
         pq.add("b");
         pq.add("e");

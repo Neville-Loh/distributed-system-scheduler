@@ -1,4 +1,4 @@
-package raspberry.scheduler.algorithm.bNb;
+package raspberry.scheduler.algorithm.bnb;
 
 import java.util.*;
 import java.util.function.Consumer;

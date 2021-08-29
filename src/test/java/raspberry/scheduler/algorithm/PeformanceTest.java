@@ -1,11 +1,9 @@
 package raspberry.scheduler.algorithm;
 
-import org.junit.Test;
-import raspberry.scheduler.algorithm.astar.Astar;
-import raspberry.scheduler.algorithm.astar.WeightedAstar;
+import raspberry.scheduler.algorithm.astar.AStar;
+import raspberry.scheduler.algorithm.astar.WeightedAStar;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
-import raspberry.scheduler.algorithm.sma.MemoryBoundAStar;
-import raspberry.scheduler.algorithm.OutputChecker;
+import raspberry.scheduler.algorithm.common.OutputChecker;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.io.GraphReader;
@@ -90,14 +88,14 @@ public class PeformanceTest {
 
         // run and time a* algorithm (seeker weighted a* routine)
         long startTime = System.nanoTime();
-        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
+        WeightedAStar wA = new WeightedAStar(graph,numProcessors);
         OutputSchedule outputBound = wA.findPath();
         int upperbound = outputBound.getFinishTime();
         wA = null;
         outputBound = null;
 
         // run a star
-        Astar astar = new Astar(graph,numProcessors, upperbound);
+        AStar astar = new AStar(graph,numProcessors, upperbound);
         OutputSchedule output = astar.findPath();
 
         System.out.printf("------------------------\n" +

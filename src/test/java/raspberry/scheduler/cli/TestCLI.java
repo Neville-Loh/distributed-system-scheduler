@@ -1,4 +1,4 @@
-package raspberry.iotest;
+package raspberry.scheduler.cli;
 
 import org.junit.Before;
 import raspberry.scheduler.cli.CLIConfig;

@@ -1,8 +1,5 @@
-package raspberry.iotest;
+package raspberry.scheduler.iotest;
 
-import static org.junit.Assert.*;
-
-import com.paypal.digraph.parser.GraphParserException;
 import org.junit.Test;
 
 

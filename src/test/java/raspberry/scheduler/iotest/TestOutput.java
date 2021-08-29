@@ -1,7 +1,7 @@
-package raspberry.iotest;
+package raspberry.scheduler.iotest;
 
 import org.junit.Test;
-import raspberry.scheduler.algorithm.astar.Astar;
+import raspberry.scheduler.algorithm.astar.AStar;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.IGraph;
@@ -26,7 +26,7 @@ public class TestOutput {
         IGraph graph = file1.read();
 
         //run algo and get output schedule
-        Astar astar = new Astar(graph,2,Integer.MAX_VALUE);
+        AStar astar = new AStar(graph,2,Integer.MAX_VALUE);
         OutputSchedule schedule = astar.findPath();
 
         //write to output file
