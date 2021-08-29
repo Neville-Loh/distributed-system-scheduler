@@ -52,6 +52,11 @@ public class Solution implements OutputSchedule {
         _totalProcessorNum = numP;
     }
 
+    /* ------------------------------
+     *  Getter and Setters
+     *
+     * ------------------------------
+     */
 
     @Override
     public int getTotalProcessorNum() {

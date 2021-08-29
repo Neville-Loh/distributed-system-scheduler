@@ -1,11 +1,14 @@
 package raspberry.scheduler.algorithm.astar;
 
-import java.util.*;
-
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.graph.*;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.PriorityQueue;
 
 /**
  * Implementation of A star algorithm.
