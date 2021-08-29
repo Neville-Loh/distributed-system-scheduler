@@ -15,7 +15,7 @@ import raspberry.scheduler.graph.INode;
  *
  * @author Takahiro
  */
-public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterable<ScheduleB>{
+public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterable<ScheduleB> {
 
 
     private int _overallFinishTime; // t: Total weight
@@ -26,8 +26,8 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
     private int _lowerBound;   // For BNB. Represents the base case. <- perfect schedling.
 
 
-    public ScheduleB( ScheduledTask scheduleTask, Hashtable<INode,Integer> inDegreeTable){
-        super( scheduleTask );
+    public ScheduleB(ScheduledTask scheduleTask, Hashtable<INode, Integer> inDegreeTable) {
+        super(scheduleTask);
         _inDegreeTable = inDegreeTable;
         _maxPid = scheduleTask.getProcessorID();
         _overallFinishTime = scheduleTask.getFinishTime();
@@ -35,9 +35,8 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
 
     /**
      * Constructor for partial schedule
-     *
      */
-    public ScheduleB(ScheduleB parent ,ScheduledTask scheduleTask, Hashtable<INode, Integer> inDegreeTable) {
+    public ScheduleB(ScheduleB parent, ScheduledTask scheduleTask, Hashtable<INode, Integer> inDegreeTable) {
         super(parent, scheduleTask);
         _inDegreeTable = inDegreeTable;
         if (scheduleTask.getProcessorID() > parent.getMaxPid()) {
@@ -45,19 +44,20 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
         } else {
             _maxPid = parent.getMaxPid();
         }
-        _overallFinishTime = Math.max( parent._overallFinishTime, scheduleTask.getFinishTime() );
+        _overallFinishTime = Math.max(parent._overallFinishTime, scheduleTask.getFinishTime());
     }
 
     /**
      * Add lower bound to this schedule.
+     *
      * @param l : lower bound value.
      */
     public void addLowerBound(int l) {
-        if ( getParent() == null){
+        if (getParent() == null) {
             _lowerBound = l; //Pretty sure this is better
 //            _lowerBound = super.getScheduledTask().getFinishTime(); //old code
-        }else{
-            _lowerBound = Math.max( getParent().getLowerBound(), l);
+        } else {
+            _lowerBound = Math.max(getParent().getLowerBound(), l);
         }
     }
 
@@ -89,9 +89,9 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
             return false;
         } else {
             ScheduleB oSchedule = (ScheduleB) otherSchedule;
-            if ( getSize() != oSchedule.getSize()) {
+            if (getSize() != oSchedule.getSize()) {
                 return false;
-            } else if ( getMaxPid() != oSchedule.getMaxPid()) {
+            } else if (getMaxPid() != oSchedule.getMaxPid()) {
                 return false;
             } else {
                 // Group by pid. Compare match
@@ -107,7 +107,7 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
                         tmp = new Hashtable<String, Integer>();
                     }
                     tmp.put(s.getName(), scheduling.get(s)[0]);
-                    hash4scheduling.put( scheduling.get(s)[2], tmp );
+                    hash4scheduling.put(scheduling.get(s)[2], tmp);
                 }
                 for (INode s : scheduling2.keySet()) {
                     Hashtable<String, Integer> tmp = hash4scheduling2.get(scheduling2.get(s)[2]); //get(0) gets pid
@@ -115,7 +115,7 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
                         tmp = new Hashtable<String, Integer>();
                     }
                     tmp.put(s.getName(), scheduling2.get(s)[0]);
-                    hash4scheduling2.put( scheduling2.get(s)[2], tmp );
+                    hash4scheduling2.put(scheduling2.get(s)[2], tmp);
                 }
 
                 for (Hashtable<String, Integer> i : hash4scheduling.values()) {
@@ -135,39 +135,15 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
         }
     }
 
-
     //Risky version of equals. Dont know if this actually outputs optimal path.
-    public boolean equals3(Object otherSchedule) {
-        if (otherSchedule == this) {
-            return true;
-        } else if (!(otherSchedule instanceof ScheduleB)) {
-            return false;
-        } else {
-            ScheduleB oSchedule = (ScheduleB) otherSchedule;
-            if (oSchedule.getSize()!= getSize()) {
-                return false;
-            } else if (oSchedule.getMaxPid() != getMaxPid()) {
-                return false;
-            } else {
-                // Group by pid. Compare match
-                Set<int[]> setSchedule = getTaskForEqual();
-                Set<int[]> setOtherSchedule = oSchedule.getTaskForEqual();
-                if ( setSchedule.equals(setOtherSchedule) ){
-                    System.out.println( setOtherSchedule );
-                    System.out.println( setSchedule );
-                }
-                return setSchedule.equals(setOtherSchedule);
-            }
-        }
-    }
 
-    //Risky version of equals. Dont know if this actually outputs optimal path.
     /**
      * Check if two Schedule instance is the same. (this is for detecting duplicate scheduling)
+     *
      * @param otherSchedule : Schedule we are comparing against.
      * @return true if its the same. false if it is not the same schedule.
      */
-    public boolean equals4(Object otherSchedule) {
+    public boolean equals3(Object otherSchedule) {
         if (otherSchedule == this) {
             return true;
         } else if (!(otherSchedule instanceof ScheduleB)) {
@@ -179,13 +155,6 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
             } else if (this.getMaxPid() != schedule.getMaxPid()) {
                 return false;
             } else {
-                // Group by pid. Compare match
-//                Hashtable<String, List<Integer>> _scheduling2 = schedule.getScheduling();
-
-//                Set<HashSet<Integer>> hash4scheduling = new HashSet<HashSet<Integer>>();
-//                Set<HashSet<Integer>> hash4scheduling2 = new HashSet<HashSet<Integer>>();
-//                int[] array = new int[2];
-
                 Set<List<Integer>> hash4scheduling = new HashSet<List<Integer>>();
                 Set<List<Integer>> hash4scheduling2 = new HashSet<List<Integer>>();
 
@@ -208,16 +177,17 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
 
     /**
      * Get set of task for Equals() function
+     *
      * @return Set of Integer Array : representing the schedule
      */
-    public Set<int[]> getTaskForEqual(){
+    public Set<int[]> getTaskForEqual() {
         Set<int[]> tmp;
-        if ( getParent() == null) {
-            tmp = new HashSet< int[] >();
+        if (getParent() == null) {
+            tmp = new HashSet<int[]>();
         } else {
             tmp = getParent().getTaskForEqual();
         }
-        tmp.add( new int[]{super.getScheduledTask().getStartTime(),
+        tmp.add(new int[]{super.getScheduledTask().getStartTime(),
                 super.getScheduledTask().getTask().getName().hashCode()});
         return tmp;
     }
@@ -234,7 +204,7 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
      */
     public Hashtable<INode, int[]> getPath() {
         Hashtable<INode, int[]> tmp;
-        if ( getParent() == null) {
+        if (getParent() == null) {
             tmp = new Hashtable<INode, int[]>();
         } else {
             tmp = getParent().getPath();
@@ -309,10 +279,10 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
     }
 
 
-
-    public int getLowerBound(){
+    public int getLowerBound() {
         return _lowerBound;
     }
+
     /**
      * get max pid The largest pid currently used to schedule
      *
@@ -322,7 +292,7 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
         return _maxPid;
     }
 
-    public Hashtable<INode, Integer> getIndegreeTable(){
+    public Hashtable<INode, Integer> getIndegreeTable() {
         return _inDegreeTable;
     }
 
@@ -331,10 +301,12 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
         ScheduleB head = this;
         return new Iterator<ScheduleB>() {
             ScheduleB current = head;
+
             @Override
             public boolean hasNext() {
                 return current != null;
             }
+
             @Override
             public ScheduleB next() {
                 if (hasNext()) {
@@ -344,6 +316,7 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
                 }
                 return null;
             }
+
             @Override
             public void remove() {
                 throw new UnsupportedOperationException("Remove not implemented.");

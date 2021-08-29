@@ -22,7 +22,7 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
     private int _total; // t: Total weight
 
 
-    private Hashtable<String, List<Integer>> _scheduling; // partial schedule. //TODO : Implement this idea with less memory intensive manner.
+    private Hashtable<String, List<Integer>> _scheduling; // partial schedule.
     private Hashtable<Integer, String> _lastForEachProcessor; //the last task schedule, for each processor.
     private int _maxPid; //The largest pid currently used to schedule
     public Hashtable<INode, Integer> _inDegreeTable;
@@ -190,9 +190,9 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
         }
     }
 
-    //Risky version of equals. Dont know if this actually outputs optimal path.
     /**
      * Check if two Schedule instance is the same. (this is for detecting duplicate scheduling)
+     *
      * @param otherSchedule : Schedule we are comparing against.
      * @return true if its the same. false if it is not the same schedule.
      */
@@ -208,17 +208,20 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
             } else if (this.getMaxPid() != schedule.getMaxPid()) {
                 return false;
             } else {
-                // Group by pid. Compare match
-                Hashtable<String, List<Integer>> _scheduling2 = schedule.getScheduling();
+                Set<List<Integer>> hash4scheduling = new HashSet<List<Integer>>();
+                Set<List<Integer>> hash4scheduling2 = new HashSet<List<Integer>>();
 
-                Set<HashSet<Integer>> hash4scheduling = new HashSet<HashSet<Integer>>();
-                Set<HashSet<Integer>> hash4scheduling2 = new HashSet<HashSet<Integer>>();
+                ArrayList<ScheduledTask> scheduledTasks = new ArrayList<ScheduledTask>();
+                this.forEach(cSchedule -> scheduledTasks.add(cSchedule.getScheduledTask()));
 
-                for (String s : _scheduling.keySet()) {
-                    hash4scheduling.add(new HashSet<Integer>(Arrays.asList(s.hashCode(), _scheduling.get(s).get(1))));
+                ArrayList<ScheduledTask> scheduledTasks2 = new ArrayList<ScheduledTask>();
+                schedule.forEach(cSchedule -> scheduledTasks2.add(cSchedule.getScheduledTask()));
+
+                for (ScheduledTask task : scheduledTasks) {
+                    hash4scheduling.add(Arrays.asList(task.getName().hashCode(), task.getStartTime()));
                 }
-                for (String s : _scheduling2.keySet()) {
-                    hash4scheduling2.add(new HashSet<Integer>(Arrays.asList(s.hashCode(), _scheduling2.get(s).get(1))));
+                for (ScheduledTask task : scheduledTasks2) {
+                    hash4scheduling2.add(Arrays.asList(task.getName().hashCode(), task.getStartTime()));
                 }
                 return hash4scheduling.equals(hash4scheduling2);
             }

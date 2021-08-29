@@ -1,6 +1,5 @@
 package raspberry.scheduler.algorithm.common;
 
-import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
@@ -20,8 +19,13 @@ public class FixOrderChecker {
     }
 
 
+    /**
+     * checks if a fixed order is possible given the free nodes available
+     * @param freeNodes list of available nodes that can be scheduled
+     * @param schedule current schedule
+     * @return true if fixed order is possible, false otherwise
+     */
     public boolean check(List<INode> freeNodes, Schedule schedule){
-//        System.out.println("========================================================================================");
         // if nf has at most one parent and at most one child
         for (INode node : freeNodes){
             int numOfParent = _graph.getIngoingEdges(node).size();
@@ -66,15 +70,17 @@ public class FixOrderChecker {
 
             }
         }
-//        System.out.println(schedule);
-//        System.out.println(_graph);
-//        System.out.println("Free node: " + getFixOrder(freeNodes, schedule));
-//        System.out.println("========================================================================================");
         return true;
     }
 
+    /**
+     *  get list of free nodes in fixed order which is the order
+     *  which guarantees the order in which the free nodes can be scheduled
+     * @param freeNodes list of free nodes that are available to be scheduled
+     * @param schedule the current schedule
+     * @return the list of nodes in fixed order
+     */
     public List<INode> getFixOrder(List<INode> freeNodes, Schedule schedule){
-        // todo please don't do 2 computation for getDataReadyTime
         freeNodes.sort( (n1,n2) -> {
             int drt1 = getDataReadyTime(n1, schedule);
             int drt2 = getDataReadyTime(n2, schedule);
@@ -89,7 +95,6 @@ public class FixOrderChecker {
             INode n1 = freeNodes.get(i-1);
             INode n2 = freeNodes.get(i);
             if (outGoingEdgeCost(n2)> outGoingEdgeCost(n1)){
-                //System.out.println("fuck it");
                 return null;
             }
         }
@@ -97,6 +102,13 @@ public class FixOrderChecker {
     }
 
 
+    /**
+     * get data ready time which is the finish time of parent task plus the
+     * communication cost if in different processors
+     * @param task the task we are getting dataReadyTime for
+     * @param schedule the current schedule
+     * @return the data ready time
+     */
     private int getDataReadyTime(INode task, Schedule schedule){
 
         // if task does not have a parent
@@ -114,6 +126,11 @@ public class FixOrderChecker {
         return dataReadyTime;
     }
 
+    /**
+     * get the outgoing edge cost of a node with its parent
+     * @param node the node we are getting the outGoingEdge cost for
+     * @return the edge cost from node to its parent, 0 if node has no parent,
+     */
     private int outGoingEdgeCost(INode node){
         if (_graph.getOutgoingEdges(node).size() == 0){
             return 0;

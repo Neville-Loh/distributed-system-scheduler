@@ -55,7 +55,7 @@ public class AStar extends Algorithm {
         _upperBound = upperBound;
 
         // checker
-        _equivalenceChecker = new EquivalenceChecker(_graph, numProcessors);
+        _equivalenceChecker = new EquivalenceChecker(_graph, numProcessors, this);
         _fixOrderChecker = new FixOrderChecker(_graph);
     }
 
@@ -301,7 +301,6 @@ public class AStar extends Algorithm {
 
 
     /**
-     * TODO : FIND OUT IF WE ACTUALLY NEED THIS FUNCTION
      * OR THIS -> "listVisitedForSize.contains(cSchedule)" JUST WORKS FINE.
      * Find out if the duplicate schedule exists.
      * -> if we find one, check if the heuristic is larger or smaller.
@@ -316,7 +315,7 @@ public class AStar extends Algorithm {
     public Boolean isIrrelevantDuplicate(ArrayList<ScheduleAStar> scheduleList, ScheduleAStar cSchedule) {
         if (!DUPLICATE_ENABLE) return false;
         for (ScheduleAStar s : scheduleList) {
-            if ( s.equals2(cSchedule) ){
+            if ( s.equals3(cSchedule) ){
                 if ( s.getTotal() > cSchedule.getTotal()) {
 //                    System.out.printf("%d -> %d\n", s.getTotal(), cSchedule.getTotal());
                     return false;
