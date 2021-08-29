@@ -36,6 +36,7 @@ public class Schedule {
         _size = parentSchedule.getSize() + 1;
     }
 
+
     public Schedule createSubschedule(ScheduledTask scheduledTask){
         return null;
     }
@@ -102,6 +103,14 @@ public class Schedule {
     public int getPid(){return _scheduledTask.getProcessorID();}
     public int getFinishTime(){return _scheduledTask.getFinishTime();}
 
+    /**
+     * get node being scheduled
+     *
+     * @return _node the node being  scheduled
+     */
+    public INode getNode() {
+        return _scheduledTask.getTask();
+    }
 
     /* ============================================================
      *  Duplicate schedule detection

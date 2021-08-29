@@ -15,7 +15,7 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  *
  * @author Takahiro
  */
-public class Astar implements Algorithm {
+public class Astar extends Algorithm {
 
     private IGraph _graph;
     int _numP;
@@ -47,6 +47,7 @@ public class Astar implements Algorithm {
      * @param numProcessors : number of processor we can use to schedule tasks.
      */
     public Astar(IGraph graphToSolve, int numProcessors, int upperBound) {
+        super(graphToSolve);
         _graph = graphToSolve;
         _pq = new PriorityQueue<ScheduleAStar>();
         _visited = new Hashtable<Integer, ArrayList<ScheduleAStar>>();
@@ -61,6 +62,7 @@ public class Astar implements Algorithm {
     }
 
     public Astar(IGraph graphToSolve) {
+        super(graphToSolve);
         _graph = graphToSolve;
     }
 
@@ -297,59 +299,6 @@ public class Astar implements Algorithm {
             sum += i.getValue();
         }
         return sum / _numP - cSchedule.getFinishTime();
-    }
-
-    /**
-     * Computes the earliest time we can schedule a task in a specific processor.
-     *
-     * @param parentSchedule   : parent schedule of this partial schedule.
-     * @param processorId      : the specific processor we want to schedule task into.
-     * @param nodeToBeSchedule : node/task to be scheduled.
-     * @return Integer : representing the earliest time. (start time)
-     */
-    public int calculateEarliestStartTime(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
-        // Find last finish parent node
-        // Find last finish time for current processor id.
-        ScheduleAStar last_processorId_use = null; //last time processor with "processorId" was used.
-        ScheduleAStar cParentSchedule = (ScheduleAStar)parentSchedule;
-
-        while (cParentSchedule != null) {
-            if (cParentSchedule.getPid() == processorId) {
-                last_processorId_use = cParentSchedule;
-                break;
-            }
-            cParentSchedule = cParentSchedule.getParent();
-        }
-
-        //last time parent was used. Needs to check for all processor.
-        int finished_time_of_last_parent = 0;
-        if (last_processorId_use != null) {
-            finished_time_of_last_parent = last_processorId_use.getFinishTime();
-        }
-
-        cParentSchedule = (ScheduleAStar)parentSchedule;
-        while (cParentSchedule != null) {
-            // for edges in current parent scheduled node
-            INode last_scheduled_node = cParentSchedule.getNode();
-            for (IEdge edge : _graph.getOutgoingEdges(last_scheduled_node.getName())) {
-
-                // if edge points to  === childNode
-                if (edge.getChild() == nodeToBeSchedule && cParentSchedule.getPid() != processorId) {
-                    //last_parent_processor[ cParentSchedule.p_id ] = true;
-                    try {
-                        int communicationWeight = _graph.getEdgeWeight(cParentSchedule.getNode(), nodeToBeSchedule);
-                        //  finished_time_of_last_parent  <
-                        if (finished_time_of_last_parent < (cParentSchedule.getFinishTime() + communicationWeight)) {
-                            finished_time_of_last_parent = cParentSchedule.getFinishTime() + communicationWeight;
-                        }
-                    } catch (EdgeDoesNotExistException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-            }
-            cParentSchedule = cParentSchedule.getParent();
-        }
-        return finished_time_of_last_parent;
     }
 
     /**

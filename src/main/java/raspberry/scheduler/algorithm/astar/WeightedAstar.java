@@ -16,7 +16,7 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  *
  * @author Takahiro
  */
-public class WeightedAstar extends Astar implements Algorithm {
+public class WeightedAstar extends Astar {
 
     /**
      * Constructor for A*

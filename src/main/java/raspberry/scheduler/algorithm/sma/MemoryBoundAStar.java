@@ -20,7 +20,7 @@ import raspberry.scheduler.algorithm.common.ScheduledTask;
  * Rough implementation of famous algorithm SMA
  * @author Neville L.
  */
-public class MemoryBoundAStar implements Algorithm {
+public class MemoryBoundAStar extends Algorithm {
     private IGraph _graph;
     private TwoWayPriorityQueue _pq;
     private final int TOTAL_NUM_PROCESSOR;
@@ -41,6 +41,7 @@ public class MemoryBoundAStar implements Algorithm {
      * @param totalProcessorNumber the total number of processor available for schedule
      */
     public MemoryBoundAStar(IGraph taskDependencyGraph, int totalProcessorNumber, int memoryLimit){
+        super(taskDependencyGraph);
         _graph = taskDependencyGraph;
         _pq = new TwoWayPriorityQueue();
         TOTAL_NUM_PROCESSOR = totalProcessorNumber;
