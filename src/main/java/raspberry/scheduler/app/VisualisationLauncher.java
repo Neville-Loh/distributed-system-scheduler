@@ -21,6 +21,7 @@ import java.io.IOException;
 
 /**
  * This class launches the front end visualisation.
+ * @author Alan
  */
 public class VisualisationLauncher extends Application {
 

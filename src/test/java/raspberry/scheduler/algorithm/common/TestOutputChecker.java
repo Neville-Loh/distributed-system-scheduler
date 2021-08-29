@@ -274,14 +274,9 @@ public class TestOutputChecker {
             testSchedule1 = new ScheduleB(testSchedule1, taskg1, inDegreeTable1);
             testSchedule1 = new ScheduleB(testSchedule1, taskh1, inDegreeTable1);
 
-//            System.out.println(testSchedule1);
-
             // Make outputSchedule.
             OutputSchedule outputSchedule1 = new Solution(testSchedule1, 2);
 
-//            System.out.println("Graph size " + testGraph1.getAllNodes().size());
-//            System.out.println(" Task size " + outputSchedule1.getNumTasks());
-//            System.out.println("Hello");
 
             // Should pass all three checks, isValid contains all three checks.
             assertEquals(false , OutputChecker.isValid(testGraph1, outputSchedule1));
