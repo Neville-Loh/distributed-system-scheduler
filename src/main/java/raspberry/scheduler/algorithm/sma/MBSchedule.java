@@ -2,6 +2,7 @@ package raspberry.scheduler.algorithm.sma;
 import java.util.*;
 import java.util.function.Consumer;
 
+import raspberry.scheduler.algorithm.common.Schedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.graph.IGraph;
@@ -13,7 +14,7 @@ import raspberry.scheduler.graph.INode;
  *
  * @author Neville
  */
-public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
+public class MBSchedule extends Schedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     public MBSchedule parent;
     private ScheduledTask _scheduledTask;
     private int _size;
@@ -38,14 +39,13 @@ public class MBSchedule implements Comparable<MBSchedule>, Iterable<MBSchedule>{
     private Hashtable<Integer, String> _lastForEachProcessor; //the last task schedule, for each processor.
 
 
-    public MBSchedule(){};
-
     /**
      * Class constructor
      * @param parentSchedule
      * @param remainingComputeTime remaining compute time after input task has been scheduled
      */
     public MBSchedule(MBSchedule parentSchedule, int remainingComputeTime, ScheduledTask scheduledTask)  {
+        super(parentSchedule, scheduledTask);
         // scheduled task value
         _scheduledTask = scheduledTask;
         _forgotten = new Hashtable<ScheduledTask, Integer>();

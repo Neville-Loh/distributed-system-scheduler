@@ -1,9 +1,8 @@
 package raspberry.scheduler.algorithm.bNb;
 
 import raspberry.scheduler.algorithm.Algorithm;
-import raspberry.scheduler.algorithm.common.OutputSchedule;
-import raspberry.scheduler.algorithm.common.Solution;
-import raspberry.scheduler.algorithm.common.ScheduledTask;
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
+import raspberry.scheduler.algorithm.common.*;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.graph.IEdge;
@@ -26,6 +25,12 @@ public class BNB implements Algorithm {
     Stack<ScheduleB> _scheduleStack;
     Hashtable<Integer, ArrayList<ScheduleB>> _visited;
     private AlgoStats _algoStats;
+    private FixOrderChecker _fixOrderChecker;
+    private EquivalenceChecker _equivalenceChecker;
+
+    public BNB(IGraph graphToSolve){
+        _graph = graphToSolve;
+    }
 
     /**
      * BNB algorithm constructor. with bound
@@ -40,6 +45,8 @@ public class BNB implements Algorithm {
         _numNode = _graph.getNumNodes();
         _algoStats = AlgoStats.getInstance();
         _bound = bound;
+        _fixOrderChecker = new FixOrderChecker(_graph);
+        _equivalenceChecker = new EquivalenceChecker(_graph, numProcessors);
     }
 
     @Override
@@ -56,8 +63,8 @@ public class BNB implements Algorithm {
 
         for (INode i : rootTable.keySet()) {
             if (rootTable.get(i) == 0) {
-                ScheduleB newSchedule = new ScheduleB(
-                        null, new ScheduledTask(1, i,0),getChildTable(rootTable, i));
+                ScheduleB newSchedule = new ScheduleB(new ScheduledTask(1, i,0),
+                        getChildTable(rootTable, i));
                 newSchedule.addLowerBound( Math.max(lowerBound_1(newSchedule), _maxCriticalPath) );
                 if ( newSchedule.getLowerBound() > _bound ){
                     continue;
@@ -82,7 +89,7 @@ public class BNB implements Algorithm {
             }
 
             cSchedule = _scheduleStack.pop();
-            if ( canPrune( cSchedule, true )){
+            if ( canPrune( cSchedule, true , false)){
                 continue;
             }
 
@@ -108,14 +115,42 @@ public class BNB implements Algorithm {
                 pidBound = currentMaxPid + 1;
             }
 
+
+            ArrayList<INode> freeNodes = new ArrayList<INode>();
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
-                    for (int j = 1; j <= pidBound; j++) {
-                        int start = calculateCost(cSchedule, j, node);
-                        ScheduleB newSchedule = new ScheduleB(cSchedule,new ScheduledTask(j,node,start),getChildTable(cTable,node));
+                    freeNodes.add(node);
+                }
+            }
+
+            if ( _fixOrderChecker.check(freeNodes, cSchedule) &&
+                    _fixOrderChecker.getFixOrder(freeNodes,cSchedule) != null){
+
+                INode node = _fixOrderChecker.getFixOrder(freeNodes,cSchedule).get(0);
+                for (int pid = 1; pid <= pidBound; pid++) {
+                    int start = calculateEarliestStartTime(cSchedule, pid, node);
+                    ScheduleB newSchedule = new ScheduleB(cSchedule,
+                            new ScheduledTask(pid,node,start),
+                            getChildTable(cTable,node));
+                    newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                    _algoStats.setSolution(new Solution(newSchedule, _numP));
+
+                    if ( canPrune( newSchedule , false,false)){
+                        continue;
+                    }
+                    _scheduleStack.push(newSchedule);
+                }
+            } else {
+                for (INode node : freeNodes) {
+                    for (int pid = 1; pid <= pidBound; pid++) {
+                        int start = calculateEarliestStartTime(cSchedule, pid, node);
+                        ScheduleB newSchedule = new ScheduleB(cSchedule,
+                                new ScheduledTask(pid,node,start),
+                                getChildTable(cTable,node));
                         newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
                         _algoStats.setSolution(new Solution(newSchedule, _numP));
-                        if ( canPrune( newSchedule , false)){
+
+                        if ( canPrune( newSchedule , false, true)){
                             continue;
                         }
                         _scheduleStack.push(newSchedule);
@@ -124,7 +159,7 @@ public class BNB implements Algorithm {
             }
         }
         if (shortestPath == null){
-//            System.out.println("==== WTF IS WRONG WITH U");
+//            System.out.println("FAILED TO FIND THE SHORTEST PATH");
         }
 //        Helper.printPath(shortestPath);
         _algoStats.setIsFinish(true);
@@ -140,11 +175,11 @@ public class BNB implements Algorithm {
      * @param nodeToBeSchedule : node/task to be scheduled.
      * @return Integer : representing the earliest time. (start time)
      */
-    public int calculateCost(ScheduleB parentSchedule, int processorId, INode nodeToBeSchedule) {
+    public int calculateEarliestStartTime(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
         // Find last finish time for current processor id.
         ScheduleB last_processorId_use = null; //last time processor with "processorId" was used.
-        ScheduleB cParentSchedule = parentSchedule;
+        ScheduleB cParentSchedule = (ScheduleB)parentSchedule;
 
         while (cParentSchedule != null) {
             if (cParentSchedule.getPid() == processorId) {
@@ -160,7 +195,7 @@ public class BNB implements Algorithm {
             finished_time_of_last_parent = last_processorId_use.getFinishTime();
         }
 
-        cParentSchedule = parentSchedule;
+        cParentSchedule =  (ScheduleB)parentSchedule;
         while (cParentSchedule != null) {
             // for edges in current parent scheduled node
             INode last_scheduled_node = cParentSchedule.getNode();
@@ -200,12 +235,14 @@ public class BNB implements Algorithm {
      * @return True : if it can be pruned
      *         False : if it cant be pruned
      */
-    public boolean canPrune(ScheduleB cSchedule, Boolean visiting){
+    public boolean canPrune(ScheduleB cSchedule, Boolean visiting, Boolean checkEquivalence){
         if (cSchedule.getLowerBound() > _bound){ //I think we can do ">=" and not just ">"
             return true;
         }
         ArrayList<ScheduleB> listVisitedForSize = _visited.get(cSchedule.getHash());
         if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
+            return true;
+        }else if( checkEquivalence && _equivalenceChecker.checkDuplicateBySwap(cSchedule)){
             return true;
         } else {
             if (visiting){

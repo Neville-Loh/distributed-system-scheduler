@@ -1,5 +1,6 @@
 package raspberry.scheduler.algorithm.bNb;
 
+import raspberry.scheduler.algorithm.common.FixOrderChecker;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
@@ -21,6 +22,7 @@ public class BNBParallel extends BNB {
     private List<Stack<ScheduleB>> stacks;
     private Semaphore _lock;
     private AlgoStats _algoStats;
+    private FixOrderChecker _fixOrderChecker;
 
     public BNBParallel(IGraph graphToSolve, int numProcessors, int bound, int numCores) {
         super(graphToSolve, numProcessors, bound);
@@ -34,6 +36,7 @@ public class BNBParallel extends BNB {
             stacks.add( new Stack<ScheduleB>() );
         }
         _algoStats = AlgoStats.getInstance();
+        _fixOrderChecker = new FixOrderChecker(_graph);
     }
 
     /**
@@ -107,7 +110,7 @@ public class BNBParallel extends BNB {
             }
 
             cSchedule = stack.pop();
-            if ( canPrune( cSchedule, true )){
+            if ( canPrune( cSchedule, true, false )){
                 continue;
             }
 
@@ -140,15 +143,41 @@ public class BNBParallel extends BNB {
                 pidBound = currentMaxPid + 1;
             }
 
+            ArrayList<INode> freeNodes = new ArrayList<INode>();
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
-                    for (int j = 1; j <= pidBound; j++) {
-                        int start = calculateCost(cSchedule, j, node);
-                        ScheduleB newSchedule = new ScheduleB(cSchedule,new ScheduledTask(j,node,start),getChildTable(cTable,node));
+                    freeNodes.add(node);
+                }
+            }
+
+            if ( _fixOrderChecker.check(freeNodes, cSchedule) &&
+                    _fixOrderChecker.getFixOrder(freeNodes,cSchedule) != null){
+
+                INode node = _fixOrderChecker.getFixOrder(freeNodes,cSchedule).get(0);
+                for (int pid = 1; pid <= pidBound; pid++) {
+                    int start = calculateEarliestStartTime(cSchedule, pid, node);
+                    ScheduleB newSchedule = new ScheduleB(cSchedule,
+                            new ScheduledTask(pid,node,start),
+                            getChildTable(cTable,node));
+                    newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                    _algoStats.setSolution(new Solution(newSchedule, _numP));
+
+                    if ( canPrune( newSchedule , false, false)){
+                        continue;
+                    }
+                    stack.push(newSchedule);
+                }
+            } else {
+                for (INode node : freeNodes) {
+                    for (int pid = 1; pid <= pidBound; pid++) {
+                        int start = calculateEarliestStartTime(cSchedule, pid, node);
+                        ScheduleB newSchedule = new ScheduleB(cSchedule,
+                                new ScheduledTask(pid,node,start),
+                                getChildTable(cTable,node));
                         newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
                         _algoStats.setSolution(new Solution(newSchedule, _numP));
 
-                        if ( canPrune( newSchedule , false)){
+                        if ( canPrune( newSchedule , false, true)){
                             continue;
                         }
                         stack.push(newSchedule);
@@ -170,8 +199,10 @@ public class BNBParallel extends BNB {
 
         for (INode i : rootTable.keySet()) {
             if (rootTable.get(i) == 0) {
-                ScheduleB newSchedule = new ScheduleB(
-                        null, new ScheduledTask(1, i,0),getChildTable(rootTable, i));
+
+                ScheduleB newSchedule = new ScheduleB(new ScheduledTask(1, i,0),
+                        getChildTable(rootTable, i));
+
                 newSchedule.addLowerBound( Math.max(lowerBound_1(newSchedule), _maxCriticalPath) );
                 if ( newSchedule.getLowerBound() > _bound ){
                     continue;
@@ -189,7 +220,7 @@ public class BNBParallel extends BNB {
             }
 
             cSchedule = rootSchedules.pop();
-            if ( canPrune( cSchedule, true )){
+            if ( canPrune( cSchedule, true , false)){
                 continue;
             }
             cTable = cSchedule.getIndegreeTable();
@@ -213,14 +244,41 @@ public class BNBParallel extends BNB {
                 pidBound = currentMaxPid + 1;
             }
 
+            ArrayList<INode> freeNodes = new ArrayList<INode>();
             for (INode node : cTable.keySet()) {
                 if (cTable.get(node) == 0) {
-                    for (int j = 1; j <= pidBound; j++) {
-                        int start = calculateCost(cSchedule, j, node);
-                        ScheduleB newSchedule = new ScheduleB(cSchedule,new ScheduledTask(j,node,start),getChildTable(cTable,node));
-                        newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                    freeNodes.add(node);
+                }
+            }
 
-                        if ( canPrune( newSchedule , false)){
+            if ( _fixOrderChecker.check(freeNodes, cSchedule) &&
+                    _fixOrderChecker.getFixOrder(freeNodes,cSchedule) != null){
+
+                INode node = _fixOrderChecker.getFixOrder(freeNodes,cSchedule).get(0);
+                for (int pid = 1; pid <= pidBound; pid++) {
+                    int start = calculateEarliestStartTime(cSchedule, pid, node);
+                    ScheduleB newSchedule = new ScheduleB(cSchedule,
+                            new ScheduledTask(pid,node,start),
+                            getChildTable(cTable,node));
+                    newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                    _algoStats.setSolution(new Solution(newSchedule, _numP));
+
+                    if ( canPrune( newSchedule , false, false)){
+                        continue;
+                    }
+                    rootSchedules.push(newSchedule);
+                }
+            } else {
+                for (INode node : freeNodes) {
+                    for (int pid = 1; pid <= pidBound; pid++) {
+                        int start = calculateEarliestStartTime(cSchedule, pid, node);
+                        ScheduleB newSchedule = new ScheduleB(cSchedule,
+                                new ScheduledTask(pid,node,start),
+                                getChildTable(cTable,node));
+                        newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                        _algoStats.setSolution(new Solution(newSchedule, _numP));
+
+                        if ( canPrune( newSchedule , false, true)){
                             continue;
                         }
                         rootSchedules.push(newSchedule);
