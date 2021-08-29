@@ -28,6 +28,7 @@ public class BNB extends Algorithm {
     private AlgoStats _algoStats;
     private FixOrderChecker _fixOrderChecker;
     private EquivalenceChecker _equivalenceChecker;
+    private final int VISITED_MAX_SIZE = 4000000;
 
     public BNB(IGraph graphToSolve){
         super(graphToSolve);
@@ -81,8 +82,9 @@ public class BNB extends Algorithm {
         _algoStats.setIterations(0);
         _algoStats.setIsFinish(false);
         while (true) {
-            if (_visited.size() > 5000000){
+            if (_visited.size() > VISITED_MAX_SIZE){
                 _visited.clear();
+                System.gc();
             }
 //            System.out.printf("Stack SIZE: %d\n", _scheduleStack.size());
             _algoStats.increment();

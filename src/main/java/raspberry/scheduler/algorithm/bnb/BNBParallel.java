@@ -28,6 +28,7 @@ public class BNBParallel extends BNB {
     private Semaphore _lock;
     private AlgoStats _algoStats;
     private FixOrderChecker _fixOrderChecker;
+    private final int VISITED_MAX_SIZE = 4000000;
 
     public BNBParallel(IGraph graphToSolve, int numProcessors, int bound, int numCores) {
         super(graphToSolve, numProcessors, bound);
@@ -104,8 +105,9 @@ public class BNBParallel extends BNB {
         Hashtable<INode, Integer> cTable;
         while (true) {
 
-            if (_visited.size() > 5000000){
+            if (_visited.size() > VISITED_MAX_SIZE){
                 _visited.clear();
+                System.gc();
             }
             _algoStats.increment();
 //            System.out.printf("Stack SIZE: %d\n", stack.size());
