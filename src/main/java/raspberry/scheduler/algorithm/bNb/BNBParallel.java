@@ -110,7 +110,7 @@ public class BNBParallel extends BNB {
             }
 
             cSchedule = stack.pop();
-            if ( canPrune( cSchedule, true )){
+            if ( canPrune( cSchedule, true, false )){
                 continue;
             }
 
@@ -162,7 +162,7 @@ public class BNBParallel extends BNB {
                     newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
                     _algoStats.setSolution(new Solution(newSchedule, _numP));
 
-                    if ( canPrune( newSchedule , false)){
+                    if ( canPrune( newSchedule , false, false)){
                         continue;
                     }
                     stack.push(newSchedule);
@@ -177,7 +177,7 @@ public class BNBParallel extends BNB {
                         newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
                         _algoStats.setSolution(new Solution(newSchedule, _numP));
 
-                        if ( canPrune( newSchedule , false)){
+                        if ( canPrune( newSchedule , false, true)){
                             continue;
                         }
                         stack.push(newSchedule);
@@ -220,7 +220,7 @@ public class BNBParallel extends BNB {
             }
 
             cSchedule = rootSchedules.pop();
-            if ( canPrune( cSchedule, true )){
+            if ( canPrune( cSchedule, true , false)){
                 continue;
             }
             cTable = cSchedule.getIndegreeTable();
@@ -263,7 +263,7 @@ public class BNBParallel extends BNB {
                     newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
                     _algoStats.setSolution(new Solution(newSchedule, _numP));
 
-                    if ( canPrune( newSchedule , false)){
+                    if ( canPrune( newSchedule , false, false)){
                         continue;
                     }
                     rootSchedules.push(newSchedule);
@@ -278,7 +278,7 @@ public class BNBParallel extends BNB {
                         newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
                         _algoStats.setSolution(new Solution(newSchedule, _numP));
 
-                        if ( canPrune( newSchedule , false)){
+                        if ( canPrune( newSchedule , false, true)){
                             continue;
                         }
                         rootSchedules.push(newSchedule);

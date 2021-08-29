@@ -89,7 +89,7 @@ public class BNB implements Algorithm {
             }
 
             cSchedule = _scheduleStack.pop();
-            if ( canPrune( cSchedule, true )){
+            if ( canPrune( cSchedule, true , false)){
                 continue;
             }
 
@@ -135,7 +135,7 @@ public class BNB implements Algorithm {
                     newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
                     _algoStats.setSolution(new Solution(newSchedule, _numP));
 
-                    if ( canPrune( newSchedule , false)){
+                    if ( canPrune( newSchedule , false,false)){
                         continue;
                     }
                     _scheduleStack.push(newSchedule);
@@ -150,7 +150,7 @@ public class BNB implements Algorithm {
                         newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
                         _algoStats.setSolution(new Solution(newSchedule, _numP));
 
-                        if ( canPrune( newSchedule , false)){
+                        if ( canPrune( newSchedule , false, true)){
                             continue;
                         }
                         _scheduleStack.push(newSchedule);
@@ -235,14 +235,14 @@ public class BNB implements Algorithm {
      * @return True : if it can be pruned
      *         False : if it cant be pruned
      */
-    public boolean canPrune(ScheduleB cSchedule, Boolean visiting){
+    public boolean canPrune(ScheduleB cSchedule, Boolean visiting, Boolean checkEquivalence){
         if (cSchedule.getLowerBound() > _bound){ //I think we can do ">=" and not just ">"
             return true;
         }
         ArrayList<ScheduleB> listVisitedForSize = _visited.get(cSchedule.getHash());
         if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
             return true;
-        }else if( _equivalenceChecker.checkDuplicateBySwap(cSchedule)){
+        }else if( checkEquivalence && _equivalenceChecker.checkDuplicateBySwap(cSchedule)){
             return true;
         } else {
             if (visiting){
