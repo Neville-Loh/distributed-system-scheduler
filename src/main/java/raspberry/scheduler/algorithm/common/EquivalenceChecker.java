@@ -337,7 +337,7 @@ public class EquivalenceChecker {
                                       ScheduledTask m, ScheduledTask taskToSwap){
 
         if (before.getSize() != after.getSize()){
-            System.out.println("INCORRECT - Size is different");
+            print("INCORRECT - Size is different");
             return false;
         }
 
@@ -348,12 +348,12 @@ public class EquivalenceChecker {
 
         // check if both task start with the exact start time
         if ((mSwappedTime == mOriginalTime) && tSwappedTime ==tOriginalTime){
-            System.out.println("INCORRECT - M AND SwappedTask HAVE THE SAME START TIME");
+            print("INCORRECT - M AND SwappedTask HAVE THE SAME START TIME");
             return false;
         }
         // if m is later than task to be swapped,
         if (mSwappedTime > tSwappedTime){
-            System.out.println("INCORRECT - m is scheduled later than (Task to be Swap)");
+            print("INCORRECT - m is scheduled later than (Task to be Swap)");
             return false;
         }
 
@@ -368,7 +368,7 @@ public class EquivalenceChecker {
             INode afterNode = afterST.get(i).getTask();
             if (beforeNode != m.getTask() && beforeNode != taskToSwap.getTask()){
                 if (beforeNode != afterNode){
-                    System.out.println("INCORRECT - the order is not the same");
+                    print("INCORRECT - the order is not the same");
                     return false;
                 }
             }
