@@ -3,6 +3,7 @@ package raspberry.scheduler.algorithm.bnb;
 import java.util.*;
 import java.util.function.Consumer;
 
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.algorithm.common.Schedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.graph.INode;
@@ -156,6 +157,51 @@ public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterab
                     System.out.println( setSchedule );
                 }
                 return setSchedule.equals(setOtherSchedule);
+            }
+        }
+    }
+
+    //Risky version of equals. Dont know if this actually outputs optimal path.
+    /**
+     * Check if two Schedule instance is the same. (this is for detecting duplicate scheduling)
+     * @param otherSchedule : Schedule we are comparing against.
+     * @return true if its the same. false if it is not the same schedule.
+     */
+    public boolean equals4(Object otherSchedule) {
+        if (otherSchedule == this) {
+            return true;
+        } else if (!(otherSchedule instanceof ScheduleB)) {
+            return false;
+        } else {
+            ScheduleB schedule = (ScheduleB) otherSchedule;
+            if (this.getSize() != schedule.getSize()) {
+                return false;
+            } else if (this.getMaxPid() != schedule.getMaxPid()) {
+                return false;
+            } else {
+                // Group by pid. Compare match
+//                Hashtable<String, List<Integer>> _scheduling2 = schedule.getScheduling();
+
+//                Set<HashSet<Integer>> hash4scheduling = new HashSet<HashSet<Integer>>();
+//                Set<HashSet<Integer>> hash4scheduling2 = new HashSet<HashSet<Integer>>();
+//                int[] array = new int[2];
+
+                Set<List<Integer>> hash4scheduling = new HashSet<List<Integer>>();
+                Set<List<Integer>> hash4scheduling2 = new HashSet<List<Integer>>();
+
+                ArrayList<ScheduledTask> scheduledTasks = new ArrayList<ScheduledTask>();
+                this.forEach(cSchedule -> scheduledTasks.add(cSchedule.getScheduledTask()));
+
+                ArrayList<ScheduledTask> scheduledTasks2 = new ArrayList<ScheduledTask>();
+                schedule.forEach(cSchedule -> scheduledTasks2.add(cSchedule.getScheduledTask()));
+
+                for (ScheduledTask task : scheduledTasks) {
+                    hash4scheduling.add(Arrays.asList(task.getName().hashCode(), task.getStartTime()));
+                }
+                for (ScheduledTask task : scheduledTasks2) {
+                    hash4scheduling2.add(Arrays.asList(task.getName().hashCode(), task.getStartTime()));
+                }
+                return hash4scheduling.equals(hash4scheduling2);
             }
         }
     }
