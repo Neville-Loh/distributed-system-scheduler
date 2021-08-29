@@ -63,7 +63,6 @@ public class Astar implements Algorithm {
 
     /**
      * Compute the optimal scheduling
-     *
      * @return OutputSchedule : the optimal path/scheduling.
      */
     @Override
@@ -81,6 +80,7 @@ public class Astar implements Algorithm {
                         getChildTable(rootTable, node)
                 );
 
+                // note can't use drt here
                 newSchedule.addHeuristic(
                         Collections.max(Arrays.asList(
                                 h(newSchedule),
@@ -107,8 +107,6 @@ public class Astar implements Algorithm {
             }
 
             cSchedule = _pq.poll();
-
-
 
 
             Solution cScheduleSolution = new Solution(cSchedule, _numP);
@@ -162,6 +160,7 @@ public class Astar implements Algorithm {
 
                     newSchedule.addHeuristic(
                             Collections.max(Arrays.asList(
+                                    dataReadyTimeHeuristic(newSchedule),
                                     h(newSchedule),
                                     h1(newTable, newSchedule)
                             ))
@@ -190,6 +189,7 @@ public class Astar implements Algorithm {
 
                         newSchedule.addHeuristic(
                                 Collections.max(Arrays.asList(
+                                        dataReadyTimeHeuristic(newSchedule),
                                         h(newSchedule),
                                         h1(newTable, newSchedule)
                                 ))
@@ -221,66 +221,41 @@ public class Astar implements Algorithm {
         return new Solution(cSchedule, _numP);
     }
 
-//    private List<ScheduleAStar> getFixOrderSchedule(
-//            ArrayList<INode> freeNodes, ScheduleAStar cSchedule, int pidBound) {
-//
-//        List<ScheduleAStar> result = new ArrayList<ScheduleAStar>();
-//        Hashtable<INode, Integer> cTable = cSchedule._inDegreeTable;
-//        List<INode> nodesInOrder = _fixOrderChecker.getFixOrder(freeNodes, cSchedule);
-//        for (INode node : nodesInOrder){
-//            for (int pid = 1; pid <= pidBound; pid++) {
-//                int start = calculateEarliestStartTime(cSchedule, pid, node);
-//                Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
-//                ScheduleAStar newSchedule = new ScheduleAStar(
-//                        cSchedule,
-//                        new ScheduledTask(pid, node, start),
-//                        newTable);
-//
-//                newSchedule.addHeuristic(
-//                        Collections.max(Arrays.asList(
-//                                h(newSchedule),
-//                                h1(newTable, newSchedule)
-//                        )));
-//
-//            }
-//        }
-//
-//        return null;
-//
-//    }
-//
-//    private ScheduleAStar createSubSchedule(ScheduleAStar cSchedule, int pid, INode node){
-//        int start = calculateEarliestStartTime(cSchedule, pid, node);
-//        Hashtable<INode, Integer> cTable = cSchedule._inDegreeTable;
-//        Hashtable<INode, Integer> newTable = getChildTable(cTable, node);
-//        ScheduleAStar newSchedule = new ScheduleAStar(
-//                cSchedule,
-//                new ScheduledTask(pid, node, start),
-//                newTable);
-//
-//        newSchedule.addHeuristic(
-//                Collections.max(Arrays.asList(
-//                        h(newSchedule),
-//                        h1(newTable, newSchedule)
-//                )));
-//
-//        return newSchedule;
-//
-//    }
-//
-//    private List<ScheduleAStar> getFixOrderScheduleRecursive(
-//            ArrayList<INode> freeNodes, ScheduleAStar cSchedule, int pidBound){
-//        List<ScheduleAStar> result = new ArrayList<ScheduleAStar>();
-//        if (freeNodes.size() == 1){
-//            for (int pid = 1; pid <= pidBound; pid++) {
-//                result.add(createSubSchedule(cSchedule, pid, freeNodes.get(0)));
-//            }
-//            return result;
-//        } else {
-//
-//        }
-//        return null;
-//    }
+
+    public int dataReadyTimeHeuristic(ScheduleAStar cSchedule){
+        Hashtable<INode, Integer> finishTime = new Hashtable<>();
+        Hashtable<INode, Integer> criticalPathTable = _graph.getCriticalPathWeightTable();
+
+        // get all free task
+        Hashtable<INode, Integer> cTable = cSchedule.getInDegreeTable();
+        ArrayList<INode> freeNodes = new ArrayList<INode>();
+        for (INode node : cTable.keySet()) {
+            if (cTable.get(node) == 0) {
+                freeNodes.add(node);
+            }
+        }
+        if (freeNodes.size() == 0){
+            return 0;
+        }
+
+        // finish time = min DRT for every processor + critial path weight
+        freeNodes.forEach( (node) ->{
+            int minStartTime = Integer.MAX_VALUE;
+            for (int pid = 1; pid <= _numP; pid++) {
+                minStartTime = Math.min(minStartTime, calculateEarliestStartTime(cSchedule, pid, node));
+            }
+            //int critpathwieight = criticalPathTable.get(node);
+            finishTime.put(node, minStartTime + node.getValue() + _heuristic.get(node.getName()));
+            //System.out.println(node + "min start time = " + minStartTime);
+        });
+//        System.out.println(cSchedule);
+//        System.out.println("Free task = " + freeNodes + "\nMIN finish time " +  Collections.min(finishTime.values()));
+//        System.out.println("Max : " + Collections.max(finishTime.values()));
+//        System.out.println("====================================================================");
+        return Math.max(0, Collections.max(finishTime.values()) - cSchedule.getFinishTime());
+
+    }
+
 
     /**
      * For each task that was scheduled last in the processor.
