@@ -2,6 +2,7 @@ package raspberry.scheduler.algorithm.astar;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import raspberry.scheduler.algorithm.common.Schedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
@@ -15,7 +16,7 @@ import raspberry.scheduler.graph.INode;
  *
  * @author Takahiro
  */
-public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar> {
+public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>, Iterable<ScheduleAStar>{
 
     private int _h; // h: Heuristic weight
     private int _total; // t: Total weight
@@ -422,5 +423,40 @@ public class ScheduleAStar extends Schedule implements Comparable<ScheduleAStar>
         TableGenerator tableGenerator = new TableGenerator();
         //System.out.format("%32s%10d%16s", string1, int1, string2);
         return tableGenerator.generateTable(headersList, rowsList);
+    }
+
+    @Override
+    public Iterator<ScheduleAStar> iterator() {
+        ScheduleAStar head = this;
+        return new Iterator<ScheduleAStar>() {
+            ScheduleAStar current = head;
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+            @Override
+            public ScheduleAStar next() {
+                if (hasNext()) {
+                    ScheduleAStar data = current;
+                    current = current.getParent();
+                    return data;
+                }
+                return null;
+            }
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Remove not implemented.");
+            }
+        };
+    }
+
+    @Override
+    public void forEach(Consumer<? super ScheduleAStar> action) {
+        Iterable.super.forEach(action);
+    }
+
+    @Override
+    public Spliterator<ScheduleAStar> spliterator() {
+        return Iterable.super.spliterator();
     }
 }
