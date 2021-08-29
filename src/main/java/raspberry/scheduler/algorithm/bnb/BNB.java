@@ -3,12 +3,18 @@ package raspberry.scheduler.algorithm.bnb;
 import raspberry.scheduler.algorithm.Algorithm;
 import raspberry.scheduler.algorithm.common.*;
 import raspberry.scheduler.app.visualisation.model.AlgoStats;
-import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Stack;
 
+/**
+ * Implementation of BNB algorithm.
+ *
+ * @author Takahiro
+ */
 public class BNB extends Algorithm {
 
     IGraph _graph;

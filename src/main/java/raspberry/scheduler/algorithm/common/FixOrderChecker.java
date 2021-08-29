@@ -1,12 +1,16 @@
 package raspberry.scheduler.algorithm.common;
 
-import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.graph.IEdge;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.INode;
 
 import java.util.List;
 
+/**
+ * This class checks whether it is possible to prune with simple sub-graph structures,
+ * such as independent tasks, chains, fork and fork-joins.
+ * @author Neville
+ */
 public class FixOrderChecker {
 
     private IGraph _graph;

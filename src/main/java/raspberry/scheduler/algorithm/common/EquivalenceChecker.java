@@ -9,7 +9,6 @@ import java.util.*;
 /**
  * Checker for duplicate states in the given schedule
  * @author Neville, Young, Takahiro
- *
  */
 public class EquivalenceChecker {
     private IGraph _graph;

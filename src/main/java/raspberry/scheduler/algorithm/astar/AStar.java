@@ -1,14 +1,11 @@
 package raspberry.scheduler.algorithm.astar;
 
-import java.util.*;
-import java.util.List;
-
 import raspberry.scheduler.algorithm.common.*;
 import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.algorithm.Algorithm;
 import raspberry.scheduler.graph.*;
 
-import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
+import java.util.*;
 
 /**
  * Implementation of A star algorithm.

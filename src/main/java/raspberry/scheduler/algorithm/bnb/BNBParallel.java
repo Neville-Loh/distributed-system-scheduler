@@ -14,6 +14,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * Implementation of BNB with parallelization.
+ *
+ * @author Takahiro
+ */
 public class BNBParallel extends BNB {
 
     private int _numCores;
