@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * Unit test for
+ * Unit tests for CLI module
  *
  * @author Alan
  * This test class is for the Command line interface
@@ -22,7 +22,7 @@ public class TestCLI {
 
 
     /**
-     * Set up new
+     * Set up new cli object
      */
     @Before
     public void setup() {
@@ -34,7 +34,7 @@ public class TestCLI {
     /**
      * Test when no inputs are given i.e. no input file and no number of processes - should throw an exception.
      *
-     * @throws ParserException
+     * @throws ParserException ParserException
      */
     @Test
     public void testCLINoArgs() {
@@ -65,7 +65,7 @@ public class TestCLI {
     /**
      * Test when no optional inputs are given i.e. no -o is stated
      *
-     * @throws ParserException
+     * @throws ParserException parserException
      */
     @Test
     public void testSimpleInputs() {
@@ -83,19 +83,6 @@ public class TestCLI {
             fail();
         }
     }
-
-    /**
-     * test when -v is given, meaning has visualisation - should pass.
-     */
-
-    /**
-     * Not yet implemented
-     */
-//    @Test
-//    public void testHasVisualisation()throws ParserException {
-//        String[] testArgs = {"input.dot","4"};
-//        _parser.parser(testArgs);
-//    }
 
     /**
      * test that the correct output file name is set when an outfile file name is given
