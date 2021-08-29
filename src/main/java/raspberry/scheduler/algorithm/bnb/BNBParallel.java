@@ -159,7 +159,7 @@ public class BNBParallel extends BNB {
                     ScheduleB newSchedule = new ScheduleB(cSchedule,
                             new ScheduledTask(pid,node,start),
                             getChildTable(cTable,node));
-                    newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                    newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), super.getMaxCriticalPath() ) );
                     _algoStats.setSolution(new Solution(newSchedule, _numP));
 
                     if ( canPrune( newSchedule , false, false)){
@@ -174,7 +174,7 @@ public class BNBParallel extends BNB {
                         ScheduleB newSchedule = new ScheduleB(cSchedule,
                                 new ScheduledTask(pid,node,start),
                                 getChildTable(cTable,node));
-                        newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                        newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), super.getMaxCriticalPath() ) );
                         _algoStats.setSolution(new Solution(newSchedule, _numP));
 
                         if ( canPrune( newSchedule , false, true)){
@@ -203,7 +203,7 @@ public class BNBParallel extends BNB {
                 ScheduleB newSchedule = new ScheduleB(new ScheduledTask(1, i,0),
                         getChildTable(rootTable, i));
 
-                newSchedule.addLowerBound( Math.max(lowerBound_1(newSchedule), _maxCriticalPath) );
+                newSchedule.addLowerBound( Math.max(lowerBound_1(newSchedule), super.getMaxCriticalPath()) );
                 if ( newSchedule.getLowerBound() > _bound ){
                     continue;
                 }
@@ -260,7 +260,7 @@ public class BNBParallel extends BNB {
                     ScheduleB newSchedule = new ScheduleB(cSchedule,
                             new ScheduledTask(pid,node,start),
                             getChildTable(cTable,node));
-                    newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                    newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), super.getMaxCriticalPath() ) );
                     _algoStats.setSolution(new Solution(newSchedule, _numP));
 
                     if ( canPrune( newSchedule , false, false)){
@@ -275,7 +275,7 @@ public class BNBParallel extends BNB {
                         ScheduleB newSchedule = new ScheduleB(cSchedule,
                                 new ScheduledTask(pid,node,start),
                                 getChildTable(cTable,node));
-                        newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                        newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), super.getMaxCriticalPath() ) );
                         _algoStats.setSolution(new Solution(newSchedule, _numP));
 
                         if ( canPrune( newSchedule , false, true)){

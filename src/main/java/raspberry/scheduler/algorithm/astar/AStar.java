@@ -20,9 +20,7 @@ public class AStar extends Algorithm {
     private IGraph _graph;
     int _numP;
     int _numNode;
-    int _maxCriticalPath;
     PriorityQueue<ScheduleAStar> _pq;
-    Hashtable<String, Integer> _heuristic = new Hashtable<String, Integer>();
     Hashtable<Integer, ArrayList<ScheduleAStar>> _visited;
     private AlgoStats _algoStats;
     int _upperBound;
@@ -75,7 +73,7 @@ public class AStar extends Algorithm {
 
         getH(); //Computes critical path
 
-        Hashtable<INode, Integer> rootTable = this.getRootTable();
+        Hashtable<INode, Integer> rootTable = getRootTable();
 
         for (INode node : rootTable.keySet()) {
             if (rootTable.get(node) == 0) {
@@ -273,7 +271,7 @@ public class AStar extends Algorithm {
     public int h(ScheduleAStar cSchedule) {
         int max = 0;
         for (String s : cSchedule.getLastForEachProcessor().values()) {
-            int tmp = _heuristic.get(s) + cSchedule.getScheduling().get(s).get(1) +
+            int tmp = super.getHeuristicTable().get(s) + cSchedule.getScheduling().get(s).get(1) +
                     _graph.getNode(s).getValue();
             if (tmp > max) {
                 max = tmp;
@@ -301,79 +299,6 @@ public class AStar extends Algorithm {
         return sum / _numP - cSchedule.getFinishTime();
     }
 
-    /**
-     * Creates initial outDegree table for the graph.
-     *
-     * @return : Hashtable : Key : Node
-     * Value : Integer representing number of outDegree edges.
-     */
-    public Hashtable<INode, Integer> getRootTable() {
-        Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>();
-        for (INode i : _graph.getAllNodes()) {
-            tmp.put(i, 0);
-        }
-        for (INode i : _graph.getAllNodes()) {
-            for (IEdge j : _graph.getOutgoingEdges(i.getName())) {
-                tmp.replace(j.getChild(), tmp.get(j.getChild()) + 1);
-            }
-        }
-        return tmp;
-    }
-
-    /**
-     * Creates outDegree table for child node.
-     *
-     * @param parentTable : parent schedule's outDegree table.
-     * @param x           : Node :that was just scheduled
-     * @return : Hashtable : Key : Node
-     * Value : Integer representing number of outDegree edges.
-     */
-    public Hashtable<INode, Integer> getChildTable(Hashtable<INode, Integer> parentTable, INode x) {
-        Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>(parentTable);
-        tmp.remove(x);
-        for (IEdge i : _graph.getOutgoingEdges(x.getName())) {
-            tmp.replace(i.getChild(), tmp.get(i.getChild()) - 1);
-        }
-        return tmp;
-    }
-
-
-    /**
-     * Creates a maximum dependency path table.
-     * Also find the maximum critical path cost of the graph.
-     * where key : String <- task's name.
-     * value : int <- maximum path cost.
-     */
-    public void getH() {
-        _heuristic = new Hashtable<String, Integer>();
-        for (INode i : _graph.getAllNodes()) {
-            _heuristic.put(i.getName(), getHRecursive(i));
-        }
-        _maxCriticalPath = Collections.max(_heuristic.values());
-    }
-
-    /**
-     * Recursive call child node to get the cost. Get the maximum cost path and return.
-     *
-     * @param n : INode : task that we are trying to find the heuristic weight.
-     * @return integer : Maximum value of n's child path.
-     */
-    public int getHRecursive(INode n) {
-        List<IEdge> e = _graph.getOutgoingEdges(n.getName());
-        if (e.size() == 0) {
-            return 0;
-        } else if (e.size() == 1) {
-            return getHRecursive(e.get(0).getChild()) + e.get(0).getChild().getValue();
-        }
-        int max = 0;
-        for (IEdge i : e) {
-            int justCost = getHRecursive(i.getChild()) + i.getChild().getValue();
-            if (max < justCost) {
-                max = justCost;
-            }
-        }
-        return max;
-    }
 
     /**
      * TODO : FIND OUT IF WE ACTUALLY NEED THIS FUNCTION

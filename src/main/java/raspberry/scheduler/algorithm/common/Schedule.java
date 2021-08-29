@@ -16,6 +16,7 @@ public class Schedule {
     // Attribute of linked list
     private Schedule _parent; // Parent Schedule
     private int _size; // Size of the partial schedule. # of tasks scheduled.
+    private int _total; // t: Total weight
 
     // item that stored in linked list
     private ScheduledTask _scheduledTask;
@@ -160,6 +161,4 @@ public class Schedule {
 
         return result;
     }
-
-
 }
