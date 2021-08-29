@@ -25,7 +25,7 @@ brew install maven
 ## building and packaging into Jar with dependency
 ```
 git clone git@github.com:SoftEng306-2021/project-1-raspberry-spirits-15.git
-mvn clean package
+mvn clean package -DskipTests
 ```
 
 The compiled jar will be located in `target/scheduler.jar`
