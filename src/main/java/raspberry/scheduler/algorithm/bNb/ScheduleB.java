@@ -1,7 +1,9 @@
 package raspberry.scheduler.algorithm.bNb;
 
 import java.util.*;
+import java.util.function.Consumer;
 
+import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.graph.INode;
 
@@ -12,7 +14,7 @@ import raspberry.scheduler.graph.INode;
  *
  * @author Takahiro
  */
-public class ScheduleB implements Comparable<ScheduleB> {
+public class ScheduleB implements Comparable<ScheduleB>, Iterable<ScheduleB>{
 
     private ScheduleB _parent; // Parent Schedule
     private int _size; // Size of the partial schedule. # of tasks scheduled.
@@ -287,5 +289,41 @@ public class ScheduleB implements Comparable<ScheduleB> {
 
     public int getPid(){
         return _scheduleTask.getProcessorID();
+    }
+
+
+    @Override
+    public Iterator<ScheduleB> iterator() {
+        ScheduleB head = this;
+        return new Iterator<ScheduleB>() {
+            ScheduleB current = head;
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+            @Override
+            public ScheduleB next() {
+                if (hasNext()) {
+                    ScheduleB data = current;
+                    current = current.getParent();
+                    return data;
+                }
+                return null;
+            }
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Remove not implemented.");
+            }
+        };
+    }
+
+    @Override
+    public void forEach(Consumer<? super ScheduleB> action) {
+        Iterable.super.forEach(action);
+    }
+
+    @Override
+    public Spliterator<ScheduleB> spliterator() {
+        return Iterable.super.spliterator();
     }
 }
