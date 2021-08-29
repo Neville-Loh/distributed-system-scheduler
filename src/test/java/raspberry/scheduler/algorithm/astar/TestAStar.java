@@ -1,7 +1,7 @@
 package raspberry.scheduler.algorithm.astar;
 
 import org.junit.Test;
-import raspberry.scheduler.algorithm.OutputChecker;
+import raspberry.scheduler.algorithm.common.OutputChecker;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -199,14 +199,14 @@ public class TestAStar {
 
         // run and time a* algorithm (seeker weighted a* routine)
         long startTime = System.nanoTime();
-        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
+        WeightedAStar wA = new WeightedAStar(graph,numProcessors);
         OutputSchedule outputBound = wA.findPath();
         int upperbound = outputBound.getFinishTime();
         wA = null;
         outputBound = null;
 
         // run a star
-        Astar astar = new Astar(graph,numProcessors, upperbound);
+        AStar astar = new AStar(graph,numProcessors, upperbound);
         OutputSchedule output = astar.findPath();
 
         System.out.printf("------------------------\n" +

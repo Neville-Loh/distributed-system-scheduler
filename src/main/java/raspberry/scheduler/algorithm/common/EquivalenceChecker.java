@@ -1,8 +1,6 @@
 package raspberry.scheduler.algorithm.common;
 
-import raspberry.scheduler.algorithm.astar.Astar;
-import raspberry.scheduler.algorithm.astar.ScheduleAStar;
-import raspberry.scheduler.algorithm.bNb.ScheduleB;
+import raspberry.scheduler.algorithm.astar.AStar;
 import raspberry.scheduler.graph.*;
 
 import java.util.*;
@@ -388,6 +386,6 @@ public class EquivalenceChecker {
 
     //DUPLICATE CODE : NEEDS REFACTOR
     public int callCalculateEarliestStartTime(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
-        return new Astar(_graph).calculateEarliestStartTime(parentSchedule,processorId,nodeToBeSchedule);
+        return new AStar(_graph).calculateEarliestStartTime(parentSchedule,processorId,nodeToBeSchedule);
     }
 }

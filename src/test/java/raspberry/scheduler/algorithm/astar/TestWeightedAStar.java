@@ -1,7 +1,7 @@
 package raspberry.scheduler.algorithm.astar;
 
 import org.junit.Test;
-import raspberry.scheduler.algorithm.OutputChecker;
+import raspberry.scheduler.algorithm.common.OutputChecker;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -17,7 +17,7 @@ import static org.junit.Assert.fail;
  * output was given prior to the development
  * @Author Neville
  */
-public class TestWeightedAstar {
+public class TestWeightedAStar {
 
     // input path of the resource folder
     private String INPUT_PATH = "src/test/resources/input/";
@@ -167,7 +167,7 @@ public class TestWeightedAstar {
         long startTime = System.nanoTime();
 
 
-        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
+        WeightedAStar wA = new WeightedAStar(graph,numProcessors);
         OutputSchedule output = wA.findPath();
         System.out.printf("------------------------\n" +
                         "File: %s, Number of Processor: %d \nRUNNING TIME : %.2f seconds\n",

@@ -1,7 +1,7 @@
 package raspberry.scheduler.algorithm.astar;
 
 import org.junit.Test;
-import raspberry.scheduler.algorithm.OutputChecker;
+import raspberry.scheduler.algorithm.common.OutputChecker;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -208,7 +208,7 @@ public class FastTestAStar {
 //        outputBound = null;
 
         // run a star
-        Astar astar = new Astar(graph,numProcessors,Integer.MAX_VALUE);
+        AStar astar = new AStar(graph,numProcessors,Integer.MAX_VALUE);
         OutputSchedule output = astar.findPath();
 
         System.out.printf("------------------------\n" +

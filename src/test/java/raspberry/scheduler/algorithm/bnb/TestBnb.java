@@ -1,9 +1,8 @@
 package raspberry.scheduler.algorithm.bnb;
 
 import org.junit.Test;
-import raspberry.scheduler.algorithm.OutputChecker;
-import raspberry.scheduler.algorithm.astar.WeightedAstar;
-import raspberry.scheduler.algorithm.bNb.BNB;
+import raspberry.scheduler.algorithm.common.OutputChecker;
+import raspberry.scheduler.algorithm.astar.WeightedAStar;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -190,7 +189,7 @@ public class TestBnb {
         long startTime = System.nanoTime();
 
 
-        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
+        WeightedAStar wA = new WeightedAStar(graph,numProcessors);
         OutputSchedule outputBound = wA.findPath();
         int upperbound = outputBound.getFinishTime();
 

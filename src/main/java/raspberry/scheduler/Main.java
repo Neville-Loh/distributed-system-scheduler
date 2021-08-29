@@ -1,8 +1,7 @@
 package raspberry.scheduler;
 
-import raspberry.scheduler.algorithm.astar.Astar;
-import raspberry.scheduler.algorithm.bNb.BNB;
-import raspberry.scheduler.algorithm.bNb.BNBParallel;
+import raspberry.scheduler.algorithm.bnb.BNB;
+import raspberry.scheduler.algorithm.bnb.BNBParallel;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.cli.CLIConfig;
 import raspberry.scheduler.cli.CLIParser;

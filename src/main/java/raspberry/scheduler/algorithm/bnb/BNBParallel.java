@@ -1,4 +1,4 @@
-package raspberry.scheduler.algorithm.bNb;
+package raspberry.scheduler.algorithm.bnb;
 
 import raspberry.scheduler.algorithm.common.FixOrderChecker;
 import raspberry.scheduler.algorithm.common.OutputSchedule;

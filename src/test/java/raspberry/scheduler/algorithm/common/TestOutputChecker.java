@@ -1,12 +1,10 @@
-package raspberry.scheduler.algorithm;
+package raspberry.scheduler.algorithm.common;
 
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import raspberry.scheduler.algorithm.bNb.ScheduleB;
-import raspberry.scheduler.algorithm.common.OutputSchedule;
-import raspberry.scheduler.algorithm.common.ScheduledTask;
-import raspberry.scheduler.algorithm.common.Solution;
+import raspberry.scheduler.algorithm.bnb.ScheduleB;
 import raspberry.scheduler.graph.INode;
 import raspberry.scheduler.graph.adjacencylist.Graph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -83,7 +81,7 @@ public class TestOutputChecker {
         OutputSchedule outputSchedule1 = new Solution(testSchedule1, 2);
 
         // Should pass all three checks, isValid contains all three checks.
-        assertEquals(true , OutputChecker.isValid(testGraph1, outputSchedule1));
+        Assert.assertEquals(true , OutputChecker.isValid(testGraph1, outputSchedule1));
     }
 
     /**

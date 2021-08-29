@@ -15,7 +15,7 @@ import static org.junit.Assert.fail;
  * This class tests the graph class.
  * @author: Jonathon
  */
-public class TestGraph {
+public class TestAdjacencyListGraph {
 
     private Graph _testGraph;
 

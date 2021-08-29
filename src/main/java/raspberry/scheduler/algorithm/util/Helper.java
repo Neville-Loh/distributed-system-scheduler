@@ -1,7 +1,7 @@
 package raspberry.scheduler.algorithm.util;
 
 import raspberry.scheduler.algorithm.astar.ScheduleAStar;
-import raspberry.scheduler.algorithm.bNb.ScheduleB;
+import raspberry.scheduler.algorithm.bnb.ScheduleB;
 import raspberry.scheduler.algorithm.sma.MBSchedule;
 import raspberry.scheduler.graph.INode;
 

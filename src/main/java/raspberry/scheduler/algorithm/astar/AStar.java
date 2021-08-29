@@ -15,7 +15,7 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  *
  * @author Takahiro
  */
-public class Astar extends Algorithm {
+public class AStar extends Algorithm {
 
     private IGraph _graph;
     int _numP;
@@ -46,7 +46,7 @@ public class Astar extends Algorithm {
      * @param graphToSolve  : graph to solve (graph represents the task and dependencies)
      * @param numProcessors : number of processor we can use to schedule tasks.
      */
-    public Astar(IGraph graphToSolve, int numProcessors, int upperBound) {
+    public AStar(IGraph graphToSolve, int numProcessors, int upperBound) {
         super(graphToSolve);
         _graph = graphToSolve;
         _pq = new PriorityQueue<ScheduleAStar>();
@@ -61,7 +61,7 @@ public class Astar extends Algorithm {
         _fixOrderChecker = new FixOrderChecker(_graph);
     }
 
-    public Astar(IGraph graphToSolve) {
+    public AStar(IGraph graphToSolve) {
         super(graphToSolve);
         _graph = graphToSolve;
     }

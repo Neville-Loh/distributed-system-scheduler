@@ -1,7 +1,7 @@
 package raspberry.scheduler.algorithm.astar;
 
 import org.junit.Test;
-import raspberry.scheduler.algorithm.OutputChecker;
+import raspberry.scheduler.algorithm.common.OutputChecker;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.graph.IGraph;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
@@ -187,7 +187,7 @@ public class TestAStarParallel {
 //        outputBound = null;
 
         // run a star
-        AstarParallel astar = new AstarParallel(graph,numProcessors,4);
+        AStarParallel astar = new AStarParallel(graph,numProcessors,4);
         OutputSchedule output = astar.findPath();
 
         System.out.printf("------------------------\n" +
