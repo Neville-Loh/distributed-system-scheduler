@@ -6,6 +6,11 @@ import raspberry.scheduler.graph.INode;
 
 import java.util.*;
 
+
+/**
+ * Class to calculate the topological order
+ * @author Neville
+ */
 public class TopologicalOrder {
 
     private IGraph m_digraph;
@@ -15,7 +20,10 @@ public class TopologicalOrder {
     private Hashtable<INode, Integer> inDegreeCount;
     public boolean orderExist = false;
 
-
+    /**
+     * Class constructor
+     * @param digraph dependency graph
+     */
     public TopologicalOrder(IGraph digraph){
         m_digraph = digraph;
         m_candidate = new LinkedList<INode>();

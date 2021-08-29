@@ -314,7 +314,6 @@ public class AStar extends Algorithm {
         for (ScheduleAStar s : scheduleList) {
             if ( s.equals3(cSchedule) ){
                 if ( s.getTotal() > cSchedule.getTotal()) {
-//                    System.out.printf("%d -> %d\n", s.getTotal(), cSchedule.getTotal());
                     return false;
                 }else{
                     return true;

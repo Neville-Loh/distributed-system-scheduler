@@ -14,13 +14,13 @@ public interface IGraph{
 
     /**
      * Get the node in the current graph with the given id
-     * @return node Node with the id
+     * @return node with the id
      */
     INode getNode(String id);
 
 
     /**
-     * Add a node the the current graph
+     * Add a node the current graph
      * @param id name of the node
      * @param value weight of the node
      */
@@ -130,14 +130,11 @@ public interface IGraph{
 
 
     /**
-     * Get the index of the node
-     * @param node
+     * Get the topological index of the node
+     * @param node node for the index
      * @return index of the node
      */
     public int getIndex(INode node);
 
-
-
-    public void printTopo();
 }
 

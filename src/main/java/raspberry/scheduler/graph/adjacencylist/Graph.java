@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Adjacency graph implementation of the graph
  * This class store the graph data using adjacency list
  * which a list of edges is stored for each node.
+ * @author Neville
  */
 public class Graph implements IGraph {
     private String _name;
@@ -192,10 +193,6 @@ public class Graph implements IGraph {
         return _name;
     }
 
-    /**
-     *  Topological order
-     */
-
     @Override
     public int getIndex(INode node){
         if (_indexTable == null){
@@ -205,53 +202,17 @@ public class Graph implements IGraph {
     }
 
 
-
+    /**
+     * Set the index table of the graph by calling the class
+     * topological order
+     */
     private void setIndexTable(){
         _indexTable = new Hashtable<>();
-        ArrayList<INode> visited = new ArrayList<>();
-        //getTopologicalOrder();
-        //Collections.reverse(_topologicalOrder);
         TopologicalOrder to = new TopologicalOrder(this);
         to.computeOrder();
         _topologicalOrder = to.getTopologicalOrder();
         for(int i = 0; i < _topologicalOrder.size(); i++){
             _indexTable.put(_topologicalOrder.get(i), i);
         }
-
-
-    }
-
-    /**
-     * @deprecated
-     */
-    private void getTopologicalOrder(){
-        _topologicalOrder = new ArrayList<INode>();
-        for ( INode i : _nodes.values()){
-            getTopoligicalOrderRecursive(i);
-        }
-        printTopo();
-    }
-
-    /**
-     * @deprecated
-     */
-    private void getTopoligicalOrderRecursive(INode i){
-        if ( _outDegreeAdjacencyList.get(i) == null || _outDegreeAdjacencyList.get(i).isEmpty() ){
-            //
-        }else{
-            for ( IEdge e : _outDegreeAdjacencyList.get(i) ) {
-                getTopoligicalOrderRecursive(e.getChild());
-            }
-        }
-        if ( !_topologicalOrder.contains(i) ){
-            _topologicalOrder.add(i);
-        }
-    }
-
-    public void printTopo(){
-        for (INode i: _topologicalOrder){
-            System.out.printf("%s_",i.getName());
-        }
-        System.out.println(_indexTable);
     }
 }
