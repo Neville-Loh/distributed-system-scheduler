@@ -8,6 +8,7 @@ import java.util.List;
 
 import raspberry.scheduler.algorithm.Algorithm;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
+import raspberry.scheduler.algorithm.common.Schedule;
 import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.algorithm.util.Helper;
 import raspberry.scheduler.graph.*;
@@ -255,9 +256,9 @@ public class MemoryBoundAStar implements Algorithm {
      * @param nodeToBeSchedule The task schedule
      * @return start time the earliest start time that a task begin in the given processor id
      */
-    public int calculateEarliestStartTime(MBSchedule parentSchedule, int processorId, INode nodeToBeSchedule) {
+    public int calculateEarliestStartTime(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
         MBSchedule last_processorId_use = null; //last time processor with "processorId" was used.
-        MBSchedule cParentSchedule = parentSchedule;
+        MBSchedule cParentSchedule = (MBSchedule)parentSchedule;
         //---------------------------------------- Getting start time
         // finding the first schedule that has same id
         while ( cParentSchedule != null){
@@ -272,7 +273,7 @@ public class MemoryBoundAStar implements Algorithm {
         if (last_processorId_use != null){
             finished_time_of_last_parent = last_processorId_use.getScheduledTask().getFinishTime();
         }
-        cParentSchedule = parentSchedule;
+        cParentSchedule = (MBSchedule)parentSchedule;
         while ( cParentSchedule != null){
             // for edges in current parent scheduled node
             INode last_scheduled_node = cParentSchedule.getScheduledTask().getTask();
