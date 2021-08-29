@@ -34,6 +34,8 @@ public class Astar implements Algorithm {
     private int duplicate = 0; // Duplicate counter, Used for debugging purposes.
     private int duplicateBySwap = 0; // Duplicate counter, Used for debugging purposes.
     private int fixOrderCount = 0; // Duplicate counter, Used for debugging purposes.
+
+    // configuration 
     private final boolean DUPLICATE_ENABLE = true;
     private final boolean UPPERBOUND_ENABLE = true;
     private final boolean FIX_ORDER_ENABLE = true;
@@ -166,16 +168,14 @@ public class Astar implements Algorithm {
                             ))
                     );
                     _pq.add(newSchedule);
-//                    if (!ENABLE_UPPERBOUND || newSchedule.getTotal() <= _upperBound) {
-//                        ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
-//                        if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
-//                            duplicate++;
-//                        } else if (_equivalenceChecker.checkDuplicateBySwap(newSchedule)) {
-//                            duplicateBySwap++;
-//                        } else {
-//                            _pq.add(newSchedule);
-//                        }
-//                    }
+                    if (!UPPERBOUND_ENABLE || newSchedule.getTotal() <= _upperBound) {
+                        ArrayList<ScheduleAStar> listVisitedForSizeV2 = _visited.get(newSchedule.getHash());
+                        if (listVisitedForSizeV2 != null && isIrrelevantDuplicate(listVisitedForSizeV2, newSchedule)) {
+                            duplicate++;
+                        } else {
+                            _pq.add(newSchedule);
+                        }
+                    }
                 }
             } else {
                 for (INode node : freeNodes) {
@@ -217,11 +217,19 @@ public class Astar implements Algorithm {
         _algoStats.setIsFinish(true);
         _algoStats.setSolution(new Solution(cSchedule,_numP));
 
-        System.out.println(cSchedule);
+        //System.out.println(cSchedule);
         return new Solution(cSchedule, _numP);
     }
 
-
+    /**
+     * This is the heuristic that uses the data ready time of free task
+     * the heuristic is the earliest star time in all processor plus to compute time of the task  + the
+     * critical path weight.
+     * The final return value is adjusted for finish time of the last task.
+     * @author Neville
+     * @param cSchedule current schedule
+     * @return heuristic value h(schedule)
+     */
     public int dataReadyTimeHeuristic(ScheduleAStar cSchedule){
         Hashtable<INode, Integer> finishTime = new Hashtable<>();
         Hashtable<INode, Integer> criticalPathTable = _graph.getCriticalPathWeightTable();
@@ -238,20 +246,14 @@ public class Astar implements Algorithm {
             return 0;
         }
 
-        // finish time = min DRT for every processor + critial path weight
+        // finish time = min DRT for every processor + critical path weight
         freeNodes.forEach( (node) ->{
             int minStartTime = Integer.MAX_VALUE;
             for (int pid = 1; pid <= _numP; pid++) {
                 minStartTime = Math.min(minStartTime, calculateEarliestStartTime(cSchedule, pid, node));
             }
-            //int critpathwieight = criticalPathTable.get(node);
-            finishTime.put(node, minStartTime + node.getValue() + _heuristic.get(node.getName()));
-            //System.out.println(node + "min start time = " + minStartTime);
+            finishTime.put(node, minStartTime + node.getValue() + criticalPathTable.get(node));
         });
-//        System.out.println(cSchedule);
-//        System.out.println("Free task = " + freeNodes + "\nMIN finish time " +  Collections.min(finishTime.values()));
-//        System.out.println("Max : " + Collections.max(finishTime.values()));
-//        System.out.println("====================================================================");
         return Math.max(0, Collections.max(finishTime.values()) - cSchedule.getFinishTime());
 
     }

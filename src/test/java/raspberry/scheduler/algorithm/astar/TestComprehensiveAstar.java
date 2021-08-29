@@ -55,62 +55,43 @@ public class TestComprehensiveAstar {
             fail("Schedule is not valid");
         }
 
-//        // read graph
-//        GraphReader reader = new GraphReader(INPUT_PATH+ filename);
-//        IGraph graph = reader.read();
-//
-//        // run and time a* algorithm
-//        long startTime = System.nanoTime();
-//
-//
-//        BNBParallel bnb = new BNBParallel(graph,numProcessors, Integer.MAX_VALUE, 5);
-//        OutputSchedule output = bnb.findPath();
-//        System.out.printf("------------------------\n" +
-//                        "File: %s, Number of Processor: %d \nRUNNING TIME : %.2f seconds\n",
-//                filename, numProcessors, (System.nanoTime() - startTime) / 1000000000.0);
-//
-//        // check if output violate any dependency
-//        if (!OutputChecker.isValid(graph,output)){
-//            fail("Schedule is not valid");
-//        }
-
         return output.getFinishTime();
     }
 
-//    @Test(timeout = TIME_LIMIT)
+    //    @Test(timeout = TIME_LIMIT)
 //    public void test16_1_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
 //        // read input graph and find path
 //        assertEquals(69,
 //                readAndFindFinishTime("16_1.dot", 8));
 //    }
 
-    @Test(timeout = TIME_LIMIT)
-    public void test16_2_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
-        // read input graph and find path
-        assertEquals(69,
-                readAndFindFinishTime("16_2.dot", 8));
-    }
-
-    @Test(timeout = TIME_LIMIT)
-    public void test16_3_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
-        // read input graph and find path
-        assertEquals(69,
-                readAndFindFinishTime("16_3.dot", 8));
-    }
-
-    @Test(timeout = TIME_LIMIT)
-    public void test16_4_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
-        // read input graph and find path
-        assertEquals(69,
-                readAndFindFinishTime("16_4.dot", 8));
-    }
-
-    @Test(timeout = TIME_LIMIT)
-    public void test16_5_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
-        // read input graph and find path
-        assertEquals(69,
-                readAndFindFinishTime("16_5.dot", 8));
-    }
+//    @Test(timeout = TIME_LIMIT)
+//    public void test16_2_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+//        // read input graph and find path
+//        assertEquals(69,
+//                readAndFindFinishTime("16_2.dot", 8));
+//    }
+//
+//    @Test(timeout = TIME_LIMIT)
+//    public void test16_3_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+//        // read input graph and find path
+//        assertEquals(69,
+//                readAndFindFinishTime("16_3.dot", 8));
+//    }
+//
+//    @Test(timeout = TIME_LIMIT)
+//    public void test16_4_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+//        // read input graph and find path
+//        assertEquals(69,
+//                readAndFindFinishTime("16_4.dot", 8));
+//    }
+//
+//    @Test(timeout = TIME_LIMIT)
+//    public void test16_5_with_8Processor() throws FileNotFoundException, EdgeDoesNotExistException {
+//        // read input graph and find path
+//        assertEquals(69,
+//                readAndFindFinishTime("16_5.dot", 8));
+//    }
 
     @Test(timeout = TIME_LIMIT)
     public void test16p_Fork_Join_Nodes_10_CCR_010_WeightType_Random_with_16Processor() throws FileNotFoundException, EdgeDoesNotExistException {
