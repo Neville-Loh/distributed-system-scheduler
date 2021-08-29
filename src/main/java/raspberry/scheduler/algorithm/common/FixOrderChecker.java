@@ -20,7 +20,7 @@ public class FixOrderChecker {
     }
 
 
-    public boolean check(List<INode> freeNodes, ScheduleAStar schedule){
+    public boolean check(List<INode> freeNodes, Schedule schedule){
 //        System.out.println("========================================================================================");
         // if nf has at most one parent and at most one child
         for (INode node : freeNodes){
@@ -73,7 +73,7 @@ public class FixOrderChecker {
         return true;
     }
 
-    public List<INode> getFixOrder(List<INode> freeNodes, ScheduleAStar schedule){
+    public List<INode> getFixOrder(List<INode> freeNodes, Schedule schedule){
         // todo please don't do 2 computation for getDataReadyTime
         freeNodes.sort( (n1,n2) -> {
             int drt1 = getDataReadyTime(n1, schedule);
@@ -97,7 +97,7 @@ public class FixOrderChecker {
     }
 
 
-    private int getDataReadyTime(INode task, ScheduleAStar schedule){
+    private int getDataReadyTime(INode task, Schedule schedule){
 
         // if task does not have a parent
         if (_graph.getIngoingEdges(task).size() == 0){

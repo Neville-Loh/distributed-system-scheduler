@@ -67,7 +67,9 @@ public class TestOutputChecker {
         // Append the tasks to the test output schedule.
 
         // Set the head of the schedule linked list as taska1.
+
         ScheduleB testSchedule1 = new ScheduleB( taska1, inDegreeTable1);
+
         // Add the rest of the tasks to the linked list.
         testSchedule1 = new ScheduleB(testSchedule1, taskb1, inDegreeTable1);
         testSchedule1 = new ScheduleB(testSchedule1, taskc1, inDegreeTable1);
@@ -264,6 +266,7 @@ public class TestOutputChecker {
 
             // Set the head of the schedule linked list as taska1.
             ScheduleB testSchedule1 = new ScheduleB( taska1, inDegreeTable1);
+
             // Add the rest of the tasks to the linked list.
             testSchedule1 = new ScheduleB(testSchedule1, taskb1, inDegreeTable1);
             testSchedule1 = new ScheduleB(testSchedule1, taskc1, inDegreeTable1);
