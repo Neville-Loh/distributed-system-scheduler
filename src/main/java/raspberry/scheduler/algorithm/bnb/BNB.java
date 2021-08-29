@@ -15,10 +15,8 @@ public class BNB extends Algorithm {
     int _numP;
     int _bound;
     int _numNode;
-    int _maxCriticalPath;
     protected ScheduleB shortestPath;
 
-    Hashtable<String, Integer> _heuristicTable;
     Stack<ScheduleB> _scheduleStack;
     Hashtable<Integer, ArrayList<ScheduleB>> _visited;
     private AlgoStats _algoStats;
@@ -64,7 +62,7 @@ public class BNB extends Algorithm {
             if (rootTable.get(i) == 0) {
                 ScheduleB newSchedule = new ScheduleB(new ScheduledTask(1, i,0),
                         getChildTable(rootTable, i));
-                newSchedule.addLowerBound( Math.max(lowerBound_1(newSchedule), _maxCriticalPath) );
+                newSchedule.addLowerBound( Math.max(lowerBound_1(newSchedule), super.getMaxCriticalPath()) );
                 if ( newSchedule.getLowerBound() > _bound ){
                     continue;
                 }
@@ -131,7 +129,7 @@ public class BNB extends Algorithm {
                     ScheduleB newSchedule = new ScheduleB(cSchedule,
                             new ScheduledTask(pid,node,start),
                             getChildTable(cTable,node));
-                    newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                    newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), super.getMaxCriticalPath() ) );
                     _algoStats.setSolution(new Solution(newSchedule, _numP));
 
                     if ( canPrune( newSchedule , false,false)){
@@ -146,7 +144,7 @@ public class BNB extends Algorithm {
                         ScheduleB newSchedule = new ScheduleB(cSchedule,
                                 new ScheduledTask(pid,node,start),
                                 getChildTable(cTable,node));
-                        newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), _maxCriticalPath ) );
+                        newSchedule.addLowerBound( Math.max( lowerBound_1(newSchedule), super.getMaxCriticalPath() ) );
                         _algoStats.setSolution(new Solution(newSchedule, _numP));
 
                         if ( canPrune( newSchedule , false, true)){
@@ -172,7 +170,7 @@ public class BNB extends Algorithm {
      * @return Integer : representing the heuristic cost.
      */
     public int lowerBound_1(ScheduleB schedule){
-        return _heuristicTable.get(schedule.getNode().getName()) + schedule.getFinishTime();
+        return super.getHeuristicTable().get(schedule.getNode().getName()) + schedule.getFinishTime();
     }
 
 
@@ -231,78 +229,5 @@ public class BNB extends Algorithm {
             }
         }
         return false;
-    }
-
-    /**
-     * Creates intial outDegree table for the graph.
-     *
-     * @return : Hashtable : Key : Node
-     * Value : Integer representing number of outDegree edges.
-     */
-    public Hashtable<INode, Integer> getRootTable() {
-        Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>();
-        for (INode i : _graph.getAllNodes()) {
-            tmp.put(i, 0);
-        }
-        for (INode i : _graph.getAllNodes()) {
-            for (IEdge j : _graph.getOutgoingEdges(i.getName())) {
-                tmp.put(j.getChild(), tmp.get(j.getChild()) + 1);
-            }
-        }
-        return tmp;
-    }
-
-    /**
-     * Creates outDegree table for child node.
-     *
-     * @param parentTable : parent schedule's outDegree table.
-     * @param x           : Node :that was just scheduled
-     * @return : Hashtable : Key : Node
-     * Value : Integer representing number of outDegree edges.
-     */
-    public Hashtable<INode, Integer> getChildTable(Hashtable<INode, Integer> parentTable, INode x) {
-        Hashtable<INode, Integer> tmp = new Hashtable<INode, Integer>(parentTable);
-        tmp.remove(x);
-        for (IEdge i : _graph.getOutgoingEdges(x.getName())) {
-            tmp.put(i.getChild(), tmp.get(i.getChild()) - 1);
-        }
-        return tmp;
-    }
-
-    /**
-     * Creates a maximum dependency path table.
-     * Also find the maximum critical path cost of the graph.
-     * where key : String <- task's name.
-     * value : int <- maximum path cost.
-     */
-    public void getH() {
-        _heuristicTable = new Hashtable<String, Integer>();
-        for (INode i : _graph.getAllNodes()) {
-            _heuristicTable.put(i.getName(), getHRecursive(i));
-        }
-        _maxCriticalPath = Collections.max(_heuristicTable.values());
-    }
-
-    /**
-     * Recursive call child node to get the cost. Get the maximum cost path and return.
-     *
-     * @param n : INode : task that we are trying to find the heuristic weight.
-     * @return integer : Maximum value of n's child path.
-     */
-    public int getHRecursive(INode n) {
-        List<IEdge> e = _graph.getOutgoingEdges(n.getName());
-        if (e.size() == 0) {
-            return 0;
-        } else if (e.size() == 1) {
-            return getHRecursive(e.get(0).getChild()) + e.get(0).getChild().getValue();
-        }
-        int max = 0;
-        for (IEdge i : e) {
-            int justCost = getHRecursive(i.getChild()) + i.getChild().getValue();
-            if (max < justCost) {
-                max = justCost;
-            }
-        }
-        return max;
     }
 }
