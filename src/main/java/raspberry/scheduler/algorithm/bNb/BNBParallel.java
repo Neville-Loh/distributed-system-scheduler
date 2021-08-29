@@ -155,7 +155,7 @@ public class BNBParallel extends BNB {
 
                 INode node = _fixOrderChecker.getFixOrder(freeNodes,cSchedule).get(0);
                 for (int pid = 1; pid <= pidBound; pid++) {
-                    int start = calculateCost(cSchedule, pid, node);
+                    int start = calculateEarliestStartTime(cSchedule, pid, node);
                     ScheduleB newSchedule = new ScheduleB(cSchedule,
                             new ScheduledTask(pid,node,start),
                             getChildTable(cTable,node));
@@ -170,7 +170,7 @@ public class BNBParallel extends BNB {
             } else {
                 for (INode node : freeNodes) {
                     for (int pid = 1; pid <= pidBound; pid++) {
-                        int start = calculateCost(cSchedule, pid, node);
+                        int start = calculateEarliestStartTime(cSchedule, pid, node);
                         ScheduleB newSchedule = new ScheduleB(cSchedule,
                                 new ScheduledTask(pid,node,start),
                                 getChildTable(cTable,node));
@@ -256,7 +256,7 @@ public class BNBParallel extends BNB {
 
                 INode node = _fixOrderChecker.getFixOrder(freeNodes,cSchedule).get(0);
                 for (int pid = 1; pid <= pidBound; pid++) {
-                    int start = calculateCost(cSchedule, pid, node);
+                    int start = calculateEarliestStartTime(cSchedule, pid, node);
                     ScheduleB newSchedule = new ScheduleB(cSchedule,
                             new ScheduledTask(pid,node,start),
                             getChildTable(cTable,node));
@@ -271,7 +271,7 @@ public class BNBParallel extends BNB {
             } else {
                 for (INode node : freeNodes) {
                     for (int pid = 1; pid <= pidBound; pid++) {
-                        int start = calculateCost(cSchedule, pid, node);
+                        int start = calculateEarliestStartTime(cSchedule, pid, node);
                         ScheduleB newSchedule = new ScheduleB(cSchedule,
                                 new ScheduledTask(pid,node,start),
                                 getChildTable(cTable,node));

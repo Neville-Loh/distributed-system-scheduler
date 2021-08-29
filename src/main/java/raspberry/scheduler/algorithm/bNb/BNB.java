@@ -26,6 +26,11 @@ public class BNB implements Algorithm {
     Hashtable<Integer, ArrayList<ScheduleB>> _visited;
     private AlgoStats _algoStats;
     private FixOrderChecker _fixOrderChecker;
+    private EquivalenceChecker _equivalenceChecker;
+
+    public BNB(IGraph graphToSolve){
+        _graph = graphToSolve;
+    }
 
     /**
      * BNB algorithm constructor. with bound
@@ -41,6 +46,7 @@ public class BNB implements Algorithm {
         _algoStats = AlgoStats.getInstance();
         _bound = bound;
         _fixOrderChecker = new FixOrderChecker(_graph);
+        _equivalenceChecker = new EquivalenceChecker(_graph, numProcessors);
     }
 
     @Override
@@ -122,7 +128,7 @@ public class BNB implements Algorithm {
 
                 INode node = _fixOrderChecker.getFixOrder(freeNodes,cSchedule).get(0);
                 for (int pid = 1; pid <= pidBound; pid++) {
-                    int start = calculateCost(cSchedule, pid, node);
+                    int start = calculateEarliestStartTime(cSchedule, pid, node);
                     ScheduleB newSchedule = new ScheduleB(cSchedule,
                             new ScheduledTask(pid,node,start),
                             getChildTable(cTable,node));
@@ -137,7 +143,7 @@ public class BNB implements Algorithm {
             } else {
                 for (INode node : freeNodes) {
                     for (int pid = 1; pid <= pidBound; pid++) {
-                        int start = calculateCost(cSchedule, pid, node);
+                        int start = calculateEarliestStartTime(cSchedule, pid, node);
                         ScheduleB newSchedule = new ScheduleB(cSchedule,
                                 new ScheduledTask(pid,node,start),
                                 getChildTable(cTable,node));
@@ -169,11 +175,11 @@ public class BNB implements Algorithm {
      * @param nodeToBeSchedule : node/task to be scheduled.
      * @return Integer : representing the earliest time. (start time)
      */
-    public int calculateCost(ScheduleB parentSchedule, int processorId, INode nodeToBeSchedule) {
+    public int calculateEarliestStartTime(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
         // Find last finish time for current processor id.
         ScheduleB last_processorId_use = null; //last time processor with "processorId" was used.
-        ScheduleB cParentSchedule = parentSchedule;
+        ScheduleB cParentSchedule = (ScheduleB)parentSchedule;
 
         while (cParentSchedule != null) {
             if (cParentSchedule.getPid() == processorId) {
@@ -189,7 +195,7 @@ public class BNB implements Algorithm {
             finished_time_of_last_parent = last_processorId_use.getFinishTime();
         }
 
-        cParentSchedule = parentSchedule;
+        cParentSchedule =  (ScheduleB)parentSchedule;
         while (cParentSchedule != null) {
             // for edges in current parent scheduled node
             INode last_scheduled_node = cParentSchedule.getNode();
@@ -235,6 +241,8 @@ public class BNB implements Algorithm {
         }
         ArrayList<ScheduleB> listVisitedForSize = _visited.get(cSchedule.getHash());
         if (listVisitedForSize != null && isIrrelevantDuplicate(listVisitedForSize, cSchedule)) {
+            return true;
+        }else if( _equivalenceChecker.checkDuplicateBySwap(cSchedule)){
             return true;
         } else {
             if (visiting){

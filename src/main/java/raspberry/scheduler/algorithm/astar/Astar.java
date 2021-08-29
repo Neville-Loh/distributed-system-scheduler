@@ -17,7 +17,7 @@ import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
  */
 public class Astar implements Algorithm {
 
-    private static IGraph _graph;
+    private IGraph _graph;
     int _numP;
     int _numNode;
     int _maxCriticalPath;
@@ -58,7 +58,8 @@ public class Astar implements Algorithm {
         _fixOrderChecker = new FixOrderChecker(_graph);
     }
 
-    public Astar(IGraph graphToSolve, int numProcessors) {
+    public Astar(IGraph graphToSolve) {
+        _graph = graphToSolve;
     }
 
     /**
@@ -329,11 +330,11 @@ public class Astar implements Algorithm {
      * @param nodeToBeSchedule : node/task to be scheduled.
      * @return Integer : representing the earliest time. (start time)
      */
-    public static int calculateEarliestStartTime(ScheduleAStar parentSchedule, int processorId, INode nodeToBeSchedule) {
+    public int calculateEarliestStartTime(Schedule parentSchedule, int processorId, INode nodeToBeSchedule) {
         // Find last finish parent node
         // Find last finish time for current processor id.
         ScheduleAStar last_processorId_use = null; //last time processor with "processorId" was used.
-        ScheduleAStar cParentSchedule = parentSchedule;
+        ScheduleAStar cParentSchedule = (ScheduleAStar)parentSchedule;
 
         while (cParentSchedule != null) {
             if (cParentSchedule.getPid() == processorId) {
@@ -349,7 +350,7 @@ public class Astar implements Algorithm {
             finished_time_of_last_parent = last_processorId_use.getFinishTime();
         }
 
-        cParentSchedule = parentSchedule;
+        cParentSchedule = (ScheduleAStar)parentSchedule;
         while (cParentSchedule != null) {
             // for edges in current parent scheduled node
             INode last_scheduled_node = cParentSchedule.getNode();
