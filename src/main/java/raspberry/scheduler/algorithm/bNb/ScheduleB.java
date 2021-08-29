@@ -3,7 +3,6 @@ package raspberry.scheduler.algorithm.bNb;
 import java.util.*;
 import java.util.function.Consumer;
 
-
 import raspberry.scheduler.algorithm.common.Schedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.graph.INode;
@@ -16,6 +15,7 @@ import raspberry.scheduler.graph.INode;
  * @author Takahiro
  */
 public class ScheduleB extends Schedule implements Comparable<ScheduleB>, Iterable<ScheduleB>{
+
 
     private int _overallFinishTime; // t: Total weight
     private int _maxPid; //The largest pid currently used to schedule. This ranges from 1 ~ n. (not 0 ~ n-1)
