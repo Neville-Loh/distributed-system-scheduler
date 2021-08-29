@@ -311,7 +311,7 @@ public class BNBParallel extends BNB {
     public Boolean isIrrelevantDuplicate(ArrayList<ScheduleB> scheduleList, ScheduleB cSchedule) {
         ArrayList<ScheduleB> copyScheduleList = new ArrayList<ScheduleB>(scheduleList);
         for (ScheduleB s : copyScheduleList) {
-            if ( s.equals2(cSchedule) ){
+            if ( s.equals3(cSchedule) ){
                 if ( s.getLowerBound() > cSchedule.getLowerBound() ) {
 //                    System.out.println("Re-opening node: Should not happen if heuristic is consistant");
                     return false;

@@ -43,7 +43,7 @@ public class BNB extends Algorithm {
         _algoStats = AlgoStats.getInstance();
         _bound = bound;
         _fixOrderChecker = new FixOrderChecker(_graph);
-        _equivalenceChecker = new EquivalenceChecker(_graph, numProcessors);
+        _equivalenceChecker = new EquivalenceChecker(_graph, numProcessors, this);
     }
 
     @Override
@@ -205,7 +205,6 @@ public class BNB extends Algorithm {
 
 
     /**
-     * TODO : FIND OUT IF WE ACTUALLY NEED THIS FUNCTION
      * OR THIS -> "listVisitedForSize.contains(cSchedule)" JUST WORKS FINE.
      * Find out if the duplicate schedule exists.
      * -> if we find one, check if the heuristic is larger or smaller.
@@ -219,7 +218,7 @@ public class BNB extends Algorithm {
      */
     public Boolean isIrrelevantDuplicate(ArrayList<ScheduleB> scheduleList, ScheduleB cSchedule) {
         for (ScheduleB s : scheduleList) {
-            if ( s.equals2(cSchedule) ){
+            if ( s.equals3(cSchedule) ){
                 if ( s.getLowerBound() > cSchedule.getLowerBound() ) {
 //                    System.out.println("Re-opening node: Should not happen if heuristic is consistant");
                     return false;

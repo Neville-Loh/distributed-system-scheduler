@@ -145,9 +145,9 @@ public class Schedule {
 
 
     /**
-     * todo: new method, please test @see dup-detection
-     * @param processorID
-     * @return
+     * retrieve all task in a input processor id
+     * @param processorID the processorID we are getting the tasks in
+     * @return an ArrayList of scheduled tasks in the processorID
      */
     public ArrayList<ScheduledTask> getAllTaskInProcessor(int processorID) {
         Schedule cSchedule = this;
