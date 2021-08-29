@@ -13,8 +13,6 @@ import javafx.util.Duration;
 import raspberry.scheduler.app.visualisation.model.AlgoStats;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 
-import raspberry.scheduler.app.visualisation.controller.MainController;
-
 import raspberry.scheduler.app.visualisation.model.GanttChart;
 import raspberry.scheduler.graph.INode;
 

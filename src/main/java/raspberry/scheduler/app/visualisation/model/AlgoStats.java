@@ -1,6 +1,5 @@
 package raspberry.scheduler.app.visualisation.model;
 import raspberry.scheduler.algorithm.astar.ScheduleAStar;
-import raspberry.scheduler.algorithm.common.Schedule;
 import raspberry.scheduler.algorithm.common.ScheduledTask;
 import raspberry.scheduler.algorithm.common.Solution;
 import raspberry.scheduler.graph.adjacencylist.Node;
@@ -92,6 +91,10 @@ public class AlgoStats {
         }
     }
 
+    /**
+     * Returns current best schedule
+     * @return cureent best schedule
+     */
     public Solution getcurrentBestSchedule(){
         return _currentBestSchedule;
     }

@@ -80,20 +80,6 @@ public class FastTestAStar {
         assertEquals(50, output.getFinishTime());
     }
 
-//    /**
-//     * Test performance of A* algorithm and correctness of output
-//     * Name: Nodes_11_OutTree.dot
-//     * Expected total Time for schedule: 350
-//     * @throws FileNotFoundException file does not exist
-//     */
-//    @Test
-//    public void testNodes11OutTree2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
-//        // read input graph and find path
-//        OutputSchedule output = readAndFindPath("Nodes_11_OutTree.dot", 2);
-//        assertEquals(350, output.getFinishTime());
-//    }
-//
-
     /*
      * ===========================================
      * 4 processor test
@@ -165,6 +151,12 @@ public class FastTestAStar {
         assertEquals(227, output.getFinishTime());
     }
 
+    /**
+     * Test performance of A* algorithm and correctness of output
+     * Name: 2p_Stencil_Nodes_10_CCR_1.97_WeightType_Random.dot
+     * ExpectSed total Time for schedule: 57
+     * @throws FileNotFoundException file does not exist
+     */
     @Test
     public void test2p_Stencil_Nodes_10_CCR_197_WeightType_Randomwith_2Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
@@ -173,6 +165,12 @@ public class FastTestAStar {
         assertEquals(57, output.getFinishTime());
     }
 
+    /**
+     * Test performance of A* algorithm and correctness of output
+     * Name: 4p_Stencil_Nodes_10_CCR_1.97_WeightType_Random.dot
+     * ExpectSed total Time for schedule: 57
+     * @throws FileNotFoundException file does not exist
+     */
     @Test
     public void test4p_Stencil_Nodes_10_CCR_197_WeightType_Randomwith_4Processor() throws FileNotFoundException, EdgeDoesNotExistException {
         // read input graph and find path
@@ -201,11 +199,6 @@ public class FastTestAStar {
 
         // run and time a* algorithm (seeker weighted a* routine)
         long startTime = System.nanoTime();
-//        WeightedAstar wA = new WeightedAstar(graph,numProcessors);
-//        OutputSchedule outputBound = wA.findPath();
-//        int upperbound = outputBound.getFinishTime();
-//        wA = null;
-//        outputBound = null;
 
         // run a star
         AStar astar = new AStar(graph,numProcessors,Integer.MAX_VALUE);

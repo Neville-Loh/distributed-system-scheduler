@@ -1,6 +1,5 @@
 package raspberry.scheduler.algorithm;
 
-import raspberry.scheduler.algorithm.astar.ScheduleAStar;
 import raspberry.scheduler.algorithm.common.OutputSchedule;
 import raspberry.scheduler.algorithm.common.Schedule;
 import raspberry.scheduler.graph.IEdge;
@@ -158,13 +157,18 @@ public abstract class Algorithm {
         return max;
     }
 
-
-
+    /**
+     * Returns Heuristic Table
+     * @return heuristic table
+     */
     public Hashtable<String, Integer> getHeuristicTable() {
         return _heuristicTable;
     }
 
-
+    /**
+     * Returns maximum critical path
+     * @return maximum critical path
+     */
     public int getMaxCriticalPath() {
         return _maxCriticalPath;
     }

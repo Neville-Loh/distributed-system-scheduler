@@ -2,17 +2,18 @@ package raspberry.scheduler.graph;
 
 import org.junit.Test;
 import raspberry.scheduler.graph.adjacencylist.Graph;
-import raspberry.scheduler.graph.adjacencylist.Node;
 import raspberry.scheduler.graph.exceptions.EdgeDoesNotExistException;
 import raspberry.scheduler.graph.util.TopologicalOrder;
 import raspberry.scheduler.io.GraphReader;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
+/**
+ * This class tests the topological order of the input graph before it is passed to the algorithm classes.
+ * @author Jonathon
+ */
 public class TestTopologicalOrder {
     private String INPUT_PATH = "src/test/resources/input/";
     private Graph _testTopGraph;
@@ -95,19 +96,13 @@ public class TestTopologicalOrder {
     }
 
 
-
-    private void readAndTest(String filename) throws
-            FileNotFoundException, EdgeDoesNotExistException {
-
-        // read graph
-        GraphReader reader = new GraphReader(INPUT_PATH+ filename);
-        IGraph graph = reader.read();
-
-        TopologicalOrder to = new TopologicalOrder(graph);
-        to.computeOrder();
-        to.printReport();
-    }
-
+    /**
+     * Helper method to read the file in the tests.
+     * @param filename filename
+     * @return input graph
+     * @throws FileNotFoundException :fileNotFoundException
+     * @throws EdgeDoesNotExistException :edgeDoesNotExistException
+     */
     private IGraph read (String filename) throws
             FileNotFoundException, EdgeDoesNotExistException {
 

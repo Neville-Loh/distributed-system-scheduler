@@ -14,6 +14,10 @@ import raspberry.scheduler.app.*;
 
 import java.io.IOException;
 
+/**
+ * Entry to the program. Responsible for passing commands to each main component.
+ * @author Alan, Young, Jonathon, Takahiro, Neville
+ */
 public class Main {
     public static final boolean COLLECT_STATS_ENABLE = false;
     private static double _startTime;
@@ -48,6 +52,11 @@ public class Main {
         }
     }
 
+    /**
+     * Initialise visualisation from CLI
+     * @param config CLI configuration object
+     * @param reader reader
+     */
     private static void startVisualisation(CLIConfig config, GraphReader reader) {
 //        new Thread(()-> {
         VisualisationLauncher.main(config, reader);
