@@ -1,5 +1,5 @@
-# raspberry-spirits-15-scheduler
-![workflow](https://github.com/SoftEng306-2021/project-1-raspberry-spirits-15/actions/workflows/maven.yml/badge.svg)
+# distributed-system-scheduler
+![workflow](https://github.com/Neville-Loh/distributed-system-scheduler/actions/workflows/maven.yml/badge.svg)
 
 The project is to develop a branch-and-bound, or A* type algorithm that solves the NP Hard Scheduling problem with the highest possible performance.
 The scheduling problem is depicted as a weighted directed acyclic graph where the nodes are tasks and its weight is the cost of computation, 
