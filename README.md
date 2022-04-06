@@ -1,4 +1,4 @@
-# distributed-system-scheduler
+# distributed-system-cpu-task-scheduler
 ![workflow](https://github.com/Neville-Loh/distributed-system-scheduler/actions/workflows/maven.yml/badge.svg)
 
 The project is to develop a branch-and-bound, or A* type algorithm that solves the NP Hard Scheduling problem with the highest possible performance.
